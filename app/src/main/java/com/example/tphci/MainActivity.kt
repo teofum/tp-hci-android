@@ -21,7 +21,7 @@ class MainActivity : ComponentActivity() {
             TPHCITheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     Greeting(
-                        name = "Android",
+                        name = "Android test",
                         modifier = Modifier.padding(innerPadding)
                     )
                 }
