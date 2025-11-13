@@ -32,13 +32,13 @@ class HomeViewModel(
         private set
 
 
-    fun login(username: String, password: String) = runOnViewModelScope<Result<User>>(
-        { userRepository.login(username, password) },
+    fun login(email: String, password: String) = runOnViewModelScope<Result<LoginResponse>>(
+        { userRepository.login(email, password) },
         { state, result ->
             result.fold(
-                onSuccess = { user ->
-                    sessionManager.saveAuthToken(user.token ?: "")
-                    state.copy(isAuthenticated = true, currentUser = user)
+                onSuccess = { response ->
+                    sessionManager.saveAuthToken(response.token)
+                    state.copy(isAuthenticated = true, currentUserToken = response.token)
                 },
                 onFailure = { e ->
                     state.copy(error = handleError(e), isAuthenticated = false)
@@ -47,20 +47,21 @@ class HomeViewModel(
         }
     )
 
-    fun signUp(username: String, email: String, password: String) = runOnViewModelScope(
-        { userRepository.signUp(username, email, password) },
-        { state, result ->
-            result.fold(
-                onSuccess = { user ->
-                    sessionManager.saveAuthToken(user.token ?: "")
-                    state.copy(isAuthenticated = true, currentUser = user)
-                },
-                onFailure = { e ->
-                    state.copy(error = handleError(e))
-                }
-            )
-        }
-    )
+    // TODO
+//    fun register(username: String, email: String, password: String) = runOnViewModelScope<Result<RegisterResponse>>(
+//        { userRepository.register(username, email, password) },
+//        { state, result ->
+//            result.fold(
+//                onSuccess = { response ->
+//                    sessionManager.saveAuthToken(response.token)
+//                    state.copy(isAuthenticated = true)
+//                },
+//                onFailure = { e ->
+//                    state.copy(error = handleError(e))
+//                }
+//            )
+//        }
+//    )
 
     fun getProducts() = runOnViewModelScope(
         { shoppingRepository.getProducts() },

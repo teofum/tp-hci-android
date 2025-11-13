@@ -1,6 +1,7 @@
 package com.example.tphci.data.network
 
 import com.example.tphci.data.model.Category
+import com.example.tphci.data.model.*
 import com.example.tphci.data.model.Product
 import com.example.tphci.data.model.ShoppingList
 import com.example.tphci.data.model.User
@@ -19,12 +20,12 @@ class RemoteDataSource(private val apiService: ApiService) {
         return apiService.getShoppingLists()
     }
 
-    suspend fun login(credentials: Map<String, String>): User {
+    suspend fun login(credentials: Map<String, String>): LoginResponse {
         return apiService.login(credentials)
     }
 
-    suspend fun signUp(userInfo: Map<String, String>): User {
-        return apiService.signUp(userInfo)
+    suspend fun register(userInfo: Map<String, String>): RegisterResponse {
+        return apiService.register(userInfo)
     }
 
     suspend fun updateUser(user: User): User {

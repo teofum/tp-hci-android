@@ -1,6 +1,7 @@
 package com.example.tphci.data.network
 
 import com.example.tphci.data.model.Category
+import com.example.tphci.data.model.*
 import com.example.tphci.data.model.Product
 import com.example.tphci.data.model.ShoppingList
 import com.example.tphci.data.model.User
@@ -22,10 +23,10 @@ interface ApiService {
     suspend fun getShoppingLists(): List<ShoppingList>
 
     @POST("users/login")
-    suspend fun login(@Body credentials: Map<String, String>): User
+    suspend fun login(@Body credentials: Map<String, String>): LoginResponse
 
-    @POST("signup")
-    suspend fun signUp(@Body userInfo: Map<String, String>): User
+    @POST("users/register")
+    suspend fun register(@Body userInfo: Map<String, String>): RegisterResponse
 
     @PUT("user")
     suspend fun updateUser(@Body user: User): User

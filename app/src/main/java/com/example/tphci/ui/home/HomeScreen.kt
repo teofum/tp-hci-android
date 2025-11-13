@@ -61,7 +61,7 @@ fun HomeScreen(
 
 
             // TODO debug full AI
-
+            println("\n\n\nOK!!\n\n\n")
 
             Text("User login ok")
             Spacer(modifier = Modifier.height(8.dp))

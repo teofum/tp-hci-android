@@ -11,7 +11,7 @@ data class HomeUIState(
     val isFetching: Boolean = false,
     val error: Error? = null,
 
-    val currentUser: User? = null,
+    val currentUserToken: String? = null,
     val products: List<Product> = emptyList(),
     val categories: List<Category> = emptyList(),
     val shoppingLists: List<ShoppingList> = emptyList()
