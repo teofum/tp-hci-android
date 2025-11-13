@@ -16,6 +16,7 @@ import com.example.tphci.ui.home.HomeViewModel
 
 @Composable
 fun ShoppingListScreen(
+    onOpenShareScreen: () -> Unit,
     viewModel: HomeViewModel = viewModel(
         factory = HomeViewModel.provideFactory(
             (LocalContext.current.applicationContext as MyApplication).sessionManager,
@@ -28,6 +29,7 @@ fun ShoppingListScreen(
     val uiState = viewModel.uiState
 
 
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -35,6 +37,14 @@ fun ShoppingListScreen(
     ) {
         Text("Mis Listas", style = MaterialTheme.typography.headlineMedium)
 
+
+        // TODO share list
+        Button(
+            onClick = { onOpenShareScreen() },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Compartir lista")
+        }
 
 
         // agregar lista
