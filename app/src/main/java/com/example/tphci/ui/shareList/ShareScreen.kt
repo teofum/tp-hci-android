@@ -83,7 +83,7 @@ fun ShareListScreen(
                 Button(
                     onClick = onDoneClick,
                     modifier = Modifier
-                        .fillMaxWidth()
+                        .fillMaxWidth(0.6f)
                         .height(52.dp),
                     shape = RoundedCornerShape(24.dp),
                 ) {
