@@ -12,28 +12,35 @@ import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffo
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.navigation.NavDestination.Companion.hasRoute
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.dialog
+import androidx.navigation.compose.rememberNavController
 import androidx.window.core.layout.WindowSizeClass
-import com.example.tphci.navigation.AppDestinations
+import com.example.tphci.R
 import com.example.tphci.ui.products.ProductScreen
 import com.example.tphci.ui.profile.ProfileScreen
+import com.example.tphci.ui.shareList.ShareListScreen
 import com.example.tphci.ui.shopping_list.ShoppingListScreen
 import com.example.tphci.ui.theme.TPHCITheme
 import kotlinx.serialization.Serializable
-
-@Serializable
-object Home
 
 @Serializable
 object ShoppingLists
 
 @Serializable
 object Products
+
+@Serializable
+object Profile
+
+@Serializable
+object Share
 
 @Composable
 fun AdaptiveApp() {
@@ -47,8 +54,6 @@ fun AdaptiveApp() {
             }
         }
 
-        var currentDestination by rememberSaveable { mutableStateOf(AppDestinations.SHOPPING_LISTS) }
-
         val myNavigationSuiteItemColors = NavigationSuiteDefaults.itemColors(
             navigationBarItemColors = NavigationBarItemDefaults.colors(
                 indicatorColor = MaterialTheme.colorScheme.primary,
@@ -60,32 +65,84 @@ fun AdaptiveApp() {
                 unselectedTextColor = MaterialTheme.colorScheme.onPrimary
             )
         )
+
+        val navController = rememberNavController()
+
+        val entry by navController.currentBackStackEntryAsState()
+        val currentDestination = entry?.destination
+
         NavigationSuiteScaffold(
             navigationSuiteColors = NavigationSuiteDefaults.colors(
                 navigationRailContainerColor = MaterialTheme.colorScheme.primary
             ),
             navigationSuiteItems = {
-                AppDestinations.entries.forEach {
-                    item(
-                        icon = {
-                            Icon(
-                                imageVector = ImageVector.vectorResource(it.icon),
-                                contentDescription = stringResource(it.contentDescription)
-                            )
-                        },
-                        label = { Text(stringResource(it.label)) },
-                        selected = it == currentDestination,
-                        colors = myNavigationSuiteItemColors,
-                        onClick = { currentDestination = it }
-                    )
-                }
+                item(
+                    icon = {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(R.drawable.shopping_cart_24px),
+                            contentDescription = stringResource(R.string.shopping_lists)
+                        )
+                    },
+                    label = { Text(stringResource(R.string.shopping_lists)) },
+                    selected = currentDestination?.hasRoute(
+                        ShoppingLists::class
+                    ) ?: false,
+                    colors = myNavigationSuiteItemColors,
+                    onClick = { navController.navigate(ShoppingLists) }
+                )
+                item(
+                    icon = {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(R.drawable.package_2_24px),
+                            contentDescription = stringResource(R.string.products)
+                        )
+                    },
+                    label = { Text(stringResource(R.string.products)) },
+                    selected = currentDestination?.hasRoute(
+                        Products::class
+                    ) ?: false,
+                    colors = myNavigationSuiteItemColors,
+                    onClick = { navController.navigate(Products) }
+                )
+                item(
+                    icon = {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(R.drawable.person_24px),
+                            contentDescription = stringResource(R.string.profile)
+                        )
+                    },
+                    label = { Text(stringResource(R.string.profile)) },
+                    selected = currentDestination?.hasRoute(
+                        Profile::class
+                    ) ?: false,
+                    colors = myNavigationSuiteItemColors,
+                    onClick = { navController.navigate(Profile) }
+                )
             },
             layoutType = customNavSuiteType
         ) {
-            when (currentDestination) {
-                AppDestinations.SHOPPING_LISTS -> ShoppingListScreen(onOpenShareScreen = {})
-                AppDestinations.PRODUCTS -> ProductScreen()
-                AppDestinations.PROFILE -> ProfileScreen()
+            NavHost(navController = navController, startDestination = ShoppingLists) {
+                composable<ShoppingLists> {
+                    ShoppingListScreen(onOpenShareScreen = {
+                        navController.navigate(
+                            Share
+                        )
+                    })
+                }
+                composable<Products> { ProductScreen() }
+                composable<Profile> { ProfileScreen() }
+                dialog<Share> { // TODO make the dialog fullscreen
+                    ShareListScreen(
+                        selectedUsers = emptyList(),
+                        suggestedUsers = emptyList(),
+                        searchQuery = "",
+                        onSearchQueryChange = {},
+                        onUserToggle = {},
+                        onRemoveSelectedUser = {},
+                        onBackClick = { navController.popBackStack() },
+                        onDoneClick = { navController.popBackStack() },
+                    )
+                }
             }
         }
     }
