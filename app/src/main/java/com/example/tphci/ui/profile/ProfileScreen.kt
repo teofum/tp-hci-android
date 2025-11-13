@@ -4,6 +4,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -21,6 +25,15 @@ fun ProfileScreen(
     )
 ) {
     val uiState = viewModel.uiState
+    var showChangePassword by remember { mutableStateOf(false) }
+
+    if (showChangePassword) {
+        ChangePasswordScreen(
+            onPasswordChanged = { showChangePassword = false },
+            onNavigateBack = { showChangePassword = false }
+        )
+        return
+    }
 
     Column(
         modifier = Modifier
@@ -108,7 +121,7 @@ fun ProfileScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             TextButton(
-                onClick = { /* TODO: Navigate to change password */ },
+                onClick = { showChangePassword = true },
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Cambiar contraseña")
