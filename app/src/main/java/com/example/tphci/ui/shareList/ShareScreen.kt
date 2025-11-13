@@ -27,6 +27,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.tphci.ui.theme.TPHCITheme
 
 /**
  * Basic user model – adapt it to your backend DTO.
@@ -59,7 +60,7 @@ fun ShareListScreen(
                 title = {
                     Text(
                         text = "Compartir lista",
-                        fontWeight = FontWeight.SemiBold
+                        fontWeight = FontWeight.SemiBold,
                     )
                 },
                 navigationIcon = {
@@ -84,7 +85,7 @@ fun ShareListScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(52.dp),
-                    shape = RoundedCornerShape(24.dp)
+                    shape = RoundedCornerShape(24.dp),
                 ) {
                     Text("Listo", fontSize = 18.sp)
                 }
@@ -291,7 +292,7 @@ private fun ShareListScreenPreview() {
 
     val search = remember { mutableStateOf("") }
 
-    MaterialTheme {
+    TPHCITheme(darkTheme = false, dynamicColor = false) {
         ShareListScreen(
             selectedUsers = selected.value,
             suggestedUsers = suggested,
