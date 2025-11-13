@@ -77,6 +77,9 @@ fun HomeScreen(
             }
 
             Spacer(modifier = Modifier.height(8.dp))
+
+            Text("Productos empty: ${uiState.products.isEmpty()}")
+
             Text("Productos:")
 
             uiState.products.forEach { product ->

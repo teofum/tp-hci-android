@@ -18,3 +18,9 @@ data class RegisterResponse(
     val updatedAt: String,
     val createdAt: String,
 )
+
+@Serializable
+data class ProductsResponse(
+    val data: List<Product>,
+    val pagination: JsonElement
+)
