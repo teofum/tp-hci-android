@@ -67,7 +67,6 @@ class HomeViewModel(
     fun getProducts() = runOnViewModelScope(
         { shoppingRepository.getProducts() },
         { state, products ->
-            Log.d(TAG, "Products fetched: ${products.size}")
             state.copy(products = products.toList())
         }
     )
@@ -79,11 +78,10 @@ class HomeViewModel(
 //        { state, categories -> state.copy(categories = categories) }
 //    )
 
-    // TODO
-//    fun getShoppingLists() = runOnViewModelScope(
-//        { shoppingRepository.getShoppingLists() },
-//        { state, lists -> state.copy(shoppingLists = lists) }
-//    )
+    fun getShoppingLists() = runOnViewModelScope(
+        { shoppingRepository.getShoppingLists() },
+        { state, lists -> state.copy(shoppingLists = lists.toList()) }
+    )
 
     fun logout() {
         sessionManager.removeAuthToken()
@@ -120,6 +118,20 @@ class HomeViewModel(
                 }
                 state.copy(
                     products = updatedProducts
+                )
+            }
+        )
+
+    fun addShoppingList(name: String, description: String?, recurring: Boolean, metadata: Map<String, Any> = emptyMap()) =
+        runOnViewModelScope<JsonObject>(
+            { shoppingRepository.addShoppingList(name, description, recurring, metadata) },
+            { state, response ->
+
+                // TODO
+                val returnedValue = response.jsonArray
+
+                state.copy(
+                    // TODO
                 )
             }
         )

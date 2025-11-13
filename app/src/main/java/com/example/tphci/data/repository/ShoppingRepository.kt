@@ -1,5 +1,6 @@
 package com.example.tphci.data.repository
 
+import android.util.Log
 import com.example.tphci.data.model.Category
 import com.example.tphci.data.model.Product
 import com.example.tphci.data.model.ShoppingList
@@ -70,8 +71,35 @@ class ShoppingRepository(private val remoteDataSource: RemoteDataSource) {
 //        return dataArray.map { json.decodeFromJsonElement<Category>(it) }
 //    }
 
-    // TODO
-//    suspend fun getShoppingLists(): List<ShoppingList> {
-//        return remoteDataSource.get("shopping-lists")
-//    }
+
+    suspend fun getShoppingLists(): List<ShoppingList> {
+        val response = remoteDataSource.get("shopping-lists")
+        val listsJson = response.jsonObject["data"]?.jsonArray ?: return emptyList()
+
+        return listsJson.mapNotNull { element ->
+            try {
+                json.decodeFromJsonElement<ShoppingList>(element)
+            } catch (e: Exception) {
+                Log.e("ShoppingListDecode", "Error decoding: ${e.message}")
+                null
+            }
+        }
+    }
+
+    suspend fun addShoppingList(name: String, description: String?, recurring: Boolean, metadata: Map<String, Any> = emptyMap()): JsonObject {
+        val body = buildJsonObject {
+            put("name", name)
+            put("description", description)
+            put("recurring", recurring)
+            put("metadata", buildJsonObject {
+                metadata.forEach { (key, value) ->
+                    put(key, value.toString())
+                }
+            })
+        }
+
+        val response = remoteDataSource.post("shopping-lists", body)
+
+        return response.jsonObject
+    }
 }
