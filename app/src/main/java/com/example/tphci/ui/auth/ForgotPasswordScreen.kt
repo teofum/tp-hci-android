@@ -7,18 +7,17 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tphci.MyApplication
 
 @Composable
-fun LoginScreen(
-    onLoginSuccess: () -> Unit,
-    onNavigateToSignUp: () -> Unit,
-    onNavigateToForgotPassword: () -> Unit,
-    viewModel: LoginViewModel = viewModel(
-        factory = LoginViewModel.provideFactory(
+fun ForgotPasswordScreen(
+    onEmailSent: () -> Unit,
+    onNavigateToLogin: () -> Unit,
+    viewModel: ForgotPasswordViewModel = viewModel(
+        factory = ForgotPasswordViewModel.provideFactory(
             (LocalContext.current.applicationContext as MyApplication).sessionManager,
             (LocalContext.current.applicationContext as MyApplication).userRepository
         )
@@ -26,9 +25,9 @@ fun LoginScreen(
 ) {
     val uiState = viewModel.uiState
 
-    LaunchedEffect(uiState.isAuthenticated) {
-        if (uiState.isAuthenticated) {
-            onLoginSuccess()
+    LaunchedEffect(uiState.emailSent) {
+        if (uiState.emailSent) {
+            onEmailSent()
         }
     }
 
@@ -40,25 +39,17 @@ fun LoginScreen(
         verticalArrangement = Arrangement.Center
     ) {
         Text(
-            text = "Iniciar sesión",
+            text = "Recuperar contraseña",
             style = MaterialTheme.typography.headlineMedium,
-            modifier = Modifier.padding(bottom = 32.dp)
+            modifier = Modifier.padding(bottom = 16.dp)
         )
 
-        uiState.error?.let {
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 16.dp),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer)
-            ) {
-                Text(
-                    text = "Email o contraseña incorrectos",
-                    modifier = Modifier.padding(16.dp),
-                    color = MaterialTheme.colorScheme.onErrorContainer
-                )
-            }
-        }
+        Text(
+            text = "Ingresá tu correo electrónico y te enviaremos un código para restablecer tu contraseña",
+            style = MaterialTheme.typography.bodyMedium,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(bottom = 32.dp)
+        )
 
         OutlinedTextField(
             value = uiState.email,
@@ -68,39 +59,38 @@ fun LoginScreen(
             enabled = !uiState.isLoading
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
-
-        OutlinedTextField(
-            value = uiState.password,
-            onValueChange = viewModel::updatePassword,
-            label = { Text("Contraseña") },
-            visualTransformation = PasswordVisualTransformation(),
-            modifier = Modifier.fillMaxWidth(),
-            enabled = !uiState.isLoading
-        )
+        uiState.error?.let {
+            Spacer(modifier = Modifier.height(8.dp))
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer)
+            ) {
+                Text(
+                    text = "Error al enviar el código",
+                    modifier = Modifier.padding(16.dp),
+                    color = MaterialTheme.colorScheme.onErrorContainer
+                )
+            }
+        }
 
         Spacer(modifier = Modifier.height(32.dp))
 
         Button(
-            onClick = { viewModel.login() },
+            onClick = { viewModel.sendResetEmail() },
             modifier = Modifier.fillMaxWidth(),
-            enabled = !uiState.isLoading && uiState.email.isNotBlank() && uiState.password.isNotBlank()
+            enabled = !uiState.isLoading && uiState.email.isNotBlank()
         ) {
             if (uiState.isLoading) {
                 CircularProgressIndicator(modifier = Modifier.size(16.dp))
             } else {
-                Text("Iniciar Sesión")
+                Text("Enviar código")
             }
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        TextButton(onClick = onNavigateToForgotPassword) {
-            Text("¿Olvidaste tu contraseña?")
-        }
-
-        TextButton(onClick = onNavigateToSignUp) {
-            Text("¿No tenés una cuenta? Registrate")
+        TextButton(onClick = onNavigateToLogin) {
+            Text("Volver al inicio de sesión")
         }
     }
 }

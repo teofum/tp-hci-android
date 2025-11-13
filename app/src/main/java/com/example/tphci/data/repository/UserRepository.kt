@@ -123,6 +123,30 @@ class UserRepository(private val remoteDataSource: RemoteDataSource) {
         }
     }
 
+    suspend fun forgotPassword(email: String): Result<JsonObject> {
+        return try {
+            val responseElement = remoteDataSource.post("users/forgot-password?email=$email", buildJsonObject {})
+            val response = responseElement.jsonObject
+            Result.success(response)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun resetPassword(code: String, password: String): Result<JsonObject> {
+        return try {
+            val resetData = buildJsonObject {
+                put("code", code)
+                put("password", password)
+            }
+            val responseElement = remoteDataSource.post("users/reset-password", resetData)
+            val response = responseElement.jsonObject
+            Result.success(response)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
     fun getCurrentUserToken(): String? {
         return currentUserToken
     }

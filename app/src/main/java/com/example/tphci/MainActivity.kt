@@ -8,7 +8,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import com.example.tphci.ui.auth.ForgotPasswordScreen
 import com.example.tphci.ui.auth.LoginScreen
+import com.example.tphci.ui.auth.ResetPasswordScreen
 import com.example.tphci.ui.auth.SignUpScreen
 import com.example.tphci.ui.auth.VerifyAccountScreen
 import com.example.tphci.ui.home.HomeScreen
@@ -25,10 +27,26 @@ class MainActivity : ComponentActivity() {
                 var showSignUp by remember { mutableStateOf(false) }
                 var showVerification by remember { mutableStateOf(false) }
                 var verificationEmail by remember { mutableStateOf("") }
+                var showForgotPassword by remember { mutableStateOf(false) }
+                var showResetPassword by remember { mutableStateOf(false) }
 
                 when {
                     isAuthenticated -> {
                         HomeScreen(onLogout = { isAuthenticated = false })
+                    }
+                    showResetPassword -> {
+                        ResetPasswordScreen(
+                            onNavigateToLogin = { 
+                                showResetPassword = false
+                                showForgotPassword = false
+                            }
+                        )
+                    }
+                    showForgotPassword -> {
+                        ForgotPasswordScreen(
+                            onEmailSent = { showResetPassword = true },
+                            onNavigateToLogin = { showForgotPassword = false }
+                        )
                     }
                     showVerification -> {
                         VerifyAccountScreen(
@@ -53,7 +71,8 @@ class MainActivity : ComponentActivity() {
                     else -> {
                         LoginScreen(
                             onLoginSuccess = { isAuthenticated = true },
-                            onNavigateToSignUp = { showSignUp = true }
+                            onNavigateToSignUp = { showSignUp = true },
+                            onNavigateToForgotPassword = { showForgotPassword = true }
                         )
                     }
                 }
