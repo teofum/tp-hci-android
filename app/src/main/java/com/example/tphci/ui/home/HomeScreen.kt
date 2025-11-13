@@ -29,6 +29,7 @@ import kotlinx.serialization.json.JsonObject
 
 @Composable
 fun HomeScreen(
+    onLogout: () -> Unit,
     viewModel: HomeViewModel = viewModel(
         factory = HomeViewModel.provideFactory(
             (LocalContext.current.applicationContext as MyApplication).sessionManager,
@@ -49,32 +50,16 @@ fun HomeScreen(
             Text(text = "Error: ${it.message}")
         }
 
-        if (!uiState.isAuthenticated) {
-            Text("Debug login")
-            Spacer(modifier = Modifier.height(8.dp))
-            Button(onClick = {
-                // TODO hardcodeado (hacerlo con form)
-                // pueden ir a http://localhost:8080/docs con la API en Try it out
-                // después ejecutar desde la página:
-                // {
-                //  "name": "test",
-                //  "surname": "test",
-                //  "email": "test@gmail.com",
-                //  "password": "test1234",
-                //  "metadata": {}
-                // }
-                // y después verificarlo
-                viewModel.login("test@gmail.com", "test1234")
-            }) {
-                Text("hardcode login")
-            }
-        } else {
+        if (uiState.isAuthenticated) {
 
 
             Text("User login ok")
             Spacer(modifier = Modifier.height(8.dp))
 
-            Button(onClick = { viewModel.logout() }) {
+            Button(onClick = { 
+                viewModel.logout()
+                onLogout()
+            }) {
                 Text("Cerrar sesión")
             }
 
