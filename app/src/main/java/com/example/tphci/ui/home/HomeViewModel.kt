@@ -15,12 +15,12 @@ import com.example.tphci.data.repository.UserRepository
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
-import androidx.lifecycle.viewModelScope
 import com.example.tphci.data.DataSourceException
-import com.example.tphci.data.model.User
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.int
+import kotlinx.serialization.json.jsonArray
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 
 class HomeViewModel(
     private val sessionManager: SessionManager,
@@ -32,13 +32,14 @@ class HomeViewModel(
         private set
 
 
-    fun login(username: String, password: String) = runOnViewModelScope<Result<User>>(
-        { userRepository.login(username, password) },
+    fun login(email: String, password: String) = runOnViewModelScope<Result<JsonObject>>(
+        { userRepository.login(email, password) },
         { state, result ->
             result.fold(
-                onSuccess = { user ->
-                    sessionManager.saveAuthToken(user.token ?: "")
-                    state.copy(isAuthenticated = true, currentUser = user)
+                onSuccess = { response ->
+                    val token = response["token"]?.jsonPrimitive?.content.orEmpty()
+                    sessionManager.saveAuthToken(token)
+                    state.copy(isAuthenticated = true, currentUserToken = token)
                 },
                 onFailure = { e ->
                     state.copy(error = handleError(e), isAuthenticated = false)
@@ -47,40 +48,93 @@ class HomeViewModel(
         }
     )
 
-    fun signUp(username: String, email: String, password: String) = runOnViewModelScope(
-        { userRepository.signUp(username, email, password) },
-        { state, result ->
-            result.fold(
-                onSuccess = { user ->
-                    sessionManager.saveAuthToken(user.token ?: "")
-                    state.copy(isAuthenticated = true, currentUser = user)
-                },
-                onFailure = { e ->
-                    state.copy(error = handleError(e))
-                }
-            )
-        }
-    )
+    // TODO
+//    fun register(username: String, email: String, password: String) = runOnViewModelScope<Result<RegisterResponse>>(
+//        { userRepository.register(username, email, password) },
+//        { state, result ->
+//            result.fold(
+//                onSuccess = { _ ->
+//                    // TODO
+//                    state.copy(isFetching = false)
+//                },
+//                onFailure = { e ->
+//                    state.copy(error = handleError(e))
+//                }
+//            )
+//        }
+//    )
 
     fun getProducts() = runOnViewModelScope(
         { shoppingRepository.getProducts() },
-        { state, products -> state.copy(products = products) }
+        { state, products ->
+            state.copy(products = products.toList())
+        }
     )
 
-    fun getCategories() = runOnViewModelScope(
-        { shoppingRepository.getCategories() },
-        { state, categories -> state.copy(categories = categories) }
-    )
+
+    // TODO
+//    fun getCategories() = runOnViewModelScope(
+//        { shoppingRepository.getCategories() },
+//        { state, categories -> state.copy(categories = categories) }
+//    )
 
     fun getShoppingLists() = runOnViewModelScope(
         { shoppingRepository.getShoppingLists() },
-        { state, lists -> state.copy(shoppingLists = lists) }
+        { state, lists -> state.copy(shoppingLists = lists.toList()) }
     )
 
     fun logout() {
         sessionManager.removeAuthToken()
         uiState = HomeUIState(isAuthenticated = false)
     }
+
+    fun addProduct(name: String, categoryId: Int?, metadata: Map<String, Any> = emptyMap()) =
+        runOnViewModelScope<JsonObject>(
+            { shoppingRepository.addProduct(name, categoryId, metadata) },
+            { state, response ->
+                val newProduct = response["data"]?.jsonArray?.firstOrNull()
+                val updatedProducts = state.products.toMutableList()
+
+                // TODO esto está medio roto, causa que no se actualice solo al agregar prod
+
+                if (newProduct != null) {
+                    val product = Product(
+                        id = newProduct.jsonObject["id"]?.jsonPrimitive?.int,
+                        name = newProduct.jsonObject["name"]?.jsonPrimitive?.content,
+                        metadata = newProduct.jsonObject["metadata"],
+                        createdAt = newProduct.jsonObject["createdAt"]?.jsonPrimitive?.content,
+                        updatedAt = newProduct.jsonObject["updatedAt"]?.jsonPrimitive?.content,
+                        category = newProduct.jsonObject["category"]?.jsonObject?.let { categoryJson ->
+                            Category(
+                                id = categoryJson["id"]?.jsonPrimitive?.int,
+                                name = categoryJson["name"]?.jsonPrimitive?.content,
+                                metadata = categoryJson["metadata"],
+                                createdAt = categoryJson["createdAt"]?.jsonPrimitive?.content,
+                                updatedAt = categoryJson["updatedAt"]?.jsonPrimitive?.content
+                            )
+                        } as Category
+                    )
+                    updatedProducts.add(product)
+                }
+                state.copy(
+                    products = updatedProducts
+                )
+            }
+        )
+
+    fun addShoppingList(name: String, description: String?, recurring: Boolean, metadata: Map<String, Any> = emptyMap()) =
+        runOnViewModelScope<JsonObject>(
+            { shoppingRepository.addShoppingList(name, description, recurring, metadata) },
+            { state, response ->
+
+                // TODO
+                val returnedValue = response.jsonArray
+
+                state.copy(
+                    // TODO
+                )
+            }
+        )
 
     private fun <R> runOnViewModelScope(
         block: suspend () -> R,
