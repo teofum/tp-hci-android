@@ -3,6 +3,7 @@ package com.example.tphci.ui.profile
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -22,6 +23,12 @@ fun ChangePasswordScreen(
     )
 ) {
     val uiState = viewModel.uiState
+
+    LaunchedEffect(uiState.changeSuccess) {
+        if (uiState.changeSuccess) {
+            onPasswordChanged()
+        }
+    }
 
     Column(
         modifier = Modifier
