@@ -13,7 +13,7 @@ class UserRepository(private val remoteDataSource: RemoteDataSource) {
 
     suspend fun login(username: String, password: String): Result<User> {
         return try {
-            val credentials = mapOf("username" to username, "password" to password)
+            val credentials = mapOf("email" to username, "password" to password)
             val user = remoteDataSource.login(credentials)
             currentUser = user
             Result.success(user)

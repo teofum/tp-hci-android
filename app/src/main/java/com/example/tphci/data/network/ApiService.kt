@@ -9,6 +9,8 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.PUT
 
+
+// TODO solo el url de login está bien, resto revisar
 interface ApiService {
     @GET("products")
     suspend fun getProducts(): List<Product>
@@ -19,7 +21,7 @@ interface ApiService {
     @GET("shopping-lists")
     suspend fun getShoppingLists(): List<ShoppingList>
 
-    @POST("login")
+    @POST("users/login")
     suspend fun login(@Body credentials: Map<String, String>): User
 
     @POST("signup")
