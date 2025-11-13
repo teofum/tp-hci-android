@@ -84,6 +84,31 @@ class UserRepository(private val remoteDataSource: RemoteDataSource) {
         }
     }
 
+    suspend fun getCurrentUser(): Result<JsonObject> {
+        return try {
+            val responseElement = remoteDataSource.get("users/profile")
+            val response = responseElement.jsonObject
+            Result.success(response)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun updateProfile(name: String, surname: String): Result<JsonObject> {
+        return try {
+            val profileData = buildJsonObject {
+                put("name", name)
+                put("surname", surname)
+                put("metadata", buildJsonObject {})
+            }
+            val responseElement = remoteDataSource.put("users/profile", profileData)
+            val response = responseElement.jsonObject
+            Result.success(response)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
     fun getCurrentUserToken(): String? {
         return currentUserToken
     }
