@@ -58,6 +58,32 @@ class UserRepository(private val remoteDataSource: RemoteDataSource) {
         }
     }
 
+    suspend fun verifyAccount(code: String): Result<JsonObject> {
+        return try {
+            val verificationData = buildJsonObject {
+                put("code", code)
+            }
+            val responseElement = remoteDataSource.post("users/verify-account", verificationData)
+            val response = responseElement.jsonObject
+            Result.success(response)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun sendVerification(email: String): Result<JsonObject> {
+        return try {
+            val emailData = buildJsonObject {
+                put("email", email)
+            }
+            val responseElement = remoteDataSource.post("users/send-verification", emailData)
+            val response = responseElement.jsonObject
+            Result.success(response)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
     fun getCurrentUserToken(): String? {
         return currentUserToken
     }

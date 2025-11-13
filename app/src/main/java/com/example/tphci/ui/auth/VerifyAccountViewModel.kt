@@ -15,46 +15,36 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.JsonObject
 
-data class SignUpUIState(
-    val name: String = "",
-    val surname: String = "",
+data class VerifyAccountUIState(
+    val code: String = "",
     val email: String = "",
-    val password: String = "",
     val isLoading: Boolean = false,
     val error: Error? = null,
-    val isRegistered: Boolean = false
+    val isVerified: Boolean = false
 )
 
-class SignUpViewModel(
+class VerifyAccountViewModel(
     private val sessionManager: SessionManager,
     private val userRepository: UserRepository
 ) : ViewModel() {
 
-    var uiState by mutableStateOf(SignUpUIState())
+    var uiState by mutableStateOf(VerifyAccountUIState())
         private set
 
-    fun updateName(name: String) {
-        uiState = uiState.copy(name = name)
-    }
-
-    fun updateSurname(surname: String) {
-        uiState = uiState.copy(surname = surname)
-    }
-
-    fun updateEmail(email: String) {
+    fun setEmail(email: String) {
         uiState = uiState.copy(email = email)
     }
 
-    fun updatePassword(password: String) {
-        uiState = uiState.copy(password = password)
+    fun updateCode(code: String) {
+        uiState = uiState.copy(code = code)
     }
 
-    fun signUp() = runOnViewModelScope<Result<JsonObject>>(
-        { userRepository.register(uiState.name, uiState.surname, uiState.email, uiState.password) },
+    fun verifyAccount() = runOnViewModelScope<Result<JsonObject>>(
+        { userRepository.verifyAccount(uiState.code) },
         { state, result ->
             result.fold(
                 onSuccess = { _ ->
-                    state.copy(isRegistered = true)
+                    state.copy(isVerified = true)
                 },
                 onFailure = { e ->
                     state.copy(error = handleError(e))
@@ -63,11 +53,23 @@ class SignUpViewModel(
         }
     )
 
-    fun getRegisteredEmail(): String = uiState.email
+    fun resendCode() = runOnViewModelScope<Result<JsonObject>>(
+        { userRepository.sendVerification(uiState.email) },
+        { state, result ->
+            result.fold(
+                onSuccess = { _ ->
+                    state.copy(error = null)
+                },
+                onFailure = { e ->
+                    state.copy(error = handleError(e))
+                }
+            )
+        }
+    )
 
     private fun <R> runOnViewModelScope(
         block: suspend () -> R,
-        updateState: (SignUpUIState, R) -> SignUpUIState
+        updateState: (VerifyAccountUIState, R) -> VerifyAccountUIState
     ): Job = viewModelScope.launch {
         uiState = uiState.copy(isLoading = true, error = null)
         runCatching { block() }
@@ -76,7 +78,7 @@ class SignUpViewModel(
             }
             .onFailure { e ->
                 uiState = uiState.copy(isLoading = false, error = handleError(e))
-                Log.e(TAG, "SignUp failed", e)
+                Log.e(TAG, "Verify account failed", e)
             }
     }
 
@@ -89,7 +91,7 @@ class SignUpViewModel(
     }
 
     companion object {
-        private const val TAG = "SignUpViewModel"
+        private const val TAG = "VerifyAccountViewModel"
 
         fun provideFactory(
             sessionManager: SessionManager,
@@ -97,7 +99,7 @@ class SignUpViewModel(
         ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return SignUpViewModel(sessionManager, userRepository) as T
+                return VerifyAccountViewModel(sessionManager, userRepository) as T
             }
         }
     }
