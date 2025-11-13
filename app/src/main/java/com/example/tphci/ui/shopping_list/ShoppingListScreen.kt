@@ -1,6 +1,7 @@
 package com.example.tphci.ui.shopping_list
 
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -17,6 +18,7 @@ import com.example.tphci.ui.home.HomeViewModel
 @Composable
 fun ShoppingListScreen(
     onOpenShareScreen: () -> Unit,
+    onOpenListDetails: (Long) -> Unit,
     viewModel: HomeViewModel = viewModel(
         factory = HomeViewModel.provideFactory(
             (LocalContext.current.applicationContext as MyApplication).sessionManager,
@@ -106,9 +108,20 @@ fun ShoppingListScreen(
         Text("Listas:")
 
         uiState.shoppingLists.forEach { list ->
-            Text("- ${list.name}")
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 4.dp)
+                    .clickable { onOpenListDetails(list.id.toLong()) },
+                colors = CardDefaults.cardColors(
+                    containerColor = Color(0xFFF5F5F5)
+                )
+            ) {
+                Column(modifier = Modifier.padding(12.dp)) {
+                    Text(list.name, style = MaterialTheme.typography.titleMedium)
+                    Text(list.description, style = MaterialTheme.typography.bodyMedium)
+                }
+            }
         }
-
-
     }
 }
