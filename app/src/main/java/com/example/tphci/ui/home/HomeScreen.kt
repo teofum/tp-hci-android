@@ -35,8 +35,6 @@ import com.example.tphci.ui.products.ProductScreen
 import com.example.tphci.ui.profile.ProfileScreen
 import com.example.tphci.ui.shopping_list.ShoppingListScreen
 
-// TODO este seríá la estructura del proyecto
-
 @Composable
 fun HomeScreen() {
     var currentRoute by remember { mutableStateOf("shopping_list") }
