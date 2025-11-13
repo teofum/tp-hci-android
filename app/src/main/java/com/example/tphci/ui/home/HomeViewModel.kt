@@ -21,6 +21,8 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
 import com.example.tphci.data.DataSourceException
 import com.example.tphci.data.model.User
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.jsonPrimitive
 
 class HomeViewModel(
     private val sessionManager: SessionManager,
@@ -32,13 +34,14 @@ class HomeViewModel(
         private set
 
 
-    fun login(email: String, password: String) = runOnViewModelScope<Result<LoginResponse>>(
+    fun login(email: String, password: String) = runOnViewModelScope<Result<JsonObject>>(
         { userRepository.login(email, password) },
         { state, result ->
             result.fold(
                 onSuccess = { response ->
-                    sessionManager.saveAuthToken(response.token)
-                    state.copy(isAuthenticated = true, currentUserToken = response.token)
+                    val token = response["token"]?.jsonPrimitive?.content.orEmpty()
+                    sessionManager.saveAuthToken(token)
+                    state.copy(isAuthenticated = true, currentUserToken = token)
                 },
                 onFailure = { e ->
                     state.copy(error = handleError(e), isAuthenticated = false)
@@ -52,9 +55,9 @@ class HomeViewModel(
 //        { userRepository.register(username, email, password) },
 //        { state, result ->
 //            result.fold(
-//                onSuccess = { response ->
-//                    sessionManager.saveAuthToken(response.token)
-//                    state.copy(isAuthenticated = true)
+//                onSuccess = { _ ->
+//                    // TODO
+//                    state.copy(isFetching = false)
 //                },
 //                onFailure = { e ->
 //                    state.copy(error = handleError(e))
@@ -73,10 +76,11 @@ class HomeViewModel(
         { state, categories -> state.copy(categories = categories) }
     )
 
-    fun getShoppingLists() = runOnViewModelScope(
-        { shoppingRepository.getShoppingLists() },
-        { state, lists -> state.copy(shoppingLists = lists) }
-    )
+    // TODO
+//    fun getShoppingLists() = runOnViewModelScope(
+//        { shoppingRepository.getShoppingLists() },
+//        { state, lists -> state.copy(shoppingLists = lists) }
+//    )
 
     fun logout() {
         sessionManager.removeAuthToken()

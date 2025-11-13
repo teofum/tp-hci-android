@@ -42,7 +42,7 @@ fun HomeScreen(
             Text("Debug login")
             Spacer(modifier = Modifier.height(8.dp))
             Button(onClick = {
-                // TODO hardcodeado
+                // TODO hardcodeado (hacerlo con form)
                 // pueden ir a http://localhost:8080/docs con la API en Try it out
                 // después ejecutar desde la página:
                 // {
@@ -61,7 +61,7 @@ fun HomeScreen(
 
 
             // TODO debug full AI
-            println("\n\n\nOK!!\n\n\n")
+
 
             Text("User login ok")
             Spacer(modifier = Modifier.height(8.dp))
@@ -104,7 +104,7 @@ fun HomeScreen(
     LaunchedEffect(uiState.isAuthenticated) {
         if (uiState.isAuthenticated) {
             viewModel.getProducts()
-            viewModel.getCategories()
+             viewModel.getCategories()
         }
     }
 }

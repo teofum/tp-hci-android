@@ -4,18 +4,52 @@ import com.example.tphci.data.model.Category
 import com.example.tphci.data.model.Product
 import com.example.tphci.data.model.ShoppingList
 import com.example.tphci.data.network.RemoteDataSource
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.decodeFromJsonElement
+import kotlinx.serialization.json.jsonArray
+import kotlinx.serialization.json.jsonObject
 
 class ShoppingRepository(private val remoteDataSource: RemoteDataSource) {
-
+    private val json = Json { ignoreUnknownKeys = true }
     suspend fun getProducts(): List<Product> {
-        return remoteDataSource.getProducts()
+        val response = remoteDataSource.get("products")
+        val productsJson = response.jsonObject["data"]?.jsonArray ?: return emptyList()
+        return productsJson.map { json.decodeFromJsonElement<Product>(it) }
+    }
+
+    // TODO
+//    suspend fun addProduct(name: String, categoryId: Int?, metadata: Map<String, Any> = emptyMap()): Product {
+//        val body = buildJsonObject {
+//            put("name", "Milk")
+//            put("metadata", buildJsonObject { metadata })
+//            put("category", buildJsonObject { put("id", 1) })
+//        }
+//        return remoteDataSource.post("products", body)
+//    }
+    // TODO
+//    suspend fun updateProduct(id: Int, name: String, categoryId: Int?, metadata: Map<String, Any> = emptyMap()): Product {
+//        val body = buildJsonObject {
+//            put("name", "Milk")
+//            put("metadata", buildJsonObject { metadata })
+//            put("category", buildJsonObject { put("id", 1) })
+//        }
+//
+//        return remoteDataSource.put("products/$id", body)
+//    }
+
+    suspend fun deleteProduct(id: Int) {
+        remoteDataSource.delete("products/$id")
     }
 
     suspend fun getCategories(): List<Category> {
-        return remoteDataSource.getCategories()
+        val response = remoteDataSource.get("categories").jsonObject
+        val dataArray = response["data"]!!.jsonArray
+        return dataArray.map { json.decodeFromJsonElement<Category>(it) }
     }
 
-    suspend fun getShoppingLists(): List<ShoppingList> {
-        return remoteDataSource.getShoppingLists()
-    }
+    // TODO
+//    suspend fun getShoppingLists(): List<ShoppingList> {
+//        return remoteDataSource.get("shopping-lists")
+//    }
 }

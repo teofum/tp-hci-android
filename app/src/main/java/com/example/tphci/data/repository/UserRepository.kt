@@ -3,6 +3,11 @@ package com.example.tphci.data.repository
 import com.example.tphci.data.model.*
 import com.example.tphci.data.model.User
 import com.example.tphci.data.network.RemoteDataSource
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
+import kotlinx.serialization.json.put
 
 class UserRepository(private val remoteDataSource: RemoteDataSource) {
 
@@ -12,27 +17,46 @@ class UserRepository(private val remoteDataSource: RemoteDataSource) {
         return currentUserToken != null
     }
 
-    suspend fun login(email: String, password: String): Result<LoginResponse> {
+    suspend fun login(email: String, password: String): Result<JsonObject> {
         return try {
-            val credentials = mapOf("email" to email, "password" to password)
-            val response = remoteDataSource.login(credentials)
-            println("\n\n\nOK!!\n\n\n")
-            currentUserToken = response.token
+            val credentials = buildJsonObject {
+                put("email", email)
+                put("password", password)
+            }
+
+            // Pedimos JsonElement y lo convertimos a JsonObject
+            val responseElement = remoteDataSource.post("users/login", credentials)
+            val response = responseElement.jsonObject
+
+            // Guardar el token para futuras requests
+            val token = response["token"]?.jsonPrimitive?.content
+            currentUserToken = token
+            remoteDataSource.token = token
+
             Result.success(response)
         } catch (e: Exception) {
             Result.failure(e)
         }
     }
 
-    suspend fun register(username: String, email: String, password: String): Result<RegisterResponse> {
-        return try {
-            val userInfo = mapOf("username" to username, "email" to email, "password" to password)
-            val user = remoteDataSource.register(userInfo)
-            Result.success(user)
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
-    }
+
+
+    // TODO
+//    suspend fun register(username: String, email: String, password: String): Result<RegisterResponse> {
+//        return try {
+//            val userInfo = buildJsonObject {
+//                put("name", username)
+//                put("surname", username)
+//                put("email", email)
+//                put("password", password)
+//                put("metadata", buildJsonObject { metadata })
+//            }
+//            val response: RegisterResponse = remoteDataSource.post("users/register", userInfo)
+//            Result.success(response)
+//        } catch (e: Exception) {
+//            Result.failure(e)
+//        }
+//    }
 
     fun getCurrentUserToken(): String? {
         return currentUserToken

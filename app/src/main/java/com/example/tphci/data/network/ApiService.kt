@@ -5,29 +5,46 @@ import com.example.tphci.data.model.*
 import com.example.tphci.data.model.Product
 import com.example.tphci.data.model.ShoppingList
 import com.example.tphci.data.model.User
+import kotlinx.serialization.json.JsonElement
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.PUT
+import retrofit2.http.Path
+import retrofit2.http.Url
 
 
 // TODO solo el url de login está bien, resto revisar
 interface ApiService {
-    @GET("products")
-    suspend fun getProducts(): List<Product>
 
-    @GET("categories")
-    suspend fun getCategories(): List<Category>
+    // wrappers genéricos como hicimos en web (usar en RemoteDataSource)
 
-    @GET("shopping-lists")
-    suspend fun getShoppingLists(): List<ShoppingList>
+    @POST
+    suspend fun post(
+        @Url url: String,
+        @Body body: JsonElement,
+        @Header("Authorization") token: String
+    ): JsonElement
 
-    @POST("users/login")
-    suspend fun login(@Body credentials: Map<String, String>): LoginResponse
+    @GET
+    suspend fun get(
+        @Url url: String,
+        @Header("Authorization") token: String
+    ): JsonElement
 
-    @POST("users/register")
-    suspend fun register(@Body userInfo: Map<String, String>): RegisterResponse
+    @PUT
+    suspend fun put(
+        @Url url: String,
+        @Body body: JsonElement,
+        @Header("Authorization") token: String
+    ): JsonElement
 
-    @PUT("user")
-    suspend fun updateUser(@Body user: User): User
+    @DELETE
+    suspend fun delete(
+        @Url url: String,
+        @Header("Authorization") token: String
+    ): JsonElement
+
 }
