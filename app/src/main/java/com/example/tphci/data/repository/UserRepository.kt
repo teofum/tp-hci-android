@@ -41,22 +41,22 @@ class UserRepository(private val remoteDataSource: RemoteDataSource) {
 
 
 
-    // TODO
-//    suspend fun register(username: String, email: String, password: String): Result<RegisterResponse> {
-//        return try {
-//            val userInfo = buildJsonObject {
-//                put("name", username)
-//                put("surname", username)
-//                put("email", email)
-//                put("password", password)
-//                put("metadata", buildJsonObject { metadata })
-//            }
-//            val response: RegisterResponse = remoteDataSource.post("users/register", userInfo)
-//            Result.success(response)
-//        } catch (e: Exception) {
-//            Result.failure(e)
-//        }
-//    }
+    suspend fun register(name: String, surname: String, email: String, password: String): Result<JsonObject> {
+        return try {
+            val userInfo = buildJsonObject {
+                put("name", name)
+                put("surname", surname)
+                put("email", email)
+                put("password", password)
+                put("metadata", buildJsonObject {})
+            }
+            val responseElement = remoteDataSource.post("users/register", userInfo)
+            val response = responseElement.jsonObject
+            Result.success(response)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 
     fun getCurrentUserToken(): String? {
         return currentUserToken

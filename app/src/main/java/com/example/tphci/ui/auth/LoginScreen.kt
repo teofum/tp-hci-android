@@ -15,6 +15,7 @@ import com.example.tphci.MyApplication
 @Composable
 fun LoginScreen(
     onLoginSuccess: () -> Unit,
+    onNavigateToSignUp: () -> Unit,
     viewModel: LoginViewModel = viewModel(
         factory = LoginViewModel.provideFactory(
             (LocalContext.current.applicationContext as MyApplication).sessionManager,
@@ -89,6 +90,12 @@ fun LoginScreen(
             } else {
                 Text("Iniciar Sesión")
             }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        TextButton(onClick = onNavigateToSignUp) {
+            Text("¿No tenés una cuenta? Registrate")
         }
     }
 }
