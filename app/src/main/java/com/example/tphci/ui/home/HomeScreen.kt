@@ -1,5 +1,6 @@
 package com.example.tphci.ui.home
 
+import BottomBar
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
@@ -24,197 +25,230 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.JsonObject
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
+import com.example.tphci.ui.products.ProductScreen
+import com.example.tphci.ui.profile.ProfileScreen
+import com.example.tphci.ui.shopping_list.ShoppingListScreen
 
 // TODO este seríá la estructura del proyecto
 
 @Composable
-fun HomeScreen(
-    viewModel: HomeViewModel = viewModel(
-        factory = HomeViewModel.provideFactory(
-            (LocalContext.current.applicationContext as MyApplication).sessionManager,
-            (LocalContext.current.applicationContext as MyApplication).userRepository,
-            (LocalContext.current.applicationContext as MyApplication).shoppingRepository
-        )
-    )
-) {
-    val uiState = viewModel.uiState
+fun HomeScreen() {
+    var currentRoute by remember { mutableStateOf("shopping_list") }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-            .verticalScroll(rememberScrollState())
-    ) {
-        uiState.error?.let {
-            Text(text = "Error: ${it.message}")
+    Scaffold(
+        bottomBar = {
+            BottomBar(
+                currentRoute = currentRoute,
+                onTabSelected = { route -> currentRoute = route }
+            )
         }
-
-        if (!uiState.isAuthenticated) {
-            Text("Debug login")
-            Spacer(modifier = Modifier.height(8.dp))
-            Button(onClick = {
-                // TODO hardcodeado (hacerlo con form)
-                // pueden ir a http://localhost:8080/docs con la API en Try it out
-                // después ejecutar desde la página:
-                // {
-                //  "name": "test",
-                //  "surname": "test",
-                //  "email": "test@gmail.com",
-                //  "password": "test1234",
-                //  "metadata": {}
-                // }
-                // y después verificarlo
-                viewModel.login("test@gmail.com", "test1234")
-            }) {
-                Text("hardcode login")
+    ) { innerPadding ->
+        Box(Modifier.padding(innerPadding)) {
+            when (currentRoute) {
+                "shopping_list" -> ShoppingListScreen()
+                "products" -> ProductScreen()
+                "profile" -> ProfileScreen()
             }
-        } else {
-
-
-            Text("User login ok")
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Button(onClick = { viewModel.logout() }) {
-                Text("Cerrar sesión")
-            }
-
-
-
-            // agregar producto
-            val productName = remember { mutableStateOf("") }
-            val categoryIdInput = remember { mutableStateOf("") }
-
-
-            OutlinedTextField(
-                value = productName.value,
-                onValueChange = { productName.value = it },
-                label = { Text("Nombre del producto") },
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            OutlinedTextField(
-                value = categoryIdInput.value,
-                onValueChange = { categoryIdInput.value = it },
-                label = { Text("ID de categoría") },
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Button(onClick = {
-                val name = productName.value
-                val categoryId = categoryIdInput.value.toIntOrNull()
-                viewModel.addProduct(name = name, categoryId = categoryId)
-            }) {
-                Text("Agregar producto")
-            }
-
-
-
-            // productos
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Button(onClick = { viewModel.getProducts() }) {
-                Text("Obtener productos")
-            }
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Text("Productos empty: ${uiState.products.isEmpty()}")
-
-            Text("Productos:")
-
-            uiState.products.forEach { product ->
-                Text("- ${product.name}")
-            }
-
-
-
-            // agregar lista
-            val listName = remember { mutableStateOf("") }
-            val listDescription = remember { mutableStateOf("") }
-            val recurring = remember { mutableStateOf(false) }
-
-
-            OutlinedTextField(
-                value = listName.value,
-                onValueChange = { listName.value = it },
-                label = { Text("Nombre de la lista") },
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            OutlinedTextField(
-                value = listDescription.value,
-                onValueChange = { listDescription.value = it },
-                label = { Text("Descriptión de la lista") },
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text("Recurrente")
-                Switch(
-                    checked = recurring.value,
-                    onCheckedChange = { recurring.value = it },
-                    colors = SwitchDefaults.colors(checkedThumbColor = Color.Green)
-                )
-            }
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Button(onClick = {
-                viewModel.addShoppingList(
-                    name = listName.value,
-                    description = listDescription.value,
-                    recurring = recurring.value
-                )
-            }) {
-                Text("Agregar lista")
-            }
-
-
-            // listas
-            Button(onClick = { viewModel.getShoppingLists() }) {
-                Text("Obtener listas")
-            }
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Text("Listas empty: ${uiState.shoppingLists.isEmpty()}")
-
-            Text("Listas:")
-
-            uiState.shoppingLists.forEach { list ->
-                Text("- ${list.name}")
-            }
-
-
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // TODO
-//            Button(onClick = { viewModel.getCategories() }) {
-//                Text("Obtener categorías")
-//            }
-
-            Spacer(modifier = Modifier.height(8.dp))
-            Text("Categorías:")
-
-            uiState.categories.forEach { category ->
-                Text("- ${category.name}")
-            }
-        }
-    }
-
-    LaunchedEffect(uiState.isAuthenticated) {
-        if (uiState.isAuthenticated) {
-            viewModel.getProducts()
-            viewModel.getShoppingLists()
-//             viewModel.getCategories() // TODO
         }
     }
 }
+
+
+
+//@Composable
+//fun HomeScreen(
+//    viewModel: HomeViewModel = viewModel(
+//        factory = HomeViewModel.provideFactory(
+//            (LocalContext.current.applicationContext as MyApplication).sessionManager,
+//            (LocalContext.current.applicationContext as MyApplication).userRepository,
+//            (LocalContext.current.applicationContext as MyApplication).shoppingRepository
+//        )
+//    )
+//) {
+//    val uiState = viewModel.uiState
+//
+//    Column(
+//        modifier = Modifier
+//            .fillMaxSize()
+//            .padding(16.dp)
+//            .verticalScroll(rememberScrollState())
+//    ) {
+//        uiState.error?.let {
+//            Text(text = "Error: ${it.message}")
+//        }
+//
+//        if (!uiState.isAuthenticated) {
+//            Text("Debug login")
+//            Spacer(modifier = Modifier.height(8.dp))
+//            Button(onClick = {
+//                // TODO hardcodeado (hacerlo con form)
+//                // pueden ir a http://localhost:8080/docs con la API en Try it out
+//                // después ejecutar desde la página:
+//                // {
+//                //  "name": "test",
+//                //  "surname": "test",
+//                //  "email": "test@gmail.com",
+//                //  "password": "test1234",
+//                //  "metadata": {}
+//                // }
+//                // y después verificarlo
+//                viewModel.login("test@gmail.com", "test1234")
+//            }) {
+//                Text("hardcode login")
+//            }
+//        } else {
+//
+//
+//            Text("User login ok")
+//            Spacer(modifier = Modifier.height(8.dp))
+//
+//            Button(onClick = { viewModel.logout() }) {
+//                Text("Cerrar sesión")
+//            }
+//
+//
+//
+//            // agregar producto
+//            val productName = remember { mutableStateOf("") }
+//            val categoryIdInput = remember { mutableStateOf("") }
+//
+//
+//            OutlinedTextField(
+//                value = productName.value,
+//                onValueChange = { productName.value = it },
+//                label = { Text("Nombre del producto") },
+//                modifier = Modifier.fillMaxWidth()
+//            )
+//
+//            OutlinedTextField(
+//                value = categoryIdInput.value,
+//                onValueChange = { categoryIdInput.value = it },
+//                label = { Text("ID de categoría") },
+//                modifier = Modifier.fillMaxWidth()
+//            )
+//
+//            Spacer(modifier = Modifier.height(8.dp))
+//
+//            Button(onClick = {
+//                val name = productName.value
+//                val categoryId = categoryIdInput.value.toIntOrNull()
+//                viewModel.addProduct(name = name, categoryId = categoryId)
+//            }) {
+//                Text("Agregar producto")
+//            }
+//
+//
+//
+//            // productos
+//            Spacer(modifier = Modifier.height(16.dp))
+//
+//            Button(onClick = { viewModel.getProducts() }) {
+//                Text("Obtener productos")
+//            }
+//
+//            Spacer(modifier = Modifier.height(8.dp))
+//
+//            Text("Productos empty: ${uiState.products.isEmpty()}")
+//
+//            Text("Productos:")
+//
+//            uiState.products.forEach { product ->
+//                Text("- ${product.name}")
+//            }
+//
+//
+//
+//            // agregar lista
+//            val listName = remember { mutableStateOf("") }
+//            val listDescription = remember { mutableStateOf("") }
+//            val recurring = remember { mutableStateOf(false) }
+//
+//
+//            OutlinedTextField(
+//                value = listName.value,
+//                onValueChange = { listName.value = it },
+//                label = { Text("Nombre de la lista") },
+//                modifier = Modifier.fillMaxWidth()
+//            )
+//
+//            OutlinedTextField(
+//                value = listDescription.value,
+//                onValueChange = { listDescription.value = it },
+//                label = { Text("Descriptión de la lista") },
+//                modifier = Modifier.fillMaxWidth()
+//            )
+//
+//            Row(
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .padding(vertical = 8.dp),
+//                horizontalArrangement = Arrangement.SpaceBetween
+//            ) {
+//                Text("Recurrente")
+//                Switch(
+//                    checked = recurring.value,
+//                    onCheckedChange = { recurring.value = it },
+//                    colors = SwitchDefaults.colors(checkedThumbColor = Color.Green)
+//                )
+//            }
+//
+//            Spacer(modifier = Modifier.height(8.dp))
+//
+//            Button(onClick = {
+//                viewModel.addShoppingList(
+//                    name = listName.value,
+//                    description = listDescription.value,
+//                    recurring = recurring.value
+//                )
+//            }) {
+//                Text("Agregar lista")
+//            }
+//
+//
+//            // listas
+//            Button(onClick = { viewModel.getShoppingLists() }) {
+//                Text("Obtener listas")
+//            }
+//
+//            Spacer(modifier = Modifier.height(8.dp))
+//
+//            Text("Listas empty: ${uiState.shoppingLists.isEmpty()}")
+//
+//            Text("Listas:")
+//
+//            uiState.shoppingLists.forEach { list ->
+//                Text("- ${list.name}")
+//            }
+//
+//
+//
+//            Spacer(modifier = Modifier.height(16.dp))
+//
+//            // TODO
+////            Button(onClick = { viewModel.getCategories() }) {
+////                Text("Obtener categorías")
+////            }
+//
+//            Spacer(modifier = Modifier.height(8.dp))
+//            Text("Categorías:")
+//
+//            uiState.categories.forEach { category ->
+//                Text("- ${category.name}")
+//            }
+//        }
+//    }
+//
+//    LaunchedEffect(uiState.isAuthenticated) {
+//        if (uiState.isAuthenticated) {
+//            viewModel.getProducts()
+//            viewModel.getShoppingLists()
+////             viewModel.getCategories() // TODO
+//        }
+//    }
+//}
