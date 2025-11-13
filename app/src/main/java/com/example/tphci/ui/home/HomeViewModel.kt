@@ -15,14 +15,11 @@ import com.example.tphci.data.repository.UserRepository
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
-import androidx.lifecycle.viewModelScope
 import com.example.tphci.data.DataSourceException
-import com.example.tphci.data.model.User
 import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.int
 import kotlinx.serialization.json.jsonArray
+import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 
 class HomeViewModel(
@@ -69,13 +66,18 @@ class HomeViewModel(
 
     fun getProducts() = runOnViewModelScope(
         { shoppingRepository.getProducts() },
-        { state, products -> state.copy(products = products) }
+        { state, products ->
+            Log.d(TAG, "Products fetched: ${products.size}")
+            state.copy(products = products.toList())
+        }
     )
 
-    fun getCategories() = runOnViewModelScope(
-        { shoppingRepository.getCategories() },
-        { state, categories -> state.copy(categories = categories) }
-    )
+
+    // TODO
+//    fun getCategories() = runOnViewModelScope(
+//        { shoppingRepository.getCategories() },
+//        { state, categories -> state.copy(categories = categories) }
+//    )
 
     // TODO
 //    fun getShoppingLists() = runOnViewModelScope(
@@ -92,15 +94,29 @@ class HomeViewModel(
         runOnViewModelScope<JsonObject>(
             { shoppingRepository.addProduct(name, categoryId, metadata) },
             { state, response ->
-                // Opcional: podrías loguear o mostrar en un toast
-                println("Producto agregado: $response")
-
-                // Actualizamos la lista de productos localmente
                 val newProduct = response["data"]?.jsonArray?.firstOrNull()
                 val updatedProducts = state.products.toMutableList()
+
+                // TODO esto está medio roto, causa que no se actualice solo al agregar prod
+
                 if (newProduct != null) {
-                    // Convertimos JsonObject a Product solo si tenés el serializer
-                    // Si no, lo dejamos como JsonObject
+                    val product = Product(
+                        id = newProduct.jsonObject["id"]?.jsonPrimitive?.int,
+                        name = newProduct.jsonObject["name"]?.jsonPrimitive?.content,
+                        metadata = newProduct.jsonObject["metadata"],
+                        createdAt = newProduct.jsonObject["createdAt"]?.jsonPrimitive?.content,
+                        updatedAt = newProduct.jsonObject["updatedAt"]?.jsonPrimitive?.content,
+                        category = newProduct.jsonObject["category"]?.jsonObject?.let { categoryJson ->
+                            Category(
+                                id = categoryJson["id"]?.jsonPrimitive?.int,
+                                name = categoryJson["name"]?.jsonPrimitive?.content,
+                                metadata = categoryJson["metadata"],
+                                createdAt = categoryJson["createdAt"]?.jsonPrimitive?.content,
+                                updatedAt = categoryJson["updatedAt"]?.jsonPrimitive?.content
+                            )
+                        } as Category
+                    )
+                    updatedProducts.add(product)
                 }
                 state.copy(
                     products = updatedProducts

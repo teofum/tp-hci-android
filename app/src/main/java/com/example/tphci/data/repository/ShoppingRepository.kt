@@ -17,7 +17,14 @@ class ShoppingRepository(private val remoteDataSource: RemoteDataSource) {
     suspend fun getProducts(): List<Product> {
         val response = remoteDataSource.get("products")
         val productsJson = response.jsonObject["data"]?.jsonArray ?: return emptyList()
-        return productsJson.map { json.decodeFromJsonElement<Product>(it) }
+
+        return productsJson.mapNotNull { element ->
+            try {
+                json.decodeFromJsonElement<Product>(element)
+            } catch (e: Exception) {
+                null
+            }
+        }
     }
 
     suspend fun addProduct(name: String, categoryId: Int?, metadata: Map<String, Any> = emptyMap()): JsonObject {
@@ -51,15 +58,17 @@ class ShoppingRepository(private val remoteDataSource: RemoteDataSource) {
 //        return remoteDataSource.put("products/$id", body)
 //    }
 
-    suspend fun deleteProduct(id: Int) {
-        remoteDataSource.delete("products/$id")
-    }
+    // TODO
+//    suspend fun deleteProduct(id: Int) {
+//        remoteDataSource.delete("products/$id")
+//    }
 
-    suspend fun getCategories(): List<Category> {
-        val response = remoteDataSource.get("categories").jsonObject
-        val dataArray = response["data"]!!.jsonArray
-        return dataArray.map { json.decodeFromJsonElement<Category>(it) }
-    }
+    // TODO
+//    suspend fun getCategories(): List<Category> {
+//        val response = remoteDataSource.get("categories").jsonObject
+//        val dataArray = response["data"]!!.jsonArray
+//        return dataArray.map { json.decodeFromJsonElement<Category>(it) }
+//    }
 
     // TODO
 //    suspend fun getShoppingLists(): List<ShoppingList> {

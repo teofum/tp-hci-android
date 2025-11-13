@@ -22,7 +22,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.JsonObject
 
-// TODO debug full AI
 // TODO este seríá la estructura del proyecto
 
 @Composable
@@ -67,9 +66,6 @@ fun HomeScreen(
                 Text("hardcode login")
             }
         } else {
-
-
-            // TODO debug full AI
 
 
             Text("User login ok")
@@ -129,9 +125,10 @@ fun HomeScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            Button(onClick = { viewModel.getCategories() }) {
-                Text("Obtener categorías")
-            }
+            // TODO
+//            Button(onClick = { viewModel.getCategories() }) {
+//                Text("Obtener categorías")
+//            }
 
             Spacer(modifier = Modifier.height(8.dp))
             Text("Categorías:")
@@ -145,7 +142,7 @@ fun HomeScreen(
     LaunchedEffect(uiState.isAuthenticated) {
         if (uiState.isAuthenticated) {
             viewModel.getProducts()
-             viewModel.getCategories()
+//             viewModel.getCategories() // TODO
         }
     }
 }
