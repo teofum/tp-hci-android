@@ -5,10 +5,12 @@ import com.example.tphci.data.model.Product
 import com.example.tphci.data.model.ShoppingList
 import com.example.tphci.data.network.RemoteDataSource
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.decodeFromJsonElement
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.put
 
 class ShoppingRepository(private val remoteDataSource: RemoteDataSource) {
     private val json = Json { ignoreUnknownKeys = true }
@@ -18,15 +20,26 @@ class ShoppingRepository(private val remoteDataSource: RemoteDataSource) {
         return productsJson.map { json.decodeFromJsonElement<Product>(it) }
     }
 
-    // TODO
-//    suspend fun addProduct(name: String, categoryId: Int?, metadata: Map<String, Any> = emptyMap()): Product {
-//        val body = buildJsonObject {
-//            put("name", "Milk")
-//            put("metadata", buildJsonObject { metadata })
-//            put("category", buildJsonObject { put("id", 1) })
-//        }
-//        return remoteDataSource.post("products", body)
-//    }
+    suspend fun addProduct(name: String, categoryId: Int?, metadata: Map<String, Any> = emptyMap()): JsonObject {
+        val body = buildJsonObject {
+            put("name", name)
+            put("metadata", buildJsonObject {
+                metadata.forEach { (key, value) ->
+                    put(key, value.toString())
+                }
+            })
+            if (categoryId != null) {
+                put("category", buildJsonObject {
+                    put("id", categoryId)
+                })
+            }
+        }
+
+        val response = remoteDataSource.post("products", body)
+
+        return response.jsonObject
+    }
+
     // TODO
 //    suspend fun updateProduct(id: Int, name: String, categoryId: Int?, metadata: Map<String, Any> = emptyMap()): Product {
 //        val body = buildJsonObject {

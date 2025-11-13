@@ -22,6 +22,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.tphci.data.DataSourceException
 import com.example.tphci.data.model.User
 import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonPrimitive
 
 class HomeViewModel(
@@ -86,6 +87,26 @@ class HomeViewModel(
         sessionManager.removeAuthToken()
         uiState = HomeUIState(isAuthenticated = false)
     }
+
+    fun addProduct(name: String, categoryId: Int?, metadata: Map<String, Any> = emptyMap()) =
+        runOnViewModelScope<JsonObject>(
+            { shoppingRepository.addProduct(name, categoryId, metadata) },
+            { state, response ->
+                // Opcional: podrías loguear o mostrar en un toast
+                println("Producto agregado: $response")
+
+                // Actualizamos la lista de productos localmente
+                val newProduct = response["data"]?.jsonArray?.firstOrNull()
+                val updatedProducts = state.products.toMutableList()
+                if (newProduct != null) {
+                    // Convertimos JsonObject a Product solo si tenés el serializer
+                    // Si no, lo dejamos como JsonObject
+                }
+                state.copy(
+                    products = updatedProducts
+                )
+            }
+        )
 
     private fun <R> runOnViewModelScope(
         block: suspend () -> R,
