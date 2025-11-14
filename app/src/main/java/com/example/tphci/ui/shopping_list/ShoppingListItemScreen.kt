@@ -57,6 +57,8 @@ fun ShoppingListItemScreen(
     val uiState = viewModel.uiState
     val items = uiState.shoppingListItems[listId] ?: emptyList()
 
+    val currentList = uiState.shoppingLists.firstOrNull { it.id.toLong() == listId }
+
     var searchQuery by remember { mutableStateOf("") }
     var filterExpanded by remember { mutableStateOf(false) }
     var selectedFilter by remember { mutableStateOf("Todos") }
@@ -65,6 +67,10 @@ fun ShoppingListItemScreen(
     var groupByCategory by remember { mutableStateOf(false) }
 
     var showAddProductScreen by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        viewModel.getShoppingLists()
+    }
 
     LaunchedEffect(listId) {
         viewModel.getShoppingListsItems(listId)
@@ -79,7 +85,7 @@ fun ShoppingListItemScreen(
                         horizontalArrangement = Arrangement.Center
                     ) {
                         Text(
-                            text = uiState.shoppingLists.first { it.id.toLong() == listId }.name,
+                            text = currentList?.name ?: "",
                             fontWeight = FontWeight.SemiBold
                         )
                     }
