@@ -123,15 +123,18 @@ fun AdaptiveApp() {
         ) {
             NavHost(navController = navController, startDestination = ShoppingLists) {
                 composable<ShoppingLists> {
-                    ShoppingListScreen(onOpenShareScreen = {
-                        navController.navigate(
-                            Share
-                        )
-                    })
+                    ShoppingListScreen(
+                        onOpenShareScreen = {
+                            navController.navigate(
+                                Share
+                            )
+                        },
+                        onOpenListDetails = {}
+                    )
                 }
                 composable<Products> { ProductScreen() }
                 composable<Profile> { ProfileScreen() }
-                dialog<Share> { // TODO make the dialog fullscreen
+                dialog<Share> { // TODO make the dialog fullscreen (TODO connect to /shareList)
                     ShareListScreen(
                         selectedUsers = emptyList(),
                         suggestedUsers = emptyList(),
