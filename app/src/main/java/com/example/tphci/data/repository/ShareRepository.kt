@@ -7,7 +7,7 @@ import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import com.example.tphci.data.model.User
 
-class ShareScreenRepository(private val remoteDataSource: RemoteDataSource) {
+class ShareRepository(private val remoteDataSource: RemoteDataSource) {
     private val json = Json { ignoreUnknownKeys = true }
 
     suspend fun getShared(): List<User> {
