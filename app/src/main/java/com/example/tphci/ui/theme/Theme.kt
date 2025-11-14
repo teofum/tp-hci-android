@@ -13,38 +13,42 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
 private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
+    primary = offWhite,
+    onPrimary = darkGreen,
+
+    secondary = offWhite2,
+    onSecondary = darkGreen,
+
+    tertiary = offWhite2,
+    onTertiary = darkGreen,
+
+    background = darkGreen,
+    onBackground = offWhite,
+    surface = darkGreen75,
+    onSurface = offWhite,
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = Color(0xFF223030),
+    primary = darkGreen,
     onPrimary = Color.White,
 
-    secondary = Color(0x22303003),
+    secondary = darkGreen75,
     onSecondary = Color.Black,
 
-    tertiary = Color(0x223030FF),
+    tertiary = darkGreen,
     onTertiary = Color.White,
 
-    background = background,
+    background = offWhite,
     onBackground = Color.Black,
-    surface = background,
+    surface = offWhite2,
     onSurface = Color.Black,
-
-
-    /* Other default colors to override
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
-    */
 )
 
 @Composable
 fun TPHCITheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {
