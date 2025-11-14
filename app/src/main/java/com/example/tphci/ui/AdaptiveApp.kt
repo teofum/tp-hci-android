@@ -12,6 +12,7 @@ import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffo
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -73,7 +74,8 @@ fun AdaptiveApp() {
 
         NavigationSuiteScaffold(
             navigationSuiteColors = NavigationSuiteDefaults.colors(
-                navigationRailContainerColor = MaterialTheme.colorScheme.primary
+                navigationBarContainerColor = MaterialTheme.colorScheme.surface,
+                navigationRailContainerColor = MaterialTheme.colorScheme.primary,
             ),
             navigationSuiteItems = {
                 item(

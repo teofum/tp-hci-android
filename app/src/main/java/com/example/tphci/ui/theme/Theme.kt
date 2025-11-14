@@ -22,7 +22,7 @@ private val LightColorScheme = lightColorScheme(
     primary = darkGreen,
     onPrimary = Color.White,
 
-    secondary = darkGreen,
+    secondary = darkGreen2,
     onSecondary = Color.Black,
 
     tertiary = darkGreen,
