@@ -36,71 +36,69 @@ fun VerifyAccountScreen(
         }
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text(
-            text = "Verificar cuenta",
-            style = MaterialTheme.typography.headlineMedium,
-            modifier = Modifier.padding(bottom = 16.dp)
-        )
-
-        Text(
-            text = "Ingresá el código de verificación que enviamos a $email",
-            style = MaterialTheme.typography.bodyMedium,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.padding(bottom = 32.dp)
-        )
-
-        uiState.error?.let {
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 16.dp),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer)
-            ) {
-                Text(
-                    text = "Código inválido o expirado",
-                    modifier = Modifier.padding(16.dp),
-                    color = MaterialTheme.colorScheme.onErrorContainer
-                )
-            }
-        }
-
-        OutlinedTextField(
-            value = uiState.code,
-            onValueChange = viewModel::updateCode,
-            label = { Text("Código de verificación") },
-            modifier = Modifier.fillMaxWidth(),
-            enabled = !uiState.isLoading
-        )
-
-        Spacer(modifier = Modifier.height(32.dp))
-
-        Button(
-            onClick = { viewModel.verifyAccount() },
-            modifier = Modifier.fillMaxWidth(),
-            enabled = !uiState.isLoading && uiState.code.isNotBlank()
+    AuthLayout {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            if (uiState.isLoading) {
-                CircularProgressIndicator(modifier = Modifier.size(16.dp))
-            } else {
-                Text("Verificar")
+            Text(
+                text = "Verificar cuenta",
+                style = MaterialTheme.typography.headlineMedium,
+                modifier = Modifier.padding(bottom = 16.dp)
+            )
+
+            Text(
+                text = "Ingresá el código de verificación que enviamos a $email",
+                style = MaterialTheme.typography.bodyMedium,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(bottom = 32.dp)
+            )
+
+            OutlinedTextField(
+                value = uiState.code,
+                onValueChange = viewModel::updateCode,
+                label = { Text("Código de verificación") },
+                modifier = Modifier.fillMaxWidth(),
+                enabled = !uiState.isLoading
+            )
+
+            uiState.error?.let {
+                Spacer(modifier = Modifier.height(16.dp))
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer)
+                ) {
+                    Text(
+                        text = "Código inválido o expirado",
+                        modifier = Modifier.padding(16.dp),
+                        color = MaterialTheme.colorScheme.onErrorContainer
+                    )
+                }
+                Spacer(modifier = Modifier.height(16.dp))
+            } ?: run {
+                Spacer(modifier = Modifier.height(32.dp))
             }
-        }
 
-        Spacer(modifier = Modifier.height(16.dp))
+            Button(
+                onClick = { viewModel.verifyAccount() },
+                modifier = Modifier.fillMaxWidth(),
+                enabled = !uiState.isLoading && uiState.code.isNotBlank()
+            ) {
+                if (uiState.isLoading) {
+                    CircularProgressIndicator(modifier = Modifier.size(16.dp))
+                } else {
+                    Text("Verificar")
+                }
+            }
 
-        TextButton(onClick = { viewModel.resendCode() }) {
-            Text("Reenviar código")
-        }
+            Spacer(modifier = Modifier.height(16.dp))
 
-        TextButton(onClick = onNavigateToLogin) {
-            Text("Volver al inicio de sesión")
+            TextButton(onClick = { viewModel.resendCode() }) {
+                Text("Reenviar código")
+            }
+
+            TextButton(onClick = onNavigateToLogin) {
+                Text("Volver al inicio de sesión")
+            }
         }
     }
 }

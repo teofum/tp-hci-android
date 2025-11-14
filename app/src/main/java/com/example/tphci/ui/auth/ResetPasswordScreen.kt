@@ -31,102 +31,101 @@ fun ResetPasswordScreen(
         }
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text(
-            text = "Restablecer contraseña",
-            style = MaterialTheme.typography.headlineMedium,
-            modifier = Modifier.padding(bottom = 16.dp)
-        )
-
-        Text(
-            text = "Ingresá el código que recibiste por correo y tu nueva contraseña",
-            style = MaterialTheme.typography.bodyMedium,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.padding(bottom = 32.dp)
-        )
-
-        OutlinedTextField(
-            value = uiState.code,
-            onValueChange = viewModel::updateCode,
-            label = { Text("Código de verificación") },
-            modifier = Modifier.fillMaxWidth(),
-            enabled = !uiState.isLoading
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        OutlinedTextField(
-            value = uiState.password,
-            onValueChange = viewModel::updatePassword,
-            label = { Text("Nueva contraseña") },
-            visualTransformation = PasswordVisualTransformation(),
-            modifier = Modifier.fillMaxWidth(),
-            enabled = !uiState.isLoading
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        OutlinedTextField(
-            value = uiState.confirmPassword,
-            onValueChange = viewModel::updateConfirmPassword,
-            label = { Text("Confirmar nueva contraseña") },
-            visualTransformation = PasswordVisualTransformation(),
-            modifier = Modifier.fillMaxWidth(),
-            enabled = !uiState.isLoading
-        )
-
-        val passwordsMatch = uiState.password == uiState.confirmPassword
-        val allFieldsFilled = uiState.code.isNotBlank() && 
-                            uiState.password.isNotBlank() && 
-                            uiState.confirmPassword.isNotBlank()
-
-        if (!passwordsMatch && uiState.confirmPassword.isNotBlank()) {
-            Spacer(modifier = Modifier.height(8.dp))
+    AuthLayout {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             Text(
-                text = "Las contraseñas no coinciden",
-                color = MaterialTheme.colorScheme.error,
-                style = MaterialTheme.typography.bodySmall
+                text = "Resetear contraseña",
+                style = MaterialTheme.typography.headlineMedium,
+                modifier = Modifier.padding(bottom = 16.dp)
             )
-        }
 
-        uiState.error?.let {
-            Spacer(modifier = Modifier.height(8.dp))
-            Card(
+            Text(
+                text = "Ingresá el código que recibiste por correo y tu nueva contraseña",
+                style = MaterialTheme.typography.bodyMedium,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(bottom = 32.dp)
+            )
+
+            OutlinedTextField(
+                value = uiState.code,
+                onValueChange = viewModel::updateCode,
+                label = { Text("Código de verificación") },
                 modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer)
-            ) {
+                enabled = !uiState.isLoading
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            OutlinedTextField(
+                value = uiState.password,
+                onValueChange = viewModel::updatePassword,
+                label = { Text("Nueva contraseña") },
+                visualTransformation = PasswordVisualTransformation(),
+                modifier = Modifier.fillMaxWidth(),
+                enabled = !uiState.isLoading
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            OutlinedTextField(
+                value = uiState.confirmPassword,
+                onValueChange = viewModel::updateConfirmPassword,
+                label = { Text("Confirmar nueva contraseña") },
+                visualTransformation = PasswordVisualTransformation(),
+                modifier = Modifier.fillMaxWidth(),
+                enabled = !uiState.isLoading
+            )
+
+            val passwordsMatch = uiState.password == uiState.confirmPassword
+            val allFieldsFilled = uiState.code.isNotBlank() && 
+                                uiState.password.isNotBlank() && 
+                                uiState.confirmPassword.isNotBlank()
+
+            if (!passwordsMatch && uiState.confirmPassword.isNotBlank()) {
+                Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "Código inválido o contraseñas no coinciden",
-                    modifier = Modifier.padding(16.dp),
-                    color = MaterialTheme.colorScheme.onErrorContainer
+                    text = "Las contraseñas no coinciden",
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodySmall
                 )
             }
-        }
 
-        Spacer(modifier = Modifier.height(32.dp))
-
-        Button(
-            onClick = { viewModel.resetPassword() },
-            modifier = Modifier.fillMaxWidth(),
-            enabled = !uiState.isLoading && allFieldsFilled && passwordsMatch
-        ) {
-            if (uiState.isLoading) {
-                CircularProgressIndicator(modifier = Modifier.size(16.dp))
-            } else {
-                Text("Restablecer contraseña")
+            uiState.error?.let {
+                Spacer(modifier = Modifier.height(16.dp))
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer)
+                ) {
+                    Text(
+                        text = "Código inválido o expirado",
+                        modifier = Modifier.padding(16.dp),
+                        color = MaterialTheme.colorScheme.onErrorContainer
+                    )
+                }
+                Spacer(modifier = Modifier.height(16.dp))
+            } ?: run {
+                Spacer(modifier = Modifier.height(32.dp))
             }
-        }
 
-        Spacer(modifier = Modifier.height(16.dp))
+            Button(
+                onClick = { viewModel.resetPassword() },
+                modifier = Modifier.fillMaxWidth(),
+                enabled = !uiState.isLoading && allFieldsFilled && passwordsMatch
+            ) {
+                if (uiState.isLoading) {
+                    CircularProgressIndicator(modifier = Modifier.size(16.dp))
+                } else {
+                    Text("Restablecer contraseña")
+                }
+            }
 
-        TextButton(onClick = onNavigateToLogin) {
-            Text("Volver al inicio de sesión")
+            Spacer(modifier = Modifier.height(16.dp))
+
+            TextButton(onClick = onNavigateToLogin) {
+                Text("Volver al inicio de sesión")
+            }
         }
     }
 }

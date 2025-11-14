@@ -32,75 +32,73 @@ fun LoginScreen(
         }
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text(
-            text = "Iniciar sesión",
-            style = MaterialTheme.typography.headlineMedium,
-            modifier = Modifier.padding(bottom = 32.dp)
-        )
-
-        uiState.error?.let {
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 16.dp),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer)
-            ) {
-                Text(
-                    text = "Email o contraseña incorrectos",
-                    modifier = Modifier.padding(16.dp),
-                    color = MaterialTheme.colorScheme.onErrorContainer
-                )
-            }
-        }
-
-        OutlinedTextField(
-            value = uiState.email,
-            onValueChange = viewModel::updateEmail,
-            label = { Text("Correo electrónico") },
-            modifier = Modifier.fillMaxWidth(),
-            enabled = !uiState.isLoading
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        OutlinedTextField(
-            value = uiState.password,
-            onValueChange = viewModel::updatePassword,
-            label = { Text("Contraseña") },
-            visualTransformation = PasswordVisualTransformation(),
-            modifier = Modifier.fillMaxWidth(),
-            enabled = !uiState.isLoading
-        )
-
-        Spacer(modifier = Modifier.height(32.dp))
-
-        Button(
-            onClick = { viewModel.login() },
-            modifier = Modifier.fillMaxWidth(),
-            enabled = !uiState.isLoading && uiState.email.isNotBlank() && uiState.password.isNotBlank()
+    AuthLayout {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            if (uiState.isLoading) {
-                CircularProgressIndicator(modifier = Modifier.size(16.dp))
-            } else {
-                Text("Iniciar Sesión")
+            Text(
+                text = "Iniciar sesión",
+                style = MaterialTheme.typography.headlineMedium,
+                modifier = Modifier.padding(bottom = 32.dp)
+            )
+
+            OutlinedTextField(
+                value = uiState.email,
+                onValueChange = viewModel::updateEmail,
+                label = { Text("Correo electrónico") },
+                modifier = Modifier.fillMaxWidth(),
+                enabled = !uiState.isLoading
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            OutlinedTextField(
+                value = uiState.password,
+                onValueChange = viewModel::updatePassword,
+                label = { Text("Contraseña") },
+                visualTransformation = PasswordVisualTransformation(),
+                modifier = Modifier.fillMaxWidth(),
+                enabled = !uiState.isLoading
+            )
+
+            uiState.error?.let {
+                Spacer(modifier = Modifier.height(16.dp))
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer)
+                ) {
+                    Text(
+                        text = "Email o contraseña incorrectos",
+                        modifier = Modifier.padding(16.dp),
+                        color = MaterialTheme.colorScheme.onErrorContainer
+                    )
+                }
+                Spacer(modifier = Modifier.height(16.dp))
+            } ?: run {
+                Spacer(modifier = Modifier.height(32.dp))
             }
-        }
 
-        Spacer(modifier = Modifier.height(16.dp))
+            Button(
+                onClick = { viewModel.login() },
+                modifier = Modifier.fillMaxWidth(),
+                enabled = !uiState.isLoading && uiState.email.isNotBlank() && uiState.password.isNotBlank()
+            ) {
+                if (uiState.isLoading) {
+                    CircularProgressIndicator(modifier = Modifier.size(16.dp))
+                } else {
+                    Text("Iniciar Sesión")
+                }
+            }
 
-        TextButton(onClick = onNavigateToForgotPassword) {
-            Text("¿Olvidaste tu contraseña?")
-        }
+            Spacer(modifier = Modifier.height(16.dp))
 
-        TextButton(onClick = onNavigateToSignUp) {
-            Text("¿No tenés una cuenta? Registrate")
+            TextButton(onClick = onNavigateToForgotPassword) {
+                Text("¿Olvidaste tu contraseña?")
+            }
+
+            TextButton(onClick = onNavigateToSignUp) {
+                Text("¿No tenés una cuenta? Registrate")
+            }
         }
     }
 }
