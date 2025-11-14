@@ -6,8 +6,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -15,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tphci.MyApplication
 import com.example.tphci.ui.home.HomeViewModel
+import com.example.tphci.ui.shopping_list.components.AddListBox
 
 @Composable
 fun ShoppingListScreen(
@@ -31,101 +34,126 @@ fun ShoppingListScreen(
 
     val uiState = viewModel.uiState
 
+    var showAddListBox by remember { mutableStateOf(false) }
+
+
     LaunchedEffect(Unit) {
         viewModel.getShoppingLists()
     }
 
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        Text("Mis Listas", style = MaterialTheme.typography.headlineMedium)
-
-
-        // TODO share list
-        Button(
-            onClick = { onOpenShareScreen() },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Compartir lista")
-        }
-
-
-        // agregar lista
-        val listName = remember { mutableStateOf("") }
-        val listDescription = remember { mutableStateOf("") }
-        val recurring = remember { mutableStateOf(false) }
-
-
-        OutlinedTextField(
-            value = listName.value,
-            onValueChange = { listName.value = it },
-            label = { Text("Nombre de la lista") },
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        OutlinedTextField(
-            value = listDescription.value,
-            onValueChange = { listDescription.value = it },
-            label = { Text("Descriptión de la lista") },
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text("Recurrente")
-            Switch(
-                checked = recurring.value,
-                onCheckedChange = { recurring.value = it },
-                colors = SwitchDefaults.colors(checkedThumbColor = Color.Green)
-            )
-        }
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Button(onClick = {
-            viewModel.addShoppingList(
-                name = listName.value,
-                description = listDescription.value,
-                recurring = recurring.value
-            )
-        }) {
-            Text("Agregar lista")
-        }
-
-
-        // listas
-        Button(onClick = { viewModel.getShoppingLists() }) {
-            Text("Obtener listas")
-        }
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Text("Listas empty: ${uiState.shoppingLists.isEmpty()}")
-
-        Text("Listas:")
-
-        uiState.shoppingLists.forEach { list ->
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 4.dp)
-                    .clickable { onOpenListDetails(list.id.toLong()) },
-                colors = CardDefaults.cardColors(
-                    containerColor = Color(0xFFF5F5F5)
-                )
+    Scaffold(
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = { showAddListBox = true }
             ) {
-                Column(modifier = Modifier.padding(12.dp)) {
-                    Text(list.name, style = MaterialTheme.typography.titleMedium)
-                    Text(list.description, style = MaterialTheme.typography.bodyMedium)
-                }
+                Text("+ Lista")
             }
         }
+    ) { innerPadding ->
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+        ) {
+            Text("Mis Listas", style = MaterialTheme.typography.headlineMedium)
+
+
+            // TODO share list
+            Button(
+                onClick = { onOpenShareScreen() },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Compartir lista")
+            }
+
+
+            // agregar lista
+            val listName = remember { mutableStateOf("") }
+            val listDescription = remember { mutableStateOf("") }
+            val recurring = remember { mutableStateOf(false) }
+
+
+            OutlinedTextField(
+                value = listName.value,
+                onValueChange = { listName.value = it },
+                label = { Text("Nombre de la lista") },
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            OutlinedTextField(
+                value = listDescription.value,
+                onValueChange = { listDescription.value = it },
+                label = { Text("Descriptión de la lista") },
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text("Recurrente")
+                Switch(
+                    checked = recurring.value,
+                    onCheckedChange = { recurring.value = it },
+                    colors = SwitchDefaults.colors(checkedThumbColor = Color.Green)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Button(onClick = {
+                viewModel.addShoppingList(
+                    name = listName.value,
+                    description = listDescription.value,
+                    recurring = recurring.value
+                )
+            }) {
+                Text("Agregar lista")
+            }
+
+
+            // listas
+            Button(onClick = { viewModel.getShoppingLists() }) {
+                Text("Obtener listas")
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text("Listas empty: ${uiState.shoppingLists.isEmpty()}")
+
+            Text("Listas:")
+
+            uiState.shoppingLists.forEach { list ->
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 4.dp)
+                        .clickable { onOpenListDetails(list.id.toLong()) },
+                    colors = CardDefaults.cardColors(
+                        containerColor = Color(0xFFF5F5F5)
+                    )
+                ) {
+                    Column(modifier = Modifier.padding(12.dp)) {
+                        Text(list.name, style = MaterialTheme.typography.titleMedium)
+                        Text(list.description, style = MaterialTheme.typography.bodyMedium)
+                    }
+                }
+            }
+
+        }
+
+        if (showAddListBox) {
+            AddListBox(
+                onClose = { showAddListBox = false },
+                onAdd = { name, description, recurring ->
+                    viewModel.addShoppingList(name, description, recurring)
+                    showAddListBox = false
+                }
+            )
+        }
+
     }
-}
+    }

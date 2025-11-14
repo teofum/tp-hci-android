@@ -40,7 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tphci.MyApplication
 import com.example.tphci.ui.home.HomeViewModel
-import com.example.tphci.ui.shopping_list.components.AddProductOverlay
+import com.example.tphci.ui.shopping_list.components.AddProductBox
 import com.example.tphci.ui.shopping_list.components.ListItem
 
 
@@ -204,7 +204,7 @@ fun ShoppingListItemScreen(
         }
 
         if (showAddProductScreen) {
-            AddProductOverlay(
+            AddProductBox(
                 onClose = { showAddProductScreen = false },
                 onAdd = { name, categoryId ->
                     viewModel.addProduct(name, categoryId)
