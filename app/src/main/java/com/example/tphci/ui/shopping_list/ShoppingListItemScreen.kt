@@ -19,6 +19,7 @@ import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
@@ -30,7 +31,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -134,13 +137,14 @@ fun ShoppingListItemScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 8.dp, bottom = 8.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
 
                 ExposedDropdownMenuBox(
                     expanded = filterExpanded,
                     onExpandedChange = { filterExpanded = !filterExpanded },
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(0.8f),
                 ) {
                     OutlinedTextField(
                         value = selectedFilter,
@@ -172,12 +176,13 @@ fun ShoppingListItemScreen(
                 Spacer(modifier = Modifier.width(12.dp))
 
                 Row(
-                    verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
+                    verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
                 ) {
-                    Text("Agrupar por categoría")
+                    Text("Agrupar por categoría ", fontSize = MaterialTheme.typography.bodyMedium.fontSize)
                     Switch(
                         checked = groupByCategory,
-                        onCheckedChange = { groupByCategory = it }
+                        onCheckedChange = { groupByCategory = it },
+                        modifier = Modifier.scale(0.8f)
                     )
                 }
             }
