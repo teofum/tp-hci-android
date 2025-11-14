@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import com.example.tphci.ui.home.HomeScreen
+import com.example.tphci.ui.AdaptiveApp
 import com.example.tphci.ui.theme.TPHCITheme
 
 class MainActivity : ComponentActivity() {
@@ -13,7 +13,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             TPHCITheme {
-                HomeScreen()
+                AdaptiveApp()
             }
         }
     }
