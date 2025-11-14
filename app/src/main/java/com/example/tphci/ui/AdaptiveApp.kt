@@ -160,7 +160,7 @@ fun AdaptiveApp() {
 
 
 
-                dialog<Share> { // TODO make the dialog fullscreen (TODO connect to /shareList)
+                composable<Share> { // TODO make the dialog fullscreen (TODO connect to /shareList)
                     ShareListScreen(
                         selectedUsers = emptyList(),
                         suggestedUsers = emptyList(),
