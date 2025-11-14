@@ -1,7 +1,7 @@
-package com.example.tphci.data.network
-
+package com.example.tphci.data.network.api
 
 import android.content.Context
+import com.example.tphci.data.network.AuthInterceptor
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
