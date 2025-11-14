@@ -7,6 +7,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.example.tphci.AuthState
 import com.example.tphci.SessionManager
 import com.example.tphci.data.DataSourceException
 import com.example.tphci.data.model.Error

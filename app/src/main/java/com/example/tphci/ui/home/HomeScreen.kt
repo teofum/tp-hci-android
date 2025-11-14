@@ -15,9 +15,7 @@ import com.example.tphci.ui.shareList.ShareListScreen
 import com.example.tphci.ui.shopping_list.ShoppingListScreen
 
 @Composable
-fun HomeScreen(
-    onLogout: () -> Unit
-) {
+fun HomeScreen() {
     var currentRoute by remember { mutableStateOf("shopping_list") }
     var showShareScreen by remember { mutableStateOf(false) }
 
@@ -35,9 +33,7 @@ fun HomeScreen(
                     onOpenShareScreen = { showShareScreen = true }
                 )
                 "products" -> ProductScreen()
-                "profile" -> ProfileScreen(
-                    onLogout = onLogout
-                )
+                "profile" -> ProfileScreen()
             }
 
             if (showShareScreen) {
