@@ -12,6 +12,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -36,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tphci.MyApplication
 import com.example.tphci.ui.home.HomeViewModel
+import com.example.tphci.ui.shopping_list.components.AddProductOverlay
 import com.example.tphci.ui.shopping_list.components.ListItem
 
 
@@ -62,6 +64,8 @@ fun ShoppingListItemScreen(
 
     var groupByCategory by remember { mutableStateOf(false) }
 
+    var showAddProductScreen by remember { mutableStateOf(false) }
+
     LaunchedEffect(listId) {
         viewModel.getShoppingListsItems(listId)
     }
@@ -70,10 +74,15 @@ fun ShoppingListItemScreen(
         topBar = {
             TopAppBar(
                 title = {
-                    Text(
-                        text = uiState.shoppingLists.first { it.id.toLong() == listId }.name,
-                        fontWeight = FontWeight.SemiBold
-                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Text(
+                            text = uiState.shoppingLists.first { it.id.toLong() == listId }.name,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
                 },
                 navigationIcon = {
                     IconButton(onClick = onClose) {
@@ -82,12 +91,25 @@ fun ShoppingListItemScreen(
                             contentDescription = "Cerrar"
                         )
                     }
+                },
+                actions = {
+                    IconButton(onClick = { /* TODO */ }) {
+                        Icon(
+                            imageVector = Icons.Default.Share,
+                            contentDescription = "Compartir"
+                        )
+                    }
                 }
             )
+        },
+        floatingActionButton = {
+            androidx.compose.material3.FloatingActionButton(
+                onClick = { showAddProductScreen = true }
+            ) {
+                Text("+ Agregar producto")
+            }
         }
     ) { innerPadding ->
-
-
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -169,6 +191,16 @@ fun ShoppingListItemScreen(
                     )
                 }
             }
+        }
+
+        if (showAddProductScreen) {
+            AddProductOverlay(
+                onClose = { showAddProductScreen = false },
+                onAdd = { name, categoryId ->
+                    viewModel.addProduct(name, categoryId)
+                    showAddProductScreen = false
+                }
+            )
         }
     }
 }
