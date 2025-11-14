@@ -4,16 +4,17 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import com.example.tphci.ui.AdaptiveApp
 import com.example.tphci.ui.auth.ForgotPasswordScreen
 import com.example.tphci.ui.auth.LoginScreen
 import com.example.tphci.ui.auth.ResetPasswordScreen
 import com.example.tphci.ui.auth.SignUpScreen
 import com.example.tphci.ui.auth.VerifyAccountScreen
-import com.example.tphci.ui.home.HomeScreen
 import com.example.tphci.ui.theme.TPHCITheme
 
 class MainActivity : ComponentActivity() {
@@ -23,7 +24,11 @@ class MainActivity : ComponentActivity() {
         setContent {
             TPHCITheme {
                 val sessionManager = (application as MyApplication).sessionManager
-                var isAuthenticated by remember { mutableStateOf(sessionManager.loadAuthToken() != null) }
+                
+                LaunchedEffect(Unit) {
+                    AuthState.initialize(sessionManager)
+                }
+                
                 var showSignUp by remember { mutableStateOf(false) }
                 var showVerification by remember { mutableStateOf(false) }
                 var verificationEmail by remember { mutableStateOf("") }
@@ -31,8 +36,8 @@ class MainActivity : ComponentActivity() {
                 var showResetPassword by remember { mutableStateOf(false) }
 
                 when {
-                    isAuthenticated -> {
-                        HomeScreen(onLogout = { isAuthenticated = false })
+                    AuthState.isAuthenticated -> {
+                        AdaptiveApp()
                     }
                     showResetPassword -> {
                         ResetPasswordScreen(
@@ -70,7 +75,7 @@ class MainActivity : ComponentActivity() {
                     }
                     else -> {
                         LoginScreen(
-                            onLoginSuccess = { isAuthenticated = true },
+                            onLoginSuccess = { AuthState.login() },
                             onNavigateToSignUp = { showSignUp = true },
                             onNavigateToForgotPassword = { showForgotPassword = true }
                         )

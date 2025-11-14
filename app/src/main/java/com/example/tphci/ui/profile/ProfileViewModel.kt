@@ -95,6 +95,7 @@ class ProfileViewModel(
 
     fun logout() {
         sessionManager.removeAuthToken()
+        AuthState.logout()
         uiState = ProfileUIState(isAuthenticated = false)
     }
 

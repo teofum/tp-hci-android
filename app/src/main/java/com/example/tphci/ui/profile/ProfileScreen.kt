@@ -16,7 +16,6 @@ import com.example.tphci.MyApplication
 
 @Composable
 fun ProfileScreen(
-    onLogout: () -> Unit = {},
     viewModel: ProfileViewModel = viewModel(
         factory = ProfileViewModel.provideFactory(
             (LocalContext.current.applicationContext as MyApplication).sessionManager,
@@ -128,10 +127,7 @@ fun ProfileScreen(
             }
 
             TextButton(
-                onClick = {
-                    viewModel.logout()
-                    onLogout()
-                },
+                onClick = { viewModel.logout() },
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Cerrar sesión")
