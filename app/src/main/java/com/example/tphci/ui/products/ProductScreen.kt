@@ -11,28 +11,32 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.tphci.MyApplication
 
 @Composable
 fun ProductScreen(
-//    viewModel: HomeViewModel = viewModel(
-//        factory = HomeViewModel.provideFactory(
-//            (LocalContext.current.applicationContext as MyApplication).sessionManager,
-//            (LocalContext.current.applicationContext as MyApplication).userRepository,
-//            (LocalContext.current.applicationContext as MyApplication).shoppingRepository
-//        )
-//    )
+    viewModel: ProductViewModel = viewModel(
+        factory = ProductViewModel.provideFactory(
+            LocalContext.current.applicationContext as MyApplication,
+        )
+    )
 ) {
 
-//    val uiState = viewModel.uiState
+    val uiState = viewModel.uiState
 
 
-    Column(Modifier
-        .fillMaxSize()
-        .padding(16.dp)) {
+    Column(
+        Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
         Text("Productos", style = MaterialTheme.typography.headlineMedium)
 
 
@@ -60,7 +64,7 @@ fun ProductScreen(
         Button(onClick = {
             val name = productName.value
             val categoryId = categoryIdInput.value.toIntOrNull()
-//            viewModel.addProduct(name = name, categoryId = categoryId)
+//            viewModel.createProduct(name = name, categoryId = categoryId)
         }) {
             Text("Agregar producto")
         }
@@ -69,18 +73,14 @@ fun ProductScreen(
         // productos
         Spacer(modifier = Modifier.height(16.dp))
 
-//        Button(onClick = { viewModel.getProducts() }) {
-//            Text("Obtener productos")
-//        }
-//
-//        Spacer(modifier = Modifier.height(8.dp))
-//
-//        Text("Productos empty: ${uiState.products.isEmpty()}")
-//
-//        Text("Productos:")
-//
-//        uiState.products.forEach { product ->
-//            Text("- ${product.name}")
-//        }
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Text("Productos empty: ${uiState.collectAsState().value.products.isEmpty()}")
+
+        Text("Productos:")
+
+        uiState.collectAsState().value.products.forEach { product ->
+            Text("- ${product.name}")
+        }
     }
 }
