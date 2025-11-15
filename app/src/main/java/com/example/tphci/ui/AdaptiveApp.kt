@@ -132,7 +132,7 @@ fun AdaptiveApp() {
                 composable<Products> { ProductScreen() }
                 composable<Profile> { ProfileScreen() }
                 dialog<Share> { // TODO make the dialog fullscreen
-                    ShareListScreen(
+                    ShareListScreen(//TODO aca va la data que deberia estar en ..?
                         selectedUsers = emptyList(),
                         suggestedUsers = emptyList(),
                         searchQuery = "",
