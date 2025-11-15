@@ -292,7 +292,7 @@ private fun ShareListScreenPreview() {
 
     val search = remember { mutableStateOf("") }
 
-    TPHCITheme(darkTheme = false, dynamicColor = false) {
+    TPHCITheme {
         ShareListScreen(
             selectedUsers = selected.value,
             suggestedUsers = suggested,

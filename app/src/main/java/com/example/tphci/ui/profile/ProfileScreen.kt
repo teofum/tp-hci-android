@@ -1,41 +1,38 @@
 package com.example.tphci.ui.profile
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.tphci.MyApplication
 
 @Composable
 fun ProfileScreen(
-//    viewModel: HomeViewModel = viewModel(
-//        factory = HomeViewModel.provideFactory(
-//            (LocalContext.current.applicationContext as MyApplication).sessionManager,
-//            (LocalContext.current.applicationContext as MyApplication).userRepository,
-//            (LocalContext.current.applicationContext as MyApplication).shoppingRepository
-//        )
-//    )
+    viewModel: ProfileViewModel = viewModel(
+        factory = ProfileViewModel.provideFactory(
+            (LocalContext.current.applicationContext as MyApplication).sessionManager,
+            (LocalContext.current.applicationContext as MyApplication).userRepository
+        )
+    )
 ) {
+    val uiState = viewModel.uiState
+    var showChangePassword by remember { mutableStateOf(false) }
 
-//    val uiState = viewModel.uiState
-
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
+    if (showChangePassword) {
+        ChangePasswordScreen(
+            onPasswordChanged = { showChangePassword = false },
+            onNavigateBack = { showChangePassword = false }
+        )
+        return
+    }
 
     Column(
         modifier = Modifier
@@ -43,57 +40,98 @@ fun ProfileScreen(
             .padding(16.dp),
     ) {
         Text("Perfil", style = MaterialTheme.typography.headlineMedium)
-        Spacer(Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
-//        if (!uiState.isAuthenticated) {
-        Text("Iniciar sesión", style = MaterialTheme.typography.titleMedium)
-        Spacer(Modifier.height(8.dp))
+        if (!uiState.isAuthenticated) {
+            Text("No has iniciado sesión", style = MaterialTheme.typography.bodyLarge)
+        } else {
+            OutlinedTextField(
+                value = uiState.name,
+                onValueChange = viewModel::updateName,
+                label = { Text("Nombre") },
+                modifier = Modifier.fillMaxWidth(),
+                enabled = !uiState.isLoading
+            )
 
-        OutlinedTextField(
-            value = email,
-            onValueChange = { email = it },
-            label = { Text("Email") },
-            modifier = Modifier.fillMaxWidth(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
-        )
+            Spacer(modifier = Modifier.height(8.dp))
 
-        Spacer(Modifier.height(8.dp))
+            OutlinedTextField(
+                value = uiState.surname,
+                onValueChange = viewModel::updateSurname,
+                label = { Text("Apellido") },
+                modifier = Modifier.fillMaxWidth(),
+                enabled = !uiState.isLoading
+            )
 
-        OutlinedTextField(
-            value = password,
-            onValueChange = { password = it },
-            label = { Text("Contraseña") },
-            modifier = Modifier.fillMaxWidth(),
-            visualTransformation = PasswordVisualTransformation(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
-        )
+            Spacer(modifier = Modifier.height(8.dp))
 
-        Spacer(Modifier.height(16.dp))
+            OutlinedTextField(
+                value = uiState.email,
+                onValueChange = {},
+                label = { Text("Correo electrónico") },
+                modifier = Modifier.fillMaxWidth(),
+                enabled = false
+            )
 
-        Button(
-            onClick = { /*viewModel.login(email, password)*/ },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Iniciar sesión")
+            Spacer(modifier = Modifier.height(16.dp))
+
+            if (uiState.updateSuccess) {
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
+                ) {
+                    Text(
+                        text = "Perfil actualizado correctamente",
+                        modifier = Modifier.padding(16.dp),
+                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
+                }
+            }
+
+            uiState.error?.let {
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer)
+                ) {
+                    Text(
+                        text = "Error al actualizar perfil",
+                        modifier = Modifier.padding(16.dp),
+                        color = MaterialTheme.colorScheme.onErrorContainer
+                    )
+                }
+            }
+
+            Button(
+                onClick = { viewModel.saveProfile() },
+                modifier = Modifier.fillMaxWidth(),
+                enabled = !uiState.isLoading && uiState.name.isNotBlank() && uiState.surname.isNotBlank()
+            ) {
+                if (uiState.isLoading) {
+                    CircularProgressIndicator(modifier = Modifier.size(16.dp))
+                } else {
+                    Text("Guardar cambios")
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            TextButton(
+                onClick = { showChangePassword = true },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Cambiar contraseña")
+            }
+
+            TextButton(
+                onClick = { viewModel.logout() },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Cerrar sesión")
+            }
         }
-
-//            if (uiState.error != null) {
-//                Spacer(Modifier.height(8.dp))
-//                Text(
-//                    text = "Error: ${uiState.error.message}",
-//                    color = MaterialTheme.colorScheme.error,
-//                    style = MaterialTheme.typography.bodySmall
-//                )
-//            }
-//        } else {
-//            Text("Usuario autenticado correctamente", style = MaterialTheme.typography.bodyLarge)
-//            Spacer(Modifier.height(8.dp))
-//            Button(
-//                onClick = { viewModel.logout() },
-//                modifier = Modifier.fillMaxWidth()
-//            ) {
-//                Text("Cerrar sesión")
-//            }
-//        }
     }
 }

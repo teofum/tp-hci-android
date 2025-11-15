@@ -6,7 +6,9 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.tphci.MyApplication
 import com.example.tphci.SessionManager
+import com.example.tphci.data.DataSourceException
 import com.example.tphci.data.model.Category
+import com.example.tphci.data.model.Error
 import com.example.tphci.data.model.Product
 import com.example.tphci.data.repository.CategoryRepository
 import com.example.tphci.data.repository.ProductRepository
@@ -155,7 +157,11 @@ class ProductViewModel(
     }
 
     private fun handleError(e: Throwable): Error {
-        return Error(e.message, e)
+        return if (e is DataSourceException) {
+            Error(e.code, e.message ?: "")
+        } else {
+            Error(null, e.message ?: "")
+        }
     }
 
     companion object {
