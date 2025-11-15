@@ -1,6 +1,97 @@
 <resources>
-    <string name="app_name">TP HCI</string>
+    <string name="app_name">YASL</string>
+    
+    <!-- Navigation -->
     <string name="shopping_lists">Listas</string>
     <string name="products">Productos</string>
     <string name="profile">Perfil</string>
+
+    <!-- Auth Layout -->
+    <string name="shopping_bag">Bolsa de compras</string>
+    
+    <!-- Login Screen -->
+    <string name="login_title">Iniciar sesión</string>
+    <string name="email">Correo electrónico</string>
+    <string name="password">Contraseña</string>
+    <string name="login">Iniciar Sesión</string>
+    <string name="forgot_password">¿Olvidaste tu contraseña?</string>
+    <string name="no_account">¿No tenés una cuenta? Registrate</string>
+    <string name="invalid_credentials">Email o contraseña incorrectos</string>
+    
+    <!-- SignUp Screen -->
+    <string name="signup_title">Creá tu cuenta</string>
+    <string name="first_name">Nombre</string>
+    <string name="last_name">Apellido</string>
+    <string name="create_account">Crear Cuenta</string>
+    <string name="create_account_error">Error al crear la cuenta</string>
+    <string name="already_have_account">¿Ya tenés una cuenta? Iniciar sesión</string>
+    
+    <!-- ForgotPassword Screen -->
+    <string name="forgot_password_title">Recuperá tu contraseña</string>
+    <string name="forgot_password_description">Ingresá tu correo electrónico y te enviaremos un código para restablecer tu contraseña</string>
+    <string name="send_code">Enviar código</string>
+    <string name="send_code_error">Error al enviar el código</string>
+    <string name="back_to_login">Volver al inicio de sesión</string>
+    
+    <!-- ResetPassword Screen -->
+    <string name="reset_password_title">Resetear contraseña</string>
+    <string name="reset_password_description">Ingresá el código que recibiste por correo y tu nueva contraseña</string>
+    <string name="verification_code">Código de verificación</string>
+    <string name="new_password">Nueva contraseña</string>
+    <string name="confirm_password">Confirmar nueva contraseña</string>
+    <string name="reset_password">Restablecer contraseña</string>
+    
+    <!-- VerifyAccount Screen -->
+    <string name="verify_account_title">Verificar cuenta</string>
+    <string name="verify_account_description">Ingresá el código de verificación que enviamos a %1$s</string>
+    <string name="verify">Verificar</string>
+    <string name="resend_code">Reenviar código</string>
+    <string name="invalid_or_expired_code">Código inválido o expirado</string>
+    
+    <!-- Profile Screen -->
+    <string name="not_logged_in">No has iniciado sesión</string>
+    <string name="save_changes">Guardar cambios</string>
+    <string name="change_password">Cambiar contraseña</string>
+    <string name="logout">Cerrar sesión</string>
+    <string name="profile_updated">Perfil actualizado correctamente</string>
+    <string name="profile_update_error">Error al actualizar perfil</string>
+    
+    <!-- ChangePassword Screen -->
+    <string name="current_password">Contraseña actual</string>
+    <string name="password_changed_success">Contraseña cambiada correctamente</string>
+    <string name="password_change_error">Error al cambiar contraseña</string>
+    <string name="passwords_dont_match">Las contraseñas no coinciden</string>
+    <string name="back_to_profile">Volver al perfil</string>
+    
+    <!-- Shopping Lists -->
+    <string name="add_list">Agregar Lista</string>
+    <string name="list_name">Nombre de la lista</string>
+    <string name="description">Descripción</string>
+    <string name="recurring">Recurrente</string>
+    <string name="cancel">Cancelar</string>
+    <string name="add">Agregar</string>
+    <string name="add_product">Agregar producto</string>
+    <string name="search_product">Buscar producto</string>
+    <string name="filter">Filtrar</string>
+    <string name="group_by_category">Agrupar por categoría</string>
+    <string name="quantity">Cantidad</string>
+    <string name="unit">Unidad</string>
+    <string name="product">Producto</string>
+    <string name="edit_lists">Editar listas</string>
+    <string name="filter_all">Todos</string>
+    <string name="filter_purchased">Comprados</string>
+    <string name="filter_pending">Pendientes</string>
+    
+    <!-- Products -->
+    <string name="manage_categories">Administrar categorías</string>
+    <string name="new_category">Nueva categoría</string>
+    <string name="category">Categoría</string>
+    <string name="close">Cerrar</string>
+    
+    <!-- Share Screen -->
+    <string name="done">Listo</string>
+    <string name="search_users">Buscar usuarios</string>
+    <string name="share_list">Compartir lista</string>
+    <string name="suggested_users">Usuarios sugeridos</string>
+    <string name="share">Compartir</string>
 </resources>

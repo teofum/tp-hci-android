@@ -37,7 +37,9 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.tphci.R
 import com.example.tphci.MyApplication
 import com.example.tphci.ui.home.HomeViewModel
 import com.example.tphci.ui.shopping_list.components.AddItemBox
@@ -65,8 +67,12 @@ fun ShoppingListItemScreen(
 
     var searchQuery by remember { mutableStateOf("") }
     var filterExpanded by remember { mutableStateOf(false) }
-    var selectedFilter by remember { mutableStateOf("Todos") }
-    val filterOptions = listOf("Todos", "Comprados", "Pendientes")
+    val filterAllText = stringResource(R.string.filter_all)
+    val filterPurchasedText = stringResource(R.string.filter_purchased)
+    val filterPendingText = stringResource(R.string.filter_pending)
+    
+    var selectedFilter by remember { mutableStateOf(filterAllText) }
+    val filterOptions = listOf(filterAllText, filterPurchasedText, filterPendingText)
 
     var groupByCategory by remember { mutableStateOf(false) }
 
@@ -98,7 +104,7 @@ fun ShoppingListItemScreen(
                     IconButton(onClick = onClose) {
                         Icon(
                             imageVector = Icons.Default.Close,
-                            contentDescription = "Cerrar"
+                            contentDescription = stringResource(R.string.close)
                         )
                     }
                 },
@@ -106,7 +112,7 @@ fun ShoppingListItemScreen(
                     IconButton(onClick = { onOpenShareScreen() }) {
                         Icon(
                             imageVector = Icons.Default.Share,
-                            contentDescription = "Compartir"
+                            contentDescription = stringResource(R.string.share)
                         )
                     }
                 }
@@ -116,7 +122,7 @@ fun ShoppingListItemScreen(
             androidx.compose.material3.FloatingActionButton(
                 onClick = { showAddItemScreen = true }
             ) {
-                Text("Agregar producto")
+                Text(stringResource(R.string.add_product))
             }
         }
     ) { innerPadding ->
@@ -130,7 +136,7 @@ fun ShoppingListItemScreen(
             OutlinedTextField(
                 value = searchQuery,
                 onValueChange = { searchQuery = it },
-                label = { Text("Buscar producto") },
+                label = { Text(stringResource(R.string.search_product)) },
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -151,7 +157,7 @@ fun ShoppingListItemScreen(
                         value = selectedFilter,
                         onValueChange = {},
                         readOnly = true,
-                        label = { Text("Filtrar") },
+                        label = { Text(stringResource(R.string.filter)) },
                         trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = filterExpanded) },
                         modifier = Modifier
                             .menuAnchor()
@@ -179,7 +185,7 @@ fun ShoppingListItemScreen(
                 Row(
                     verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
                 ) {
-                    Text("Agrupar por categoría ", fontSize = MaterialTheme.typography.bodyMedium.fontSize)
+                    Text(stringResource(R.string.group_by_category) + " ", fontSize = MaterialTheme.typography.bodyMedium.fontSize)
                     Switch(
                         checked = groupByCategory,
                         onCheckedChange = { groupByCategory = it },

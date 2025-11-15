@@ -23,6 +23,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.dialog
 import androidx.navigation.compose.rememberNavController
+import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.navArgument
 import androidx.window.core.layout.WindowSizeClass
 import com.example.tphci.R
@@ -144,8 +145,6 @@ fun AdaptiveApp() {
                 }
                 composable<Products> { ProductScreen() }
                 composable<Profile> { ProfileScreen() }
-
-
                 composable<ShoppingListItem> { entry ->
                     val args = entry.arguments!!
                     val listId = args.getLong("listId")
@@ -160,9 +159,9 @@ fun AdaptiveApp() {
                     )
                 }
 
-
-
-                composable<Share> { // TODO make the dialog fullscreen (TODO connect to /shareList)
+                dialog<Share>(
+                    dialogProperties = DialogProperties(usePlatformDefaultWidth = false)
+                ) {
                     ShareListScreen(
                         selectedUsers = emptyList(),
                         suggestedUsers = emptyList(),

@@ -9,7 +9,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.tphci.R
 import com.example.tphci.MyApplication
 
 @Composable
@@ -37,7 +39,7 @@ fun LoginScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "Iniciar sesión",
+                text = stringResource(R.string.login_title),
                 style = MaterialTheme.typography.headlineMedium,
                 modifier = Modifier.padding(bottom = 32.dp)
             )
@@ -45,7 +47,7 @@ fun LoginScreen(
             OutlinedTextField(
                 value = uiState.email,
                 onValueChange = viewModel::updateEmail,
-                label = { Text("Correo electrónico") },
+                label = { Text(stringResource(R.string.email)) },
                 modifier = Modifier.fillMaxWidth(),
                 enabled = !uiState.isLoading
             )
@@ -55,7 +57,7 @@ fun LoginScreen(
             OutlinedTextField(
                 value = uiState.password,
                 onValueChange = viewModel::updatePassword,
-                label = { Text("Contraseña") },
+                label = { Text(stringResource(R.string.password)) },
                 visualTransformation = PasswordVisualTransformation(),
                 modifier = Modifier.fillMaxWidth(),
                 enabled = !uiState.isLoading
@@ -68,7 +70,7 @@ fun LoginScreen(
                     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer)
                 ) {
                     Text(
-                        text = "Email o contraseña incorrectos",
+                        text = stringResource(R.string.invalid_credentials),
                         modifier = Modifier.padding(16.dp),
                         color = MaterialTheme.colorScheme.onErrorContainer
                     )
@@ -86,18 +88,18 @@ fun LoginScreen(
                 if (uiState.isLoading) {
                     CircularProgressIndicator(modifier = Modifier.size(16.dp))
                 } else {
-                    Text("Iniciar Sesión")
+                    Text(stringResource(R.string.login))
                 }
             }
 
             Spacer(modifier = Modifier.height(16.dp))
 
             TextButton(onClick = onNavigateToForgotPassword) {
-                Text("¿Olvidaste tu contraseña?")
+                Text(stringResource(R.string.forgot_password))
             }
 
             TextButton(onClick = onNavigateToSignUp) {
-                Text("¿No tenés una cuenta? Registrate")
+                Text(stringResource(R.string.no_account))
             }
         }
     }

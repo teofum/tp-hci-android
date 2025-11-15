@@ -30,7 +30,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.tphci.R
 
 @Composable
 fun AddListBox(
@@ -66,25 +68,25 @@ fun AddListBox(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Agregar lista",
+                    text = stringResource(R.string.add_list),
                     style = MaterialTheme.typography.titleLarge
                 )
                 IconButton(onClick = onClose) {
-                    Icon(Icons.Default.Close, contentDescription = "Cerrar")
+                    Icon(Icons.Default.Close, contentDescription = stringResource(R.string.cancel))
                 }
             }
 
             OutlinedTextField(
                 value = name,
                 onValueChange = { name = it },
-                label = { Text("Nombre de la lista") },
+                label = { Text(stringResource(R.string.list_name)) },
                 modifier = Modifier.fillMaxWidth()
             )
 
             OutlinedTextField(
                 value = description,
                 onValueChange = { description = it },
-                label = { Text("Descripción") },
+                label = { Text(stringResource(R.string.description)) },
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -93,7 +95,7 @@ fun AddListBox(
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text("Recurrente ")
+                Text(stringResource(R.string.recurring) + " ")
                 Switch(
                     checked = recurring,
                     onCheckedChange = { recurring = it }
@@ -104,7 +106,7 @@ fun AddListBox(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                TextButton(onClick = onClose) { Text("Cancelar") }
+                TextButton(onClick = onClose) { Text(stringResource(R.string.cancel)) }
 
                 Button(
                     onClick = {
@@ -113,7 +115,7 @@ fun AddListBox(
                         }
                     }
                 ) {
-                    Text("Agregar")
+                    Text(stringResource(R.string.add))
                 }
             }
         }

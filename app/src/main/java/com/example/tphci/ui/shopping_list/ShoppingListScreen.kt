@@ -16,8 +16,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.tphci.R
 import com.example.tphci.MyApplication
 import com.example.tphci.ui.home.HomeViewModel
 import com.example.tphci.ui.shopping_list.components.AddListBox
@@ -48,7 +50,7 @@ fun ShoppingListScreen(
             FloatingActionButton(
                 onClick = { showAddListBox = true }
             ) {
-                Text("Agregar Lista")
+                Text(stringResource(R.string.add_list))
             }
         }
     ) { innerPadding ->
@@ -69,7 +71,7 @@ fun ShoppingListScreen(
                 Spacer(modifier = Modifier.weight(1f))
 
                 Text(
-                    "Listas",
+                    stringResource(R.string.shopping_lists),
                     style = MaterialTheme.typography.headlineMedium
                 )
 
@@ -78,7 +80,7 @@ fun ShoppingListScreen(
                 IconButton(onClick = { /* TODO */ }) {
                     Icon(
                         imageVector = Icons.Default.Edit,
-                        contentDescription = "Editar listas"
+                        contentDescription = stringResource(R.string.edit_lists)
                     )
                 }
             }

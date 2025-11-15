@@ -10,7 +10,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.tphci.R
 import com.example.tphci.MyApplication
 
 @Composable
@@ -36,7 +38,7 @@ fun ResetPasswordScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "Resetear contraseña",
+                text = stringResource(R.string.reset_password_title),
                 style = MaterialTheme.typography.headlineMedium,
                 modifier = Modifier.padding(bottom = 16.dp)
             )
@@ -51,7 +53,7 @@ fun ResetPasswordScreen(
             OutlinedTextField(
                 value = uiState.code,
                 onValueChange = viewModel::updateCode,
-                label = { Text("Código de verificación") },
+                label = { Text(stringResource(R.string.verification_code)) },
                 modifier = Modifier.fillMaxWidth(),
                 enabled = !uiState.isLoading
             )
@@ -61,7 +63,7 @@ fun ResetPasswordScreen(
             OutlinedTextField(
                 value = uiState.password,
                 onValueChange = viewModel::updatePassword,
-                label = { Text("Nueva contraseña") },
+                label = { Text(stringResource(R.string.new_password)) },
                 visualTransformation = PasswordVisualTransformation(),
                 modifier = Modifier.fillMaxWidth(),
                 enabled = !uiState.isLoading
@@ -72,7 +74,7 @@ fun ResetPasswordScreen(
             OutlinedTextField(
                 value = uiState.confirmPassword,
                 onValueChange = viewModel::updateConfirmPassword,
-                label = { Text("Confirmar nueva contraseña") },
+                label = { Text(stringResource(R.string.confirm_password)) },
                 visualTransformation = PasswordVisualTransformation(),
                 modifier = Modifier.fillMaxWidth(),
                 enabled = !uiState.isLoading
@@ -117,14 +119,14 @@ fun ResetPasswordScreen(
                 if (uiState.isLoading) {
                     CircularProgressIndicator(modifier = Modifier.size(16.dp))
                 } else {
-                    Text("Restablecer contraseña")
+                    Text(stringResource(R.string.reset_password))
                 }
             }
 
             Spacer(modifier = Modifier.height(16.dp))
 
             TextButton(onClick = onNavigateToLogin) {
-                Text("Volver al inicio de sesión")
+                Text(stringResource(R.string.back_to_login))
             }
         }
     }

@@ -27,17 +27,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.stringResource
+import com.example.tphci.R
 import com.example.tphci.ui.theme.TPHCITheme
-
-/**
- * Basic user model – adapt it to your backend DTO.
- */
-data class User(
-    val id: String,
-    val fullName: String,
-    val handle: String,
-    val avatarRes: Int? = null, // local drawable, or null if you load from URL
-)
+import com.example.tphci.data.model.User
 
 /**
  * Main screen. Stateless: only UI + callbacks.
@@ -59,7 +52,7 @@ fun ShareListScreen(
             TopAppBar(
                 title = {
                     Text(
-                        text = "Compartir lista",
+                        text = stringResource(R.string.share_list),
                         fontWeight = FontWeight.SemiBold,
                     )
                 },
@@ -67,7 +60,7 @@ fun ShareListScreen(
                     IconButton(onClick = onBackClick) {
                         Icon(
                             imageVector = Icons.Default.Close,
-                            contentDescription = "Cerrar"
+                            contentDescription = stringResource(R.string.close)
                         )
                     }
                 }
@@ -87,7 +80,7 @@ fun ShareListScreen(
                         .height(52.dp),
                     shape = RoundedCornerShape(24.dp),
                 ) {
-                    Text("Listo", fontSize = 18.sp)
+                    Text(stringResource(R.string.done), fontSize = 18.sp)
                 }
             }
         }
@@ -122,14 +115,14 @@ fun ShareListScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 24.dp),
-                placeholder = { Text("Buscar usuarios") },
+                placeholder = { Text(stringResource(R.string.search_users)) },
                 singleLine = true,
                 shape = RoundedCornerShape(10.dp)
             )
 
             // Suggested users title
             Text(
-                text = "Usuarios sugeridos",
+                text = stringResource(R.string.suggested_users),
                 fontWeight = FontWeight.SemiBold,
                 modifier = Modifier.padding(bottom = 12.dp)
             )
@@ -170,16 +163,18 @@ private fun SelectedUserChip(
 
             Spacer(Modifier.width(8.dp))
 
+            val displayName = user.username ?: user.email
+            val handle = "@${user.username ?: user.email.substringBefore("@")}"
+
             Column {
                 Text(
-                    text = user.fullName,
+                    text = displayName,
                     fontSize = 13.sp,
                     fontWeight = FontWeight.SemiBold
                 )
                 Text(
-                    text = "@${user.handle}",
+                    text = handle,
                     fontSize = 11.sp,
-                    color = Color.Gray
                 )
             }
 
@@ -191,7 +186,7 @@ private fun SelectedUserChip(
             ) {
                 Icon(
                     imageVector = Icons.Default.Close,
-                    contentDescription = "Quitar usuario",
+                    contentDescription = stringResource(R.string.close),
                     modifier = Modifier.size(16.dp)
                 )
             }
@@ -217,14 +212,17 @@ private fun SuggestedUserRow(
 
         Spacer(Modifier.width(12.dp))
 
+        val displayName = user.username ?: user.email
+        val handle = "@${user.username ?: user.email.substringBefore("@")}"
+
         Column {
             Text(
-                text = user.fullName,
+                text = displayName,
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 15.sp
             )
             Text(
-                text = "@${user.handle}",
+                text = handle,
                 fontSize = 13.sp,
                 color = Color.Gray
             )
@@ -244,7 +242,7 @@ private fun Avatar(
     if (user.avatarRes != null) {
         Image(
             painter = painterResource(id = user.avatarRes),
-            contentDescription = user.fullName,
+            contentDescription = user.username,
             modifier = Modifier
                 .size(size)
                 .clip(CircleShape),
@@ -258,8 +256,9 @@ private fun Avatar(
                 .background(MaterialTheme.colorScheme.primary),
             contentAlignment = Alignment.Center
         ) {
+            val displayName = user.username ?: user.email
             Text(
-                text = user.fullName.firstOrNull()?.uppercase() ?: "",
+                text = displayName.firstOrNull()?.uppercase() ?: "",
                 color = MaterialTheme.colorScheme.onPrimary,
                 fontWeight = FontWeight.Bold
             )
@@ -277,17 +276,17 @@ private fun ShareListScreenPreview() {
         mutableStateOf(
             listOf(
                 User(
-                    id = "1",
-                    fullName = "Sophia Richards",
-                    handle = "sophia.richards"
+                    id = 1,
+                    username = "Sophia Richards",
+                    email = "",
                 )
             )
         )
     }
 
     val suggested = listOf(
-        User("2", "Henry Clark", "henry.clark"),
-        User("3", "Olivia Smith", "olivia.smith")
+        User(2, "Henry Clark", "henry.clark"),
+        User(3, "Olivia Smith", "olivia.smith")
     )
 
     val search = remember { mutableStateOf("") }
