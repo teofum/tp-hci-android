@@ -32,4 +32,10 @@
     <string name="new_password">Nueva contraseña</string>
     <string name="confirm_password">Confirmar nueva contraseña</string>
     <string name="reset_password">Restablecer contraseña</string>
+    
+    <!-- VerifyAccount Screen -->
+    <string name="verify_account_title">Verificar cuenta</string>
+    <string name="verify_account_description">Ingresá el código de verificación que enviamos a %1$s</string>
+    <string name="verify">Verificar</string>
+    <string name="resend_code">Reenviar código</string>
 </resources>

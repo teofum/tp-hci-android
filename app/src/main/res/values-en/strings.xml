@@ -32,4 +32,10 @@
     <string name="new_password">New password</string>
     <string name="confirm_password">Confirm new password</string>
     <string name="reset_password">Reset password</string>
+    
+    <!-- VerifyAccount Screen -->
+    <string name="verify_account_title">Verify account</string>
+    <string name="verify_account_description">Enter the verification code we sent to %1$s</string>
+    <string name="verify">Verify</string>
+    <string name="resend_code">Resend code</string>
 </resources>
