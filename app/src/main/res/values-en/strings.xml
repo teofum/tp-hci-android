@@ -65,4 +65,10 @@
     <string name="quantity">Quantity</string>
     <string name="unit">Unit</string>
     <string name="product">Product</string>
+    
+    <!-- Products -->
+    <string name="manage_categories">Manage categories</string>
+    <string name="new_category">New category</string>
+    <string name="category">Category</string>
+    <string name="close">Close</string>
 </resources>

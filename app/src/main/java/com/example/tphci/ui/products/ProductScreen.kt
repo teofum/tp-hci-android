@@ -16,8 +16,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.tphci.R
 import com.example.tphci.MyApplication
 import com.example.tphci.ui.home.HomeViewModel
 import com.example.tphci.ui.products.components.AddProductBox
@@ -55,12 +57,12 @@ fun ProductScreen(
             FloatingActionButton(
                 onClick = { showAddProductScreen = true }
             ) {
-                Text("Agregar Producto")
+                Text(stringResource(R.string.add_product))
             }
         }
     ) { innerPadding ->
         Column(Modifier.fillMaxSize().padding(16.dp)) {
-            Text("Productos", style = MaterialTheme.typography.headlineMedium)
+            Text(stringResource(R.string.products), style = MaterialTheme.typography.headlineMedium)
 
 
 
@@ -69,7 +71,7 @@ fun ProductScreen(
             OutlinedTextField(
                 value = productSearch.value,
                 onValueChange = { productSearch.value = it },
-                label = { Text("Nombre de la lista") },
+                label = { Text(stringResource(R.string.search_product)) },
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -87,7 +89,7 @@ fun ProductScreen(
                     modifier = Modifier.clickable { showManageCategoriesBox = true }
                 ) {
                     Text(
-                        "Administrar categorías",
+                        stringResource(R.string.manage_categories),
                         fontSize = MaterialTheme.typography.bodyMedium.fontSize,
                         color = MaterialTheme.colorScheme.primary
                     )
@@ -99,7 +101,7 @@ fun ProductScreen(
                 Row(
                     verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
                 ) {
-                    Text("Agrupar por categoría ", fontSize = MaterialTheme.typography.bodyMedium.fontSize)
+                    Text(stringResource(R.string.group_by_category) + " ", fontSize = MaterialTheme.typography.bodyMedium.fontSize)
                     Switch(
                         checked = groupByCategory,
                         onCheckedChange = { groupByCategory = it },

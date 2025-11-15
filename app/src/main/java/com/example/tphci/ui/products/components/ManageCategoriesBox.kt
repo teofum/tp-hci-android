@@ -31,7 +31,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.tphci.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -57,12 +59,12 @@ fun ManageCategoriesBox(
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
 
-                Text("Administrar categorías", style = MaterialTheme.typography.titleMedium)
+                Text(stringResource(R.string.manage_categories), style = MaterialTheme.typography.titleMedium)
 
                 OutlinedTextField(
                     value = categoryName,
                     onValueChange = { categoryName = it },
-                    label = { Text("Nueva categoría") },
+                    label = { Text(stringResource(R.string.new_category)) },
                     modifier = Modifier.fillMaxWidth()
                 )
 
@@ -71,11 +73,11 @@ fun ManageCategoriesBox(
                     horizontalArrangement = Arrangement.End
                 ) {
                     TextButton(onClick = onClose) {
-                        Text("Cerrar")
+                        Text(stringResource(R.string.close))
                     }
 
                     Button(onClick = { onAddCategory(categoryName) }) {
-                        Text("Agregar")
+                        Text(stringResource(R.string.add))
                     }
                 }
             }
