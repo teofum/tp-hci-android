@@ -12,4 +12,11 @@
     <string name="forgot_password">¿Olvidaste tu contraseña?</string>
     <string name="no_account">¿No tenés una cuenta? Registrate</string>
     <string name="invalid_credentials">Email o contraseña incorrectos</string>
+    
+    <!-- SignUp Screen -->
+    <string name="signup_title">Creá tu cuenta</string>
+    <string name="first_name">Nombre</string>
+    <string name="last_name">Apellido</string>
+    <string name="create_account">Crear Cuenta</string>
+    <string name="already_have_account">¿Ya tenés una cuenta? Iniciar sesión</string>
 </resources>

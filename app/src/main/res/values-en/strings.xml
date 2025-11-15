@@ -12,4 +12,11 @@
     <string name="forgot_password">Forgot your password?</string>
     <string name="no_account">Don\'t have an account? Sign up</string>
     <string name="invalid_credentials">Invalid email or password</string>
+    
+    <!-- SignUp Screen -->
+    <string name="signup_title">Create your account</string>
+    <string name="first_name">First Name</string>
+    <string name="last_name">Last Name</string>
+    <string name="create_account">Sign up</string>
+    <string name="already_have_account">Already have an account? Log in</string>
 </resources>
