@@ -165,33 +165,32 @@ fun ShoppingListScreen(
                     }
                 }
             }
+        }
 
-            if (showAddListBox) {
-                AddListBox(
-                    onClose = { showAddListBox = false },
-                    onAdd = { name, description, recurring ->
-                        viewModel.addShoppingList(name, description, recurring) // TODO api
-                        showAddListBox = false
-                    }
-                )
-            }
+        if (showAddListBox) {
+            AddListBox(
+                onClose = { showAddListBox = false },
+                onAdd = { name, description, recurring ->
+                    viewModel.addShoppingList(name, description, recurring) // TODO api
+                    showAddListBox = false
+                }
+            )
+        }
 
-            if (showEditListBox && editingList != null) {
-                EditListBox(
-                    initialName = editingList!!.name,
-                    initialDescription = editingList!!.description,
-                    initialRecurring = editingList!!.recurring,
-                    onClose = {
-                        showEditListBox = false
-                        editingList = null
-                    },
-                    onEdit = { name, description, recurring ->
-                        viewModel.addShoppingList(name, description, recurring) // TODO api
-                        showEditListBox = false
-                    }
-                )
-            }
-
+        if (showEditListBox && editingList != null) {
+            EditListBox(
+                initialName = editingList!!.name,
+                initialDescription = editingList!!.description,
+                initialRecurring = editingList!!.recurring,
+                onClose = {
+                    showEditListBox = false
+                    editingList = null
+                },
+                onEdit = { name, description, recurring ->
+                    viewModel.addShoppingList(name, description, recurring) // TODO api
+                    showEditListBox = false
+                }
+            )
         }
     }
 }
