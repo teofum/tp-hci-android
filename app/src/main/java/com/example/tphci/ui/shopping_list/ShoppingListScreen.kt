@@ -1,8 +1,10 @@
 package com.example.tphci.ui.shopping_list
 
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
@@ -46,7 +48,9 @@ fun ShoppingListScreen(
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { showAddListBox = true }
+                onClick = { showAddListBox = true },
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary
             ) {
                 Text("Agregar Lista")
             }
@@ -87,16 +91,38 @@ fun ShoppingListScreen(
 
 
             uiState.shoppingLists.forEach { list ->
-                Card(
+
+                Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 4.dp)
-                        .clickable { onOpenListDetails(list.id.toLong()) }
+                        .padding(vertical = 10.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Column(modifier = Modifier.padding(12.dp)) {
-                        Text(list.name, style = MaterialTheme.typography.titleMedium)
-                        Text(list.description, style = MaterialTheme.typography.bodyMedium)
+
+
+                    Box(
+                        modifier = Modifier
+                            .size(48.dp)
+                            .background(Color(0xFFF1F1F1), RoundedCornerShape(12.dp))
+                    ) {
+                        // TODO emoji
                     }
+
+                    Card(
+                        colors = (CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.background
+                        )),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 4.dp)
+                            .clickable { onOpenListDetails(list.id.toLong()) }
+                    ) {
+                        Column(modifier = Modifier.padding(12.dp)) {
+                            Text(list.name, style = MaterialTheme.typography.titleMedium)
+                            Text(list.description, style = MaterialTheme.typography.bodyMedium)
+                        }
+                    }
+
                 }
             }
         }

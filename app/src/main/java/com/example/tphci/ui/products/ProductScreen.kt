@@ -53,7 +53,9 @@ fun ProductScreen(
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { showAddProductScreen = true }
+                onClick = { showAddProductScreen = true },
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary
             ) {
                 Text("Agregar Producto")
             }

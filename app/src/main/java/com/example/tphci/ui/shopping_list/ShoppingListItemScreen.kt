@@ -114,7 +114,9 @@ fun ShoppingListItemScreen(
         },
         floatingActionButton = {
             androidx.compose.material3.FloatingActionButton(
-                onClick = { showAddItemScreen = true }
+                onClick = { showAddItemScreen = true },
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary
             ) {
                 Text("Agregar producto")
             }
