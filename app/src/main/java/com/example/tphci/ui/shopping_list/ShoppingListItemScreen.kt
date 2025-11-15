@@ -67,8 +67,12 @@ fun ShoppingListItemScreen(
 
     var searchQuery by remember { mutableStateOf("") }
     var filterExpanded by remember { mutableStateOf(false) }
-    var selectedFilter by remember { mutableStateOf("Todos") }
-    val filterOptions = listOf("Todos", "Comprados", "Pendientes")
+    val filterAllText = stringResource(R.string.filter_all)
+    val filterPurchasedText = stringResource(R.string.filter_purchased)
+    val filterPendingText = stringResource(R.string.filter_pending)
+    
+    var selectedFilter by remember { mutableStateOf(filterAllText) }
+    val filterOptions = listOf(filterAllText, filterPurchasedText, filterPendingText)
 
     var groupByCategory by remember { mutableStateOf(false) }
 
