@@ -27,8 +27,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tphci.MyApplication
 import com.example.tphci.data.model.ShoppingList
 import com.example.tphci.ui.home.HomeViewModel
-import com.example.tphci.ui.shopping_list.components.AddListBox
-import com.example.tphci.ui.shopping_list.components.EditListBox
+import com.example.tphci.ui.shopping_list.components.ManageListBox
 
 @Composable
 fun ShoppingListScreen(
@@ -168,27 +167,32 @@ fun ShoppingListScreen(
         }
 
         if (showAddListBox) {
-            AddListBox(
+            ManageListBox(
+                title = "Agregar lista",
+                confirmButtonText = "Agregar",
                 onClose = { showAddListBox = false },
-                onAdd = { name, description, recurring ->
-                    viewModel.addShoppingList(name, description, recurring) // TODO api
+                onConfirm = { name, description, recurring ->
+                    viewModel.addShoppingList(name, description, recurring) // TODO API
                     showAddListBox = false
                 }
             )
         }
 
         if (showEditListBox && editingList != null) {
-            EditListBox(
+            ManageListBox(
+                title = "Editar lista",
                 initialName = editingList!!.name,
                 initialDescription = editingList!!.description,
                 initialRecurring = editingList!!.recurring,
+                confirmButtonText = "Guardar",
                 onClose = {
                     showEditListBox = false
                     editingList = null
                 },
-                onEdit = { name, description, recurring ->
-                    viewModel.addShoppingList(name, description, recurring) // TODO api
+                onConfirm = { name, description, recurring ->
+                    viewModel.addShoppingList(name, description, recurring) // TODO API
                     showEditListBox = false
+                    editingList = null
                 }
             )
         }

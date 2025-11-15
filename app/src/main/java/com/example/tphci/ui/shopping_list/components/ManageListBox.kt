@@ -5,12 +5,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
@@ -18,7 +15,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -33,13 +29,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun AddListBox(
+fun ManageListBox(
+    title: String,
+    initialName: String = "",
+    initialDescription: String = "",
+    initialRecurring: Boolean = false,
+    confirmButtonText: String,
     onClose: () -> Unit,
-    onAdd: (String, String, Boolean) -> Unit
+    onConfirm: (String, String, Boolean) -> Unit
 ) {
-    var name by remember { mutableStateOf("") }
-    var description by remember { mutableStateOf("") }
-    var recurring by remember { mutableStateOf(false) }
+    var name by remember { mutableStateOf(initialName) }
+    var description by remember { mutableStateOf(initialDescription) }
+    var recurring by remember { mutableStateOf(initialRecurring) }
 
     Box(
         modifier = Modifier
@@ -50,23 +51,18 @@ fun AddListBox(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(
-                    MaterialTheme.colorScheme.background
-                )
+                .background(MaterialTheme.colorScheme.background)
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
 
-            // Header igual al de productos
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = "Agregar lista",
-                    style = MaterialTheme.typography.titleLarge
-                )
+                Text(title, style = MaterialTheme.typography.titleLarge)
+
                 IconButton(onClick = onClose) {
                     Icon(Icons.Default.Close, contentDescription = "Cerrar")
                 }
@@ -107,11 +103,11 @@ fun AddListBox(
                 Button(
                     onClick = {
                         if (name.isNotBlank()) {
-                            onAdd(name, description, recurring)
+                            onConfirm(name, description, recurring)
                         }
                     }
                 ) {
-                    Text("Agregar")
+                    Text(confirmButtonText)
                 }
             }
         }
