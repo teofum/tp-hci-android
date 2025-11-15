@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tphci.MyApplication
@@ -63,11 +64,15 @@ fun ProductScreen(
         }
     ) { innerPadding ->
         Column(Modifier.fillMaxSize().padding(16.dp)) {
-            Text("Productos", style = MaterialTheme.typography.headlineMedium)
 
+            Text(
+                "Productos",
+                style = MaterialTheme.typography.headlineMedium,
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center
+            )
 
-
-
+            Spacer(modifier = Modifier.height(8.dp))
 
             OutlinedTextField(
                 value = productSearch.value,

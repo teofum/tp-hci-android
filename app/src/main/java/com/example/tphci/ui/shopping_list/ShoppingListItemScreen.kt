@@ -59,14 +59,15 @@ fun ShoppingListItemScreen(
     )
 ) {
     val uiState = viewModel.uiState
-    val items = uiState.shoppingListItems[listId] ?: emptyList()
 
+    val items = uiState.shoppingListItems[listId] ?: emptyList()
     val currentList = uiState.shoppingLists.firstOrNull { it.id.toLong() == listId }
 
+    // TODO
     var searchQuery by remember { mutableStateOf("") }
-    var filterExpanded by remember { mutableStateOf(false) }
     var selectedFilter by remember { mutableStateOf("Todos") }
     val filterOptions = listOf("Todos", "Comprados", "Pendientes")
+    var filterExpanded by remember { mutableStateOf(false) }
 
     var groupByCategory by remember { mutableStateOf(false) }
 

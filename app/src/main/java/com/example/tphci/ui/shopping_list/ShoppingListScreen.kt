@@ -18,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tphci.MyApplication
@@ -65,28 +66,12 @@ fun ShoppingListScreen(
                 .fillMaxSize()
                 .padding(16.dp)
         ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 8.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Spacer(modifier = Modifier.weight(1f))
-
-                Text(
-                    "Listas",
-                    style = MaterialTheme.typography.headlineMedium
-                )
-
-                Spacer(modifier = Modifier.weight(1f))
-
-                IconButton(onClick = { /* TODO */ }) {
-                    Icon(
-                        imageVector = Icons.Default.Edit,
-                        contentDescription = "Editar listas"
-                    )
-                }
-            }
+            Text(
+                "Listas",
+                style = MaterialTheme.typography.headlineMedium,
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center
+            )
 
             Spacer(modifier = Modifier.height(8.dp))
 
