@@ -10,7 +10,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.tphci.R
 import com.example.tphci.MyApplication
 
 @Composable
@@ -37,13 +39,13 @@ fun ForgotPasswordScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "Recuperá tu contraseña",
+                text = stringResource(R.string.forgot_password_title),
                 style = MaterialTheme.typography.headlineMedium,
                 modifier = Modifier.padding(bottom = 16.dp)
             )
 
             Text(
-                text = "Ingresá tu correo electrónico y te enviaremos un código para restablecer tu contraseña",
+                text = stringResource(R.string.forgot_password_description),
                 style = MaterialTheme.typography.bodyMedium,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(bottom = 32.dp)
@@ -52,7 +54,7 @@ fun ForgotPasswordScreen(
             OutlinedTextField(
                 value = uiState.email,
                 onValueChange = viewModel::updateEmail,
-                label = { Text("Correo electrónico") },
+                label = { Text(stringResource(R.string.email)) },
                 modifier = Modifier.fillMaxWidth(),
                 enabled = !uiState.isLoading
             )
@@ -82,14 +84,14 @@ fun ForgotPasswordScreen(
                 if (uiState.isLoading) {
                     CircularProgressIndicator(modifier = Modifier.size(16.dp))
                 } else {
-                    Text("Enviar código")
+                    Text(stringResource(R.string.send_code))
                 }
             }
 
             Spacer(modifier = Modifier.height(16.dp))
 
             TextButton(onClick = onNavigateToLogin) {
-                Text("Volver al inicio de sesión")
+                Text(stringResource(R.string.back_to_login))
             }
         }
     }

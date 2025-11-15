@@ -19,4 +19,10 @@
     <string name="last_name">Last Name</string>
     <string name="create_account">Sign up</string>
     <string name="already_have_account">Already have an account? Log in</string>
+    
+    <!-- ForgotPassword Screen -->
+    <string name="forgot_password_title">Reset your password</string>
+    <string name="forgot_password_description">Enter your email address and we\'ll send you a code to reset your password</string>
+    <string name="send_code">Send code</string>
+    <string name="back_to_login">Back to login</string>
 </resources>
