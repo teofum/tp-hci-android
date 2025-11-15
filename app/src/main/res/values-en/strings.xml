@@ -51,6 +51,13 @@
     <string name="profile_updated">Profile updated successfully</string>
     <string name="profile_update_error">Error updating profile</string>
     
+    <!-- ChangePassword Screen -->
+    <string name="current_password">Current password</string>
+    <string name="password_changed_success">Password changed successfully</string>
+    <string name="password_change_error">Error changing password</string>
+    <string name="passwords_dont_match">Passwords don\'t match</string>
+    <string name="back_to_profile">Back to profile</string>
+    
     <!-- Shopping Lists -->
     <string name="add_list">Add List</string>
     <string name="list_name">List name</string>
@@ -72,10 +79,9 @@
     <string name="category">Category</string>
     <string name="close">Close</string>
     
-    <!-- ChangePassword Screen -->
-    <string name="current_password">Current password</string>
-    <string name="password_changed_success">Password changed successfully</string>
-    <string name="password_change_error">Error changing password</string>
-    <string name="passwords_dont_match">Passwords don\'t match</string>
-    <string name="back_to_profile">Back to profile</string>
+    <!-- Share Screen -->
+    <string name="done">Done</string>
+    <string name="search_users">Search users</string>
+    <string name="share_list">Share list</string>
+    <string name="suggested_users">Suggested users</string>
 </resources>

@@ -51,6 +51,13 @@
     <string name="profile_updated">Perfil actualizado correctamente</string>
     <string name="profile_update_error">Error al actualizar perfil</string>
     
+    <!-- ChangePassword Screen -->
+    <string name="current_password">Contraseña actual</string>
+    <string name="password_changed_success">Contraseña cambiada correctamente</string>
+    <string name="password_change_error">Error al cambiar contraseña</string>
+    <string name="passwords_dont_match">Las contraseñas no coinciden</string>
+    <string name="back_to_profile">Volver al perfil</string>
+    
     <!-- Shopping Lists -->
     <string name="add_list">Agregar Lista</string>
     <string name="list_name">Nombre de la lista</string>
@@ -72,10 +79,9 @@
     <string name="category">Categoría</string>
     <string name="close">Cerrar</string>
     
-    <!-- ChangePassword Screen -->
-    <string name="current_password">Contraseña actual</string>
-    <string name="password_changed_success">Contraseña cambiada correctamente</string>
-    <string name="password_change_error">Error al cambiar contraseña</string>
-    <string name="passwords_dont_match">Las contraseñas no coinciden</string>
-    <string name="back_to_profile">Volver al perfil</string>
+    <!-- Share Screen -->
+    <string name="done">Listo</string>
+    <string name="search_users">Buscar usuarios</string>
+    <string name="share_list">Compartir lista</string>
+    <string name="suggested_users">Usuarios sugeridos</string>
 </resources>
