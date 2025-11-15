@@ -5,6 +5,9 @@
     <string name="shopping_lists">Listas</string>
     <string name="products">Productos</string>
     <string name="profile">Perfil</string>
+
+    <!-- Auth Layout -->
+    <string name="shopping_bag">Bolsa de compras</string>
     
     <!-- Login Screen -->
     <string name="login_title">Iniciar sesión</string>
@@ -32,6 +35,7 @@
     
     <!-- ResetPassword Screen -->
     <string name="reset_password_title">Resetear contraseña</string>
+    <string name="reset_password_description">Ingresá el código que recibiste por correo y tu nueva contraseña</string>
     <string name="verification_code">Código de verificación</string>
     <string name="new_password">Nueva contraseña</string>
     <string name="confirm_password">Confirmar nueva contraseña</string>
@@ -42,6 +46,7 @@
     <string name="verify_account_description">Ingresá el código de verificación que enviamos a %1$s</string>
     <string name="verify">Verificar</string>
     <string name="resend_code">Reenviar código</string>
+    <string name="invalid_or_expired_code">Código inválido o expirado</string>
     
     <!-- Profile Screen -->
     <string name="not_logged_in">No has iniciado sesión</string>
@@ -72,6 +77,10 @@
     <string name="quantity">Cantidad</string>
     <string name="unit">Unidad</string>
     <string name="product">Producto</string>
+    <string name="edit_lists">Editar listas</string>
+    <string name="filter_all">Todos</string>
+    <string name="filter_purchased">Comprados</string>
+    <string name="filter_pending">Pendientes</string>
     
     <!-- Products -->
     <string name="manage_categories">Administrar categorías</string>
@@ -84,14 +93,5 @@
     <string name="search_users">Buscar usuarios</string>
     <string name="share_list">Compartir lista</string>
     <string name="suggested_users">Usuarios sugeridos</string>
-    
-    <!-- Content Descriptions -->
-    <string name="shopping_bag">Bolsa de compras</string>
-    <string name="edit_lists">Editar listas</string>
     <string name="share">Compartir</string>
-    <string name="invalid_or_expired_code">Código inválido o expirado</string>
-    <string name="reset_password_description">Ingresá el código que recibiste por correo y tu nueva contraseña</string>
-    <string name="filter_all">Todos</string>
-    <string name="filter_purchased">Comprados</string>
-    <string name="filter_pending">Pendientes</string>
 </resources>
