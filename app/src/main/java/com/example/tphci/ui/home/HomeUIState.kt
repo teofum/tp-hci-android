@@ -5,6 +5,7 @@ import com.example.tphci.data.model.Product
 import com.example.tphci.data.model.ShoppingList
 import com.example.tphci.data.model.User
 import com.example.tphci.data.model.Error
+import com.example.tphci.data.model.Item
 
 data class HomeUIState(
     val isAuthenticated: Boolean = false,
@@ -14,6 +15,8 @@ data class HomeUIState(
     val currentUserToken: String? = null,
     val products: List<Product> = emptyList(),
     val categories: List<Category> = emptyList(),
-    val shoppingLists: List<ShoppingList> = emptyList()
+    val shoppingLists: List<ShoppingList> = emptyList(),
+
+    val shoppingListItems: Map<Long, List<Item>> = emptyMap()
 )
 

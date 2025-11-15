@@ -1,37 +1,38 @@
 package com.example.tphci.ui.profile
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tphci.MyApplication
-import com.example.tphci.ui.home.HomeViewModel
 
 @Composable
 fun ProfileScreen(
-    viewModel: HomeViewModel = viewModel(
-        factory = HomeViewModel.provideFactory(
+    viewModel: ProfileViewModel = viewModel(
+        factory = ProfileViewModel.provideFactory(
             (LocalContext.current.applicationContext as MyApplication).sessionManager,
-            (LocalContext.current.applicationContext as MyApplication).userRepository,
-            (LocalContext.current.applicationContext as MyApplication).shoppingRepository
+            (LocalContext.current.applicationContext as MyApplication).userRepository
         )
     )
 ) {
-
     val uiState = viewModel.uiState
+    var showChangePassword by remember { mutableStateOf(false) }
 
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
+    if (showChangePassword) {
+        ChangePasswordScreen(
+            onPasswordChanged = { showChangePassword = false },
+            onNavigateBack = { showChangePassword = false }
+        )
+        return
+    }
 
     Column(
         modifier = Modifier
@@ -39,52 +40,93 @@ fun ProfileScreen(
             .padding(16.dp),
     ) {
         Text("Perfil", style = MaterialTheme.typography.headlineMedium)
-        Spacer(Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
         if (!uiState.isAuthenticated) {
-            Text("Iniciar sesión", style = MaterialTheme.typography.titleMedium)
-            Spacer(Modifier.height(8.dp))
-
+            Text("No has iniciado sesión", style = MaterialTheme.typography.bodyLarge)
+        } else {
             OutlinedTextField(
-                value = email,
-                onValueChange = { email = it },
-                label = { Text("Email") },
+                value = uiState.name,
+                onValueChange = viewModel::updateName,
+                label = { Text("Nombre") },
                 modifier = Modifier.fillMaxWidth(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
+                enabled = !uiState.isLoading
             )
 
-            Spacer(Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
             OutlinedTextField(
-                value = password,
-                onValueChange = { password = it },
-                label = { Text("Contraseña") },
+                value = uiState.surname,
+                onValueChange = viewModel::updateSurname,
+                label = { Text("Apellido") },
                 modifier = Modifier.fillMaxWidth(),
-                visualTransformation = PasswordVisualTransformation(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
+                enabled = !uiState.isLoading
             )
 
-            Spacer(Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(8.dp))
+
+            OutlinedTextField(
+                value = uiState.email,
+                onValueChange = {},
+                label = { Text("Correo electrónico") },
+                modifier = Modifier.fillMaxWidth(),
+                enabled = false
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            if (uiState.updateSuccess) {
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
+                ) {
+                    Text(
+                        text = "Perfil actualizado correctamente",
+                        modifier = Modifier.padding(16.dp),
+                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
+                }
+            }
+
+            uiState.error?.let {
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer)
+                ) {
+                    Text(
+                        text = "Error al actualizar perfil",
+                        modifier = Modifier.padding(16.dp),
+                        color = MaterialTheme.colorScheme.onErrorContainer
+                    )
+                }
+            }
 
             Button(
-                onClick = { viewModel.login(email, password) },
+                onClick = { viewModel.saveProfile() },
+                modifier = Modifier.fillMaxWidth(),
+                enabled = !uiState.isLoading && uiState.name.isNotBlank() && uiState.surname.isNotBlank()
+            ) {
+                if (uiState.isLoading) {
+                    CircularProgressIndicator(modifier = Modifier.size(16.dp))
+                } else {
+                    Text("Guardar cambios")
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            TextButton(
+                onClick = { showChangePassword = true },
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Iniciar sesión")
+                Text("Cambiar contraseña")
             }
 
-            if (uiState.error != null) {
-                Spacer(Modifier.height(8.dp))
-                Text(
-                    text = "Error: ${uiState.error.message}",
-                    color = MaterialTheme.colorScheme.error,
-                    style = MaterialTheme.typography.bodySmall
-                )
-            }
-        } else {
-            Text("Usuario autenticado correctamente", style = MaterialTheme.typography.bodyLarge)
-            Spacer(Modifier.height(8.dp))
-            Button(
+            TextButton(
                 onClick = { viewModel.logout() },
                 modifier = Modifier.fillMaxWidth()
             ) {

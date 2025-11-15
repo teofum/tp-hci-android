@@ -34,12 +34,15 @@ import androidx.navigation.compose.rememberNavController
 import com.example.tphci.ui.products.ProductScreen
 import com.example.tphci.ui.profile.ProfileScreen
 import com.example.tphci.ui.shareList.ShareListScreen
+import com.example.tphci.ui.shopping_list.ShoppingListItemScreen
 import com.example.tphci.ui.shopping_list.ShoppingListScreen
 
 @Composable
 fun HomeScreen() {
     var currentRoute by remember { mutableStateOf("shopping_list") }
     var showShareScreen by remember { mutableStateOf(false) }
+    var selectedListId by remember { mutableStateOf<Long?>(null) }
+    var showListDetails by remember { mutableStateOf(false) }
 
     Scaffold(
         bottomBar = {
@@ -52,7 +55,10 @@ fun HomeScreen() {
         Box(Modifier.padding(innerPadding)) {
             when (currentRoute) {
                 "shopping_list" -> ShoppingListScreen(
-                    onOpenShareScreen = { showShareScreen = true }
+                    onOpenListDetails = { id ->
+                        selectedListId = id
+                        showListDetails = true
+                    }
                 )
                 "products" -> ProductScreen()
                 "profile" -> ProfileScreen()
@@ -71,6 +77,13 @@ fun HomeScreen() {
                 )
             }
 
+            if (showListDetails && selectedListId != null) {
+                ShoppingListItemScreen(
+                    listId = selectedListId!!,
+                    onClose = { showListDetails = false },
+                    onOpenShareScreen = { showShareScreen = true },
+                )
+            }
         }
     }
 }
