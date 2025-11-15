@@ -1,14 +1,7 @@
 package com.example.tphci.data.network
 
-import com.example.tphci.data.model.Category
-import com.example.tphci.data.model.*
-import com.example.tphci.data.model.Product
-import com.example.tphci.data.model.ShoppingList
-import com.example.tphci.data.model.User
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
-import kotlinx.serialization.json.decodeFromJsonElement
-import kotlinx.serialization.json.encodeToJsonElement
 
 class RemoteDataSource(val apiService: ApiService) {
     val json = Json { ignoreUnknownKeys = true }
