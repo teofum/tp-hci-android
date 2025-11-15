@@ -81,37 +81,6 @@ fun ShoppingListItemScreen(
     }
 
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        Text(
-                            text = currentList?.name ?: "",
-                            fontWeight = FontWeight.SemiBold
-                        )
-                    }
-                },
-                navigationIcon = {
-                    IconButton(onClick = onClose) {
-                        Icon(
-                            imageVector = Icons.Default.Close,
-                            contentDescription = "Cerrar"
-                        )
-                    }
-                },
-                actions = {
-                    IconButton(onClick = { onOpenShareScreen() }) {
-                        Icon(
-                            imageVector = Icons.Default.Share,
-                            contentDescription = "Compartir"
-                        )
-                    }
-                }
-            )
-        },
         floatingActionButton = {
             androidx.compose.material3.FloatingActionButton(
                 onClick = { showAddItemScreen = true },
@@ -129,6 +98,36 @@ fun ShoppingListItemScreen(
                 .padding(innerPadding)
                 .padding(horizontal = 16.dp, vertical = 8.dp),
         ) {
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp, bottom = 16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+
+                IconButton(onClick = onClose) {
+                    Icon(
+                        imageVector = Icons.Default.Close,
+                        contentDescription = "Cerrar"
+                    )
+                }
+
+                Text(
+                    text = currentList?.name ?: "",
+                    fontWeight = FontWeight.SemiBold,
+                    style = MaterialTheme.typography.headlineSmall
+                )
+
+                IconButton(onClick = onOpenShareScreen) {
+                    Icon(
+                        imageVector = Icons.Default.Share,
+                        contentDescription = "Compartir"
+                    )
+                }
+            }
+
 
             OutlinedTextField(
                 value = searchQuery,

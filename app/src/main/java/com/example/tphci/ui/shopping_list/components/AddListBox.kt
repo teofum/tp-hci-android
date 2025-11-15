@@ -49,11 +49,9 @@ fun AddListBox(
     ) {
         Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(24.dp)
+                .fillMaxSize()
                 .background(
-                    Color.White,
-                    shape = RoundedCornerShape(20.dp)
+                    MaterialTheme.colorScheme.background
                 )
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
