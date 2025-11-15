@@ -1,6 +1,7 @@
 package com.example.tphci.ui.products
 
 import com.example.tphci.data.model.Category
+import com.example.tphci.data.model.Error
 import com.example.tphci.data.model.Product
 
 data class ProductUiState(

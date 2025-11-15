@@ -13,7 +13,6 @@ import com.example.tphci.data.model.Error
 import com.example.tphci.data.repository.UserRepository
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import kotlinx.serialization.json.JsonObject
 
 data class SignUpUIState(
     val name: String = "",
@@ -49,18 +48,9 @@ class SignUpViewModel(
         uiState = uiState.copy(password = password)
     }
 
-    fun signUp() = runOnViewModelScope<Result<JsonObject>>(
+    fun signUp() = runOnViewModelScope(
         { userRepository.register(uiState.name, uiState.surname, uiState.email, uiState.password) },
-        { state, result ->
-            result.fold(
-                onSuccess = { _ ->
-                    state.copy(isRegistered = true)
-                },
-                onFailure = { e ->
-                    state.copy(error = handleError(e))
-                }
-            )
-        }
+        { state, result -> state.copy(isRegistered = true) }
     )
 
     fun getRegisteredEmail(): String = uiState.email

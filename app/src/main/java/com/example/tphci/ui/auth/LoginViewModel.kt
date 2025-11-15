@@ -13,8 +13,6 @@ import com.example.tphci.data.model.Error
 import com.example.tphci.data.repository.UserRepository
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.jsonPrimitive
 
 data class LoginUIState(
     val email: String = "",
@@ -40,20 +38,9 @@ class LoginViewModel(
         uiState = uiState.copy(password = password)
     }
 
-    fun login() = runOnViewModelScope<Result<JsonObject>>(
+    fun login() = runOnViewModelScope(
         { userRepository.login(uiState.email, uiState.password) },
-        { state, result ->
-            result.fold(
-                onSuccess = { response ->
-                    val token = response["token"]?.jsonPrimitive?.content.orEmpty()
-                    sessionManager.saveAuthToken(token)
-                    state.copy(isAuthenticated = true)
-                },
-                onFailure = { e ->
-                    state.copy(error = handleError(e))
-                }
-            )
-        }
+        { state, _ -> state.copy(isAuthenticated = true) }
     )
 
     private fun <R> runOnViewModelScope(
