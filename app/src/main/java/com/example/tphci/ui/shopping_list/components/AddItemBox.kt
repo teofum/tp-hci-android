@@ -29,7 +29,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun AddProductBox(
+fun AddItemBox(
     onClose: () -> Unit,
     onAdd: (name: String, categoryId: Int?) -> Unit
 ) {

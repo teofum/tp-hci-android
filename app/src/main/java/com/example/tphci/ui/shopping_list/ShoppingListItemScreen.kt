@@ -40,7 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tphci.MyApplication
 import com.example.tphci.ui.home.HomeViewModel
-import com.example.tphci.ui.shopping_list.components.AddProductBox
+import com.example.tphci.ui.shopping_list.components.AddItemBox
 import com.example.tphci.ui.shopping_list.components.ListItem
 
 
@@ -69,7 +69,7 @@ fun ShoppingListItemScreen(
 
     var groupByCategory by remember { mutableStateOf(false) }
 
-    var showAddProductScreen by remember { mutableStateOf(false) }
+    var showAddItemScreen by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         viewModel.getShoppingLists()
@@ -113,7 +113,7 @@ fun ShoppingListItemScreen(
         },
         floatingActionButton = {
             androidx.compose.material3.FloatingActionButton(
-                onClick = { showAddProductScreen = true }
+                onClick = { showAddItemScreen = true }
             ) {
                 Text("+ Agregar producto")
             }
@@ -203,12 +203,12 @@ fun ShoppingListItemScreen(
             }
         }
 
-        if (showAddProductScreen) {
-            AddProductBox(
-                onClose = { showAddProductScreen = false },
+        if (showAddItemScreen) {
+            AddItemBox(
+                onClose = { showAddItemScreen = false },
                 onAdd = { name, categoryId ->
                     viewModel.addProduct(name, categoryId)
-                    showAddProductScreen = false
+                    showAddItemScreen = false
                 }
             )
         }
