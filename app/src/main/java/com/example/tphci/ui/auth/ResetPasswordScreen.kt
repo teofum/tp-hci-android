@@ -8,16 +8,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tphci.MyApplication
 
 @Composable
-fun SignUpScreen(
-    onSignUpSuccess: (String) -> Unit,
+fun ResetPasswordScreen(
     onNavigateToLogin: () -> Unit,
-    viewModel: SignUpViewModel = viewModel(
-        factory = SignUpViewModel.provideFactory(
+    viewModel: ResetPasswordViewModel = viewModel(
+        factory = ResetPasswordViewModel.provideFactory(
             (LocalContext.current.applicationContext as MyApplication).sessionManager,
             (LocalContext.current.applicationContext as MyApplication).userRepository
         )
@@ -25,9 +25,9 @@ fun SignUpScreen(
 ) {
     val uiState = viewModel.uiState
 
-    LaunchedEffect(uiState.isRegistered) {
-        if (uiState.isRegistered) {
-            onSignUpSuccess(viewModel.getRegisteredEmail())
+    LaunchedEffect(uiState.resetSuccess) {
+        if (uiState.resetSuccess) {
+            onNavigateToLogin()
         }
     }
 
@@ -36,35 +36,22 @@ fun SignUpScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "Creá tu cuenta",
+                text = "Resetear contraseña",
                 style = MaterialTheme.typography.headlineMedium,
+                modifier = Modifier.padding(bottom = 16.dp)
+            )
+
+            Text(
+                text = "Ingresá el código que recibiste por correo y tu nueva contraseña",
+                style = MaterialTheme.typography.bodyMedium,
+                textAlign = TextAlign.Center,
                 modifier = Modifier.padding(bottom = 32.dp)
             )
 
             OutlinedTextField(
-                value = uiState.name,
-                onValueChange = viewModel::updateName,
-                label = { Text("Nombre") },
-                modifier = Modifier.fillMaxWidth(),
-                enabled = !uiState.isLoading
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            OutlinedTextField(
-                value = uiState.surname,
-                onValueChange = viewModel::updateSurname,
-                label = { Text("Apellido") },
-                modifier = Modifier.fillMaxWidth(),
-                enabled = !uiState.isLoading
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            OutlinedTextField(
-                value = uiState.email,
-                onValueChange = viewModel::updateEmail,
-                label = { Text("Correo electrónico") },
+                value = uiState.code,
+                onValueChange = viewModel::updateCode,
+                label = { Text("Código de verificación") },
                 modifier = Modifier.fillMaxWidth(),
                 enabled = !uiState.isLoading
             )
@@ -74,11 +61,36 @@ fun SignUpScreen(
             OutlinedTextField(
                 value = uiState.password,
                 onValueChange = viewModel::updatePassword,
-                label = { Text("Contraseña") },
+                label = { Text("Nueva contraseña") },
                 visualTransformation = PasswordVisualTransformation(),
                 modifier = Modifier.fillMaxWidth(),
                 enabled = !uiState.isLoading
             )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            OutlinedTextField(
+                value = uiState.confirmPassword,
+                onValueChange = viewModel::updateConfirmPassword,
+                label = { Text("Confirmar nueva contraseña") },
+                visualTransformation = PasswordVisualTransformation(),
+                modifier = Modifier.fillMaxWidth(),
+                enabled = !uiState.isLoading
+            )
+
+            val passwordsMatch = uiState.password == uiState.confirmPassword
+            val allFieldsFilled = uiState.code.isNotBlank() && 
+                                uiState.password.isNotBlank() && 
+                                uiState.confirmPassword.isNotBlank()
+
+            if (!passwordsMatch && uiState.confirmPassword.isNotBlank()) {
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = "Las contraseñas no coinciden",
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodySmall
+                )
+            }
 
             uiState.error?.let {
                 Spacer(modifier = Modifier.height(16.dp))
@@ -87,7 +99,7 @@ fun SignUpScreen(
                     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer)
                 ) {
                     Text(
-                        text = "Error al crear la cuenta",
+                        text = "Código inválido o expirado",
                         modifier = Modifier.padding(16.dp),
                         color = MaterialTheme.colorScheme.onErrorContainer
                     )
@@ -98,21 +110,21 @@ fun SignUpScreen(
             }
 
             Button(
-                onClick = { viewModel.signUp() },
+                onClick = { viewModel.resetPassword() },
                 modifier = Modifier.fillMaxWidth(),
-                enabled = !uiState.isLoading && uiState.name.isNotBlank() && uiState.surname.isNotBlank() && uiState.email.isNotBlank() && uiState.password.isNotBlank()
+                enabled = !uiState.isLoading && allFieldsFilled && passwordsMatch
             ) {
                 if (uiState.isLoading) {
                     CircularProgressIndicator(modifier = Modifier.size(16.dp))
                 } else {
-                    Text("Crear Cuenta")
+                    Text("Restablecer contraseña")
                 }
             }
 
             Spacer(modifier = Modifier.height(16.dp))
 
             TextButton(onClick = onNavigateToLogin) {
-                Text("¿Ya tenés una cuenta? Iniciar sesión")
+                Text("Volver al inicio de sesión")
             }
         }
     }
