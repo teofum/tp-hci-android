@@ -3,6 +3,8 @@ package com.example.tphci.ui.shopping_list
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -10,6 +12,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -50,32 +53,45 @@ fun ShoppingListScreen(
         }
     ) { innerPadding ->
 
+
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp)
         ) {
-            Text("Mis Listas", style = MaterialTheme.typography.headlineMedium)
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Spacer(modifier = Modifier.weight(1f))
 
-            Button(onClick = { viewModel.getShoppingLists() }) {
-                Text("Obtener listas")
+                Text(
+                    "Listas",
+                    style = MaterialTheme.typography.headlineMedium
+                )
+
+                Spacer(modifier = Modifier.weight(1f))
+
+                IconButton(onClick = { /* TODO */ }) {
+                    Icon(
+                        imageVector = Icons.Default.Edit,
+                        contentDescription = "Editar listas"
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            Text("Listas empty: ${uiState.shoppingLists.isEmpty()}")
-
-            Text("Listas:")
 
             uiState.shoppingLists.forEach { list ->
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 4.dp)
-                        .clickable { onOpenListDetails(list.id.toLong()) },
-                    colors = CardDefaults.cardColors(
-                        containerColor = Color(0xFFF5F5F5)
-                    )
+                        .clickable { onOpenListDetails(list.id.toLong()) }
                 ) {
                     Column(modifier = Modifier.padding(12.dp)) {
                         Text(list.name, style = MaterialTheme.typography.titleMedium)
