@@ -1,21 +1,16 @@
 package com.example.tphci.ui.home
 
 import android.util.Log
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.tphci.SessionManager
+import com.example.tphci.data.DataSourceException
 import com.example.tphci.data.model.*
-import com.example.tphci.data.model.Error
 import com.example.tphci.data.repository.ShoppingRepository
 import com.example.tphci.data.repository.UserRepository
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-
-import com.example.tphci.data.DataSourceException
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.int
 import kotlinx.serialization.json.jsonArray
@@ -28,25 +23,25 @@ class HomeViewModel(
     private val shoppingRepository: ShoppingRepository
 ) : ViewModel() {
 
-    var uiState by mutableStateOf(HomeUIState(isAuthenticated = sessionManager.loadAuthToken() != null))
-        private set
+//    var uiState by mutableStateOf(HomeUIState(isAuthenticated = sessionManager.loadAuthToken() != null))
+//        private set
 
 
-    fun login(email: String, password: String) = runOnViewModelScope<Result<JsonObject>>(
-        { userRepository.login(email, password) },
-        { state, result ->
-            result.fold(
-                onSuccess = { response ->
-                    val token = response["token"]?.jsonPrimitive?.content.orEmpty()
-                    sessionManager.saveAuthToken(token)
-                    state.copy(isAuthenticated = true, currentUserToken = token)
-                },
-                onFailure = { e ->
-                    state.copy(error = handleError(e), isAuthenticated = false)
-                }
-            )
-        }
-    )
+//    fun login(email: String, password: String) = runOnViewModelScope<Result<JsonObject>>(
+//        { userRepository.login(email, password) },
+//        { state, result ->
+//            result.fold(
+//                onSuccess = { response ->
+//                    val token = response["token"]?.jsonPrimitive?.content.orEmpty()
+//                    sessionManager.saveAuthToken(token)
+//                    state.copy(isAuthenticated = true, currentUserToken = token)
+//                },
+//                onFailure = { e ->
+//                    state.copy(error = handleError(e), isAuthenticated = false)
+//                }
+//            )
+//        }
+//    )
 
     // TODO
 //    fun register(username: String, email: String, password: String) = runOnViewModelScope<Result<RegisterResponse>>(
@@ -64,12 +59,12 @@ class HomeViewModel(
 //        }
 //    )
 
-    fun getProducts() = runOnViewModelScope(
-        { shoppingRepository.getProducts() },
-        { state, products ->
-            state.copy(products = products.toList())
-        }
-    )
+//    fun getProducts() = runOnViewModelScope(
+//        { shoppingRepository.getProducts() },
+//        { state, products ->
+//            state.copy(products = products.toList())
+//        }
+//    )
 
 
     // TODO
@@ -122,7 +117,12 @@ class HomeViewModel(
             }
         )
 
-    fun addShoppingList(name: String, description: String?, recurring: Boolean, metadata: Map<String, Any> = emptyMap()) =
+    fun addShoppingList(
+        name: String,
+        description: String?,
+        recurring: Boolean,
+        metadata: Map<String, Any> = emptyMap()
+    ) =
         runOnViewModelScope<JsonObject>(
             { shoppingRepository.addShoppingList(name, description, recurring, metadata) },
             { state, response ->
@@ -160,7 +160,6 @@ class HomeViewModel(
     }
 
 
-
     companion object {
         private const val TAG = "HomeViewModel"
 
@@ -175,4 +174,4 @@ class HomeViewModel(
             }
         }
     }
-    }
+}

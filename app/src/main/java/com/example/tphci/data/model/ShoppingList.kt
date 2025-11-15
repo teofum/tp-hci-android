@@ -1,18 +1,33 @@
 package com.example.tphci.data.model
 
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.JsonElement
+import com.example.tphci.data.network.model.NetworkMetadata
+import com.example.tphci.data.network.model.NetworkShoppingList
+import java.util.Date
 
-@Serializable
 data class ShoppingList(
     val id: Int,
-    val name: String,
-    val description: String,
-    val recurring: Boolean,
-    val metadata: JsonElement,
-    val createdAt: String,
-    val updatedAt: String,
-    val lastPurchasedAt: String? = null,
-    val owner: JsonElement,
-    val sharedWith: List<JsonElement> // TODO revisar qué devuelve
-)
+    var name: String,
+    var description: String,
+    var recurring: Boolean,
+    var emoji: String,
+    val createdAt: Date,
+    val updatedAt: Date,
+    val lastPurchasedAt: Date?,
+    val owner: User,
+    val sharedWith: List<User>
+) {
+    fun asNetworkModel(): NetworkShoppingList {
+        return NetworkShoppingList(
+            id = id,
+            name = name,
+            description = description,
+            recurring = recurring,
+            metadata = NetworkMetadata(emoji),
+            createdAt = createdAt,
+            updatedAt = updatedAt,
+            lastPurchasedAt = lastPurchasedAt,
+            owner = owner,
+            sharedWith = sharedWith
+        )
+    }
+}

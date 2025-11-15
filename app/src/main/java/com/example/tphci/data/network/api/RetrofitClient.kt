@@ -24,7 +24,6 @@ object RetrofitClient {
         }
 
     private fun buildRetrofit(context: Context): Retrofit {
-
         val httpLoggingInterceptor = HttpLoggingInterceptor()
             .setLevel(HttpLoggingInterceptor.Level.BODY)
 
@@ -44,5 +43,17 @@ object RetrofitClient {
 
     fun getApiService(context: Context): ApiService {
         return getInstance(context).create(ApiService::class.java)
+    }
+
+    fun getUserApiService(context: Context): UserApiService {
+        return getInstance(context).create(UserApiService::class.java)
+    }
+
+    fun getCategoryApiService(context: Context): CategoryApiService {
+        return getInstance(context).create(CategoryApiService::class.java)
+    }
+
+    fun getProductApiService(context: Context): ProductApiService {
+        return getInstance(context).create(ProductApiService::class.java)
     }
 }
