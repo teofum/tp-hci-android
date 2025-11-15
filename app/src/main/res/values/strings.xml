@@ -50,4 +50,19 @@
     <string name="logout">Cerrar sesión</string>
     <string name="profile_updated">Perfil actualizado correctamente</string>
     <string name="profile_update_error">Error al actualizar perfil</string>
+    
+    <!-- Shopping Lists -->
+    <string name="add_list">Agregar Lista</string>
+    <string name="list_name">Nombre de la lista</string>
+    <string name="description">Descripción</string>
+    <string name="recurring">Recurrente</string>
+    <string name="cancel">Cancelar</string>
+    <string name="add">Agregar</string>
+    <string name="add_product">Agregar producto</string>
+    <string name="search_product">Buscar producto</string>
+    <string name="filter">Filtrar</string>
+    <string name="group_by_category">Agrupar por categoría</string>
+    <string name="quantity">Cantidad</string>
+    <string name="unit">Unidad</string>
+    <string name="product">Producto</string>
 </resources>

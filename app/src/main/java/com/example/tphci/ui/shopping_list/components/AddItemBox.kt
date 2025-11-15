@@ -26,7 +26,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.tphci.R
 
 @Composable
 fun AddItemBox(
@@ -55,11 +57,11 @@ fun AddItemBox(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "Agregar item",
+                    text = stringResource(R.string.add_product),
                     style = MaterialTheme.typography.titleLarge
                 )
                 IconButton(onClick = onClose) {
-                    Icon(Icons.Default.Close, contentDescription = "Cerrar")
+                    Icon(Icons.Default.Close, contentDescription = stringResource(R.string.cancel))
                 }
             }
 
@@ -74,13 +76,13 @@ fun AddItemBox(
                 OutlinedTextField(
                     value = cantidad,
                     onValueChange = { cantidad = it },
-                    label = { Text("Cantidad") },
+                    label = { Text(stringResource(R.string.quantity)) },
                     modifier = Modifier.weight(1f)
                 )
                 OutlinedTextField(
                     value = unidad,
                     onValueChange = { unidad = it },
-                    label = { Text("Unidad") },
+                    label = { Text(stringResource(R.string.unit)) },
                     modifier = Modifier.weight(1f)
                 )
             }
@@ -92,7 +94,7 @@ fun AddItemBox(
                 OutlinedTextField(
                     value = producto,
                     onValueChange = { producto = it },
-                    label = { Text("Producto") },
+                    label = { Text(stringResource(R.string.product)) },
                     modifier = Modifier.weight(1f)
                 )
 
@@ -102,12 +104,12 @@ fun AddItemBox(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                TextButton(onClick = onClose) { Text("Cancelar") }
+                TextButton(onClick = onClose) { Text(stringResource(R.string.cancel)) }
 
                 Button(onClick = {
                     onAdd(producto, null)
                 }) {
-                    Text("Agregar")
+                    Text(stringResource(R.string.add))
                 }
             }
         }

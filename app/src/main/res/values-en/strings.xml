@@ -50,4 +50,19 @@
     <string name="logout">Log out</string>
     <string name="profile_updated">Profile updated successfully</string>
     <string name="profile_update_error">Error updating profile</string>
+    
+    <!-- Shopping Lists -->
+    <string name="add_list">Add List</string>
+    <string name="list_name">List name</string>
+    <string name="description">Description</string>
+    <string name="recurring">Recurring</string>
+    <string name="cancel">Cancel</string>
+    <string name="add">Add</string>
+    <string name="add_product">Add product</string>
+    <string name="search_product">Search product</string>
+    <string name="filter">Filter</string>
+    <string name="group_by_category">Group by category</string>
+    <string name="quantity">Quantity</string>
+    <string name="unit">Unit</string>
+    <string name="product">Product</string>
 </resources>
