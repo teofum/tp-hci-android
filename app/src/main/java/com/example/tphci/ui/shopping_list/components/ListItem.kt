@@ -37,7 +37,7 @@ fun ListItem(
                 .size(48.dp)
                 .background(Color(0xFFF1F1F1), RoundedCornerShape(12.dp))
         ) {
-            // TODO image
+            // TODO emoji
         }
 
         Spacer(Modifier.width(12.dp))

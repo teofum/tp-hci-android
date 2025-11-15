@@ -48,7 +48,7 @@ fun ShoppingListScreen(
             FloatingActionButton(
                 onClick = { showAddListBox = true }
             ) {
-                Text("+ Lista")
+                Text("Agregar Lista")
             }
         }
     ) { innerPadding ->
