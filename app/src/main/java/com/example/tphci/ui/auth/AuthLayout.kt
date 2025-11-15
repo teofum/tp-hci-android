@@ -10,7 +10,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.tphci.R
 
 @Composable
 fun AuthLayout(
@@ -34,7 +36,7 @@ fun AuthLayout(
         ) {
             Icon(
                 imageVector = Icons.Outlined.ShoppingBag,
-                contentDescription = "Shopping Bag",
+                contentDescription = stringResource(R.string.shopping_bag),
                 modifier = Modifier.size(64.dp),
                 tint = Color.White
             )

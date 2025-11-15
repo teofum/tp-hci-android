@@ -80,7 +80,7 @@ fun ShoppingListScreen(
                 IconButton(onClick = { /* TODO */ }) {
                     Icon(
                         imageVector = Icons.Default.Edit,
-                        contentDescription = "Editar listas"
+                        contentDescription = stringResource(R.string.edit_lists)
                     )
                 }
             }

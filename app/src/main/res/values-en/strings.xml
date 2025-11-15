@@ -84,4 +84,14 @@
     <string name="search_users">Search users</string>
     <string name="share_list">Share list</string>
     <string name="suggested_users">Suggested users</string>
+    
+    <!-- Content Descriptions -->
+    <string name="shopping_bag">Shopping Bag</string>
+    <string name="edit_lists">Edit lists</string>
+    <string name="share">Share</string>
+    <string name="invalid_or_expired_code">Invalid or expired code</string>
+    <string name="reset_password_description">Enter the code you received by email and your new password</string>
+    <string name="filter_all">All</string>
+    <string name="filter_purchased">Purchased</string>
+    <string name="filter_pending">Pending</string>
 </resources>

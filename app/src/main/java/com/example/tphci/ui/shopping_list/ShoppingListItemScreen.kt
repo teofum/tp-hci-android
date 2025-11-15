@@ -100,7 +100,7 @@ fun ShoppingListItemScreen(
                     IconButton(onClick = onClose) {
                         Icon(
                             imageVector = Icons.Default.Close,
-                            contentDescription = "Cerrar"
+                            contentDescription = stringResource(R.string.close)
                         )
                     }
                 },
@@ -108,7 +108,7 @@ fun ShoppingListItemScreen(
                     IconButton(onClick = { onOpenShareScreen() }) {
                         Icon(
                             imageVector = Icons.Default.Share,
-                            contentDescription = "Compartir"
+                            contentDescription = stringResource(R.string.share)
                         )
                     }
                 }

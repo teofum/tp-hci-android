@@ -84,4 +84,14 @@
     <string name="search_users">Buscar usuarios</string>
     <string name="share_list">Compartir lista</string>
     <string name="suggested_users">Usuarios sugeridos</string>
+    
+    <!-- Content Descriptions -->
+    <string name="shopping_bag">Bolsa de compras</string>
+    <string name="edit_lists">Editar listas</string>
+    <string name="share">Compartir</string>
+    <string name="invalid_or_expired_code">Código inválido o expirado</string>
+    <string name="reset_password_description">Ingresá el código que recibiste por correo y tu nueva contraseña</string>
+    <string name="filter_all">Todos</string>
+    <string name="filter_purchased">Comprados</string>
+    <string name="filter_pending">Pendientes</string>
 </resources>
