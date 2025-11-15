@@ -17,16 +17,19 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.navigation.NavDestination.Companion.hasRoute
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.dialog
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import androidx.window.core.layout.WindowSizeClass
 import com.example.tphci.R
 import com.example.tphci.ui.products.ProductScreen
 import com.example.tphci.ui.profile.ProfileScreen
 import com.example.tphci.ui.shareList.ShareListScreen
+import com.example.tphci.ui.shopping_list.ShoppingListItemScreen
 import com.example.tphci.ui.shopping_list.ShoppingListScreen
 import com.example.tphci.ui.theme.TPHCITheme
 import kotlinx.serialization.Serializable
@@ -43,9 +46,17 @@ object Profile
 @Serializable
 object Share
 
+@Serializable
+data class ShoppingListItem(val listId: Long)
+
+
 @Composable
 fun AdaptiveApp() {
     TPHCITheme {
+
+        val SHOPPING_LIST_ITEM = "shopping_list_item/{listId}"
+        fun shoppingListItem(listId: Long) = "shopping_list_item/$listId"
+
         val adaptiveInfo = currentWindowAdaptiveInfo()
         val customNavSuiteType = with(adaptiveInfo) {
             if (windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)) {
@@ -125,15 +136,33 @@ fun AdaptiveApp() {
         ) {
             NavHost(navController = navController, startDestination = ShoppingLists) {
                 composable<ShoppingLists> {
-                    ShoppingListScreen(onOpenShareScreen = {
-                        navController.navigate(
-                            Share
-                        )
-                    })
+                    ShoppingListScreen(
+                        onOpenListDetails = { listId ->
+                            navController.navigate(ShoppingListItem(listId))
+                        }
+                    )
                 }
                 composable<Products> { ProductScreen() }
                 composable<Profile> { ProfileScreen() }
-                dialog<Share> { // TODO make the dialog fullscreen
+
+
+                composable<ShoppingListItem> { entry ->
+                    val args = entry.arguments!!
+                    val listId = args.getLong("listId")
+                    ShoppingListItemScreen(
+                        listId = listId,
+                        onClose = { navController.popBackStack() },
+                        onOpenShareScreen = {
+                            navController.navigate(
+                                Share
+                            )
+                        }
+                    )
+                }
+
+
+
+                composable<Share> { // TODO make the dialog fullscreen (TODO connect to /shareList)
                     ShareListScreen(
                         selectedUsers = emptyList(),
                         suggestedUsers = emptyList(),

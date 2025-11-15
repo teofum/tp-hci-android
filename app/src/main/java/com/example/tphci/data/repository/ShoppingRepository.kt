@@ -2,6 +2,7 @@ package com.example.tphci.data.repository
 
 import android.util.Log
 import com.example.tphci.data.model.Category
+import com.example.tphci.data.model.Item
 import com.example.tphci.data.model.Product
 import com.example.tphci.data.model.ShoppingList
 import com.example.tphci.data.network.RemoteDataSource
@@ -85,6 +86,22 @@ class ShoppingRepository(private val remoteDataSource: RemoteDataSource) {
             }
         }
     }
+
+    suspend fun getShoppingListItems(id: Long): List<Item> {
+        val response = remoteDataSource.get("shopping-lists/${id}/items")
+        val listsJson = response.jsonObject["data"]?.jsonArray ?: return emptyList()
+
+        return listsJson.mapNotNull { item ->
+            try {
+                json.decodeFromJsonElement<Item>(item)
+            } catch (e: Exception) {
+                Log.e("ShoppingListDecode", "Error decoding: ${e.message}")
+                null
+            }
+        }
+    }
+
+
 
     suspend fun addShoppingList(name: String, description: String?, recurring: Boolean, metadata: Map<String, Any> = emptyMap()): JsonObject {
         val body = buildJsonObject {

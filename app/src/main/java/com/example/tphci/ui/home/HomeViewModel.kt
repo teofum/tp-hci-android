@@ -83,6 +83,15 @@ class HomeViewModel(
         { state, lists -> state.copy(shoppingLists = lists.toList()) }
     )
 
+    fun getShoppingListsItems(id: Long) = runOnViewModelScope(
+        { shoppingRepository.getShoppingListItems(id) },
+        { state, items ->
+            val updatedMap = state.shoppingListItems.toMutableMap()
+            updatedMap[id] = items
+            state.copy(shoppingListItems = updatedMap)
+        }
+    )
+
     fun logout() {
         sessionManager.removeAuthToken()
         uiState = HomeUIState(isAuthenticated = false)
