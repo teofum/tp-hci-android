@@ -6,7 +6,10 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -60,7 +63,6 @@ fun ShoppingListScreen(
     ) { innerPadding ->
 
 
-
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -78,50 +80,88 @@ fun ShoppingListScreen(
 
             uiState.shoppingLists.forEach { list ->
 
+                var expanded by remember { mutableStateOf(false) }
+
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 10.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+
                 ) {
 
-
-                    Box(
-                        modifier = Modifier
-                            .size(48.dp)
-                            .background(Color(0xFFF1F1F1), RoundedCornerShape(12.dp))
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.fillMaxWidth()
                     ) {
-                        // TODO emoji
-                    }
 
-                    Card(
-                        colors = (CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.background
-                        )),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 4.dp)
-                            .clickable { onOpenListDetails(list.id.toLong()) }
-                    ) {
-                        Column(modifier = Modifier.padding(12.dp)) {
-                            Text(list.name, style = MaterialTheme.typography.titleMedium)
-                            Text(list.description, style = MaterialTheme.typography.bodyMedium)
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(48.dp)
+                                    .background(Color(0xFFF1F1F1), RoundedCornerShape(12.dp))
+                            ) {}
+
+                            Card(
+                                colors = CardDefaults.cardColors(
+                                    containerColor = MaterialTheme.colorScheme.background
+                                ),
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .padding(start = 10.dp)
+                                    .clickable { onOpenListDetails(list.id.toLong()) }
+                            ) {
+                                Column(modifier = Modifier.padding(12.dp)) {
+                                    Text(list.name, style = MaterialTheme.typography.titleMedium)
+                                    Text(list.description, style = MaterialTheme.typography.bodyMedium)
+                                }
+                            }
+                        }
+
+                        Box {
+                            IconButton(onClick = { expanded = true }) {
+                                Icon(Icons.Default.MoreVert, contentDescription = "Opciones")
+                            }
+
+                            DropdownMenu(
+                                expanded = expanded,
+                                onDismissRequest = { expanded = false }
+                            ) {
+                                DropdownMenuItem(
+                                    text = { Text("Editar") },
+                                    leadingIcon = { Icon(Icons.Default.Edit, null) },
+                                    onClick = { expanded = false }
+                                )
+                                DropdownMenuItem(
+                                    text = { Text("Compartir") },
+                                    leadingIcon = { Icon(Icons.Default.Share, null) },
+                                    onClick = { expanded = false }
+                                )
+                                DropdownMenuItem(
+                                    text = { Text("Eliminar") },
+                                    leadingIcon = { Icon(Icons.Default.Delete, null) },
+                                    onClick = { expanded = false }
+                                )
+                            }
                         }
                     }
-
                 }
             }
-        }
 
-        if (showAddListBox) {
-            AddListBox(
-                onClose = { showAddListBox = false },
-                onAdd = { name, description, recurring ->
-                    viewModel.addShoppingList(name, description, recurring)
-                    showAddListBox = false
-                }
-            )
-        }
+            if (showAddListBox) {
+                AddListBox(
+                    onClose = { showAddListBox = false },
+                    onAdd = { name, description, recurring ->
+                        viewModel.addShoppingList(name, description, recurring)
+                        showAddListBox = false
+                    }
+                )
+            }
 
+        }
     }
-    }
+}
