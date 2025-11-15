@@ -23,6 +23,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.dialog
 import androidx.navigation.compose.rememberNavController
+import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.navArgument
 import androidx.window.core.layout.WindowSizeClass
 import com.example.tphci.R
@@ -158,7 +159,9 @@ fun AdaptiveApp() {
                     )
                 }
 
-                dialog<Share> { // TODO make the dialog fullscreen
+                dialog<Share>(
+                    dialogProperties = DialogProperties(usePlatformDefaultWidth = false)
+                ) {
                     ShareListScreen(
                         selectedUsers = emptyList(),
                         suggestedUsers = emptyList(),
