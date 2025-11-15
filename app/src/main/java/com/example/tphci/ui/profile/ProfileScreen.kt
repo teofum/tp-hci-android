@@ -10,7 +10,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.tphci.R
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tphci.MyApplication
 
@@ -39,16 +41,16 @@ fun ProfileScreen(
             .fillMaxSize()
             .padding(16.dp),
     ) {
-        Text("Perfil", style = MaterialTheme.typography.headlineMedium)
+        Text(stringResource(R.string.profile), style = MaterialTheme.typography.headlineMedium)
         Spacer(modifier = Modifier.height(16.dp))
 
         if (!uiState.isAuthenticated) {
-            Text("No has iniciado sesión", style = MaterialTheme.typography.bodyLarge)
+            Text(stringResource(R.string.not_logged_in), style = MaterialTheme.typography.bodyLarge)
         } else {
             OutlinedTextField(
                 value = uiState.name,
                 onValueChange = viewModel::updateName,
-                label = { Text("Nombre") },
+                label = { Text(stringResource(R.string.first_name)) },
                 modifier = Modifier.fillMaxWidth(),
                 enabled = !uiState.isLoading
             )
@@ -58,7 +60,7 @@ fun ProfileScreen(
             OutlinedTextField(
                 value = uiState.surname,
                 onValueChange = viewModel::updateSurname,
-                label = { Text("Apellido") },
+                label = { Text(stringResource(R.string.last_name)) },
                 modifier = Modifier.fillMaxWidth(),
                 enabled = !uiState.isLoading
             )
@@ -68,7 +70,7 @@ fun ProfileScreen(
             OutlinedTextField(
                 value = uiState.email,
                 onValueChange = {},
-                label = { Text("Correo electrónico") },
+                label = { Text(stringResource(R.string.email)) },
                 modifier = Modifier.fillMaxWidth(),
                 enabled = false
             )
@@ -83,7 +85,7 @@ fun ProfileScreen(
                     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
                 ) {
                     Text(
-                        text = "Perfil actualizado correctamente",
+                        text = stringResource(R.string.profile_updated),
                         modifier = Modifier.padding(16.dp),
                         color = MaterialTheme.colorScheme.onPrimaryContainer
                     )
@@ -98,7 +100,7 @@ fun ProfileScreen(
                     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer)
                 ) {
                     Text(
-                        text = "Error al actualizar perfil",
+                        text = stringResource(R.string.profile_update_error),
                         modifier = Modifier.padding(16.dp),
                         color = MaterialTheme.colorScheme.onErrorContainer
                     )
@@ -113,7 +115,7 @@ fun ProfileScreen(
                 if (uiState.isLoading) {
                     CircularProgressIndicator(modifier = Modifier.size(16.dp))
                 } else {
-                    Text("Guardar cambios")
+                    Text(stringResource(R.string.save_changes))
                 }
             }
 
@@ -123,14 +125,14 @@ fun ProfileScreen(
                 onClick = { showChangePassword = true },
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Cambiar contraseña")
+                Text(stringResource(R.string.change_password))
             }
 
             TextButton(
                 onClick = { viewModel.logout() },
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Cerrar sesión")
+                Text(stringResource(R.string.logout))
             }
         }
     }

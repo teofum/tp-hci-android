@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">TP HCI</string>
+    
+    <!-- Navigation -->
     <string name="shopping_lists">Lists</string>
     <string name="products">Products</string>
     <string name="profile">Profile</string>
@@ -38,4 +40,12 @@
     <string name="verify_account_description">Enter the verification code we sent to %1$s</string>
     <string name="verify">Verify</string>
     <string name="resend_code">Resend code</string>
+    
+    <!-- Profile Screen -->
+    <string name="not_logged_in">You are not logged in</string>
+    <string name="save_changes">Save changes</string>
+    <string name="change_password">Change password</string>
+    <string name="logout">Log out</string>
+    <string name="profile_updated">Profile updated successfully</string>
+    <string name="profile_update_error">Error updating profile</string>
 </resources>
