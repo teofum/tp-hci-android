@@ -29,3 +29,9 @@ data class NetworkPagedProducts(
     val data: List<NetworkProduct>,
     val pagination: NetworkPaginationMetadata
 )
+
+@Serializable
+data class NetworkPagedShopingLists(
+    val data: List<NetworkShoppingList>,
+    val pagination: NetworkPaginationMetadata
+)

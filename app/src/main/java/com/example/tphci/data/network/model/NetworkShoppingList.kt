@@ -7,6 +7,19 @@ import kotlinx.serialization.Serializable
 import java.util.Date
 
 @Serializable
+data class NetworkPurchaseShoppingList(
+    val metadata: Unit
+)
+
+@Serializable
+data class NetworkNewShoppingList(
+    val name: String,
+    val description: String,
+    val recurring: Boolean,
+    val metadata: NetworkMetadata
+)
+
+@Serializable
 data class NetworkShoppingList(
     val id: Int,
     val name: String,
