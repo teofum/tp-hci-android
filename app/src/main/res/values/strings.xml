@@ -20,12 +20,14 @@
     <string name="first_name">Nombre</string>
     <string name="last_name">Apellido</string>
     <string name="create_account">Crear Cuenta</string>
+    <string name="create_account_error">Error al crear la cuenta</string>
     <string name="already_have_account">¿Ya tenés una cuenta? Iniciar sesión</string>
     
     <!-- ForgotPassword Screen -->
     <string name="forgot_password_title">Recuperá tu contraseña</string>
     <string name="forgot_password_description">Ingresá tu correo electrónico y te enviaremos un código para restablecer tu contraseña</string>
     <string name="send_code">Enviar código</string>
+    <string name="send_code_error">Error al enviar el código</string>
     <string name="back_to_login">Volver al inicio de sesión</string>
     
     <!-- ResetPassword Screen -->
