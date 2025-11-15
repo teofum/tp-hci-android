@@ -55,9 +55,10 @@ fun ProductScreen(
             FloatingActionButton(
                 onClick = { showAddProductScreen = true },
                 containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = MaterialTheme.colorScheme.onPrimary
+                contentColor = MaterialTheme.colorScheme.onPrimary,
+                modifier = Modifier.width(150.dp)
             ) {
-                Text("Agregar Producto")
+                Text("+ Agregar Producto")
             }
         }
     ) { innerPadding ->

@@ -50,9 +50,10 @@ fun ShoppingListScreen(
             FloatingActionButton(
                 onClick = { showAddListBox = true },
                 containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = MaterialTheme.colorScheme.onPrimary
+                contentColor = MaterialTheme.colorScheme.onPrimary,
+                modifier = Modifier.width(150.dp)
             ) {
-                Text("Agregar Lista")
+                Text("+ Agregar Lista")
             }
         }
     ) { innerPadding ->
