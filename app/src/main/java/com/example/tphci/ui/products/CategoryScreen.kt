@@ -1,16 +1,39 @@
-package com.example.tphci.ui.shopping_list
-
+package com.example.tphci.ui.products
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Share
-import androidx.compose.material3.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -20,54 +43,46 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.tphci.MyApplication
+import com.example.tphci.data.model.Category
 import com.example.tphci.data.model.ShoppingList
-import com.example.tphci.ui.home.HomeViewModel
-import com.example.tphci.ui.shopping_list.components.ManageListBox
+import com.example.tphci.ui.products.components.ManageCategoryBox
+import com.example.tphci.ui.shopping_list.components.AddItemBox
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ShoppingListScreen(
-    onOpenShareScreen: () -> Unit,
-    onOpenListDetails: (Long) -> Unit,
-    viewModel: HomeViewModel = viewModel(
-        factory = HomeViewModel.provideFactory(
-            (LocalContext.current.applicationContext as MyApplication).sessionManager,
-            (LocalContext.current.applicationContext as MyApplication).userRepository,
-            (LocalContext.current.applicationContext as MyApplication).shoppingRepository
-        )
-    )
+fun CategoryScreen(
+    categories: List<Category>,
+    onClose: () -> Unit,
+    onAddCategory: (String) -> Unit
 ) {
+    var categoryName by remember { mutableStateOf("") }
 
-    val uiState = viewModel.uiState
+    var showAddItemScreen by remember { mutableStateOf(false) }
 
-    var showAddListBox by remember { mutableStateOf(false) }
-    var showEditListBox by remember { mutableStateOf(false) }
-
-    var editingList by remember { mutableStateOf<ShoppingList?>(null) }
-
+    var showAddCategoryBox by remember { mutableStateOf(false) }
+    var showEditCategoryBox by remember { mutableStateOf(false) }
+    var editingCategory by remember { mutableStateOf<Category?>(null) }
 
 
-    LaunchedEffect(Unit) {
-        viewModel.getShoppingLists()
-    }
+    // TODO api
+//    LaunchedEffect(Unit) {
+//        viewModel.getCategories()
+//    }
 
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { showAddListBox = true },
+                onClick = { showAddCategoryBox = true },
                 containerColor = MaterialTheme.colorScheme.primary,
                 contentColor = MaterialTheme.colorScheme.onPrimary,
                 modifier = Modifier.width(150.dp)
             ) {
-                Text("+ Agregar Lista")
+                Text("+ Agregar categoría")
             }
         }
     ) { innerPadding ->
-
 
         Column(
             modifier = Modifier
@@ -75,7 +90,7 @@ fun ShoppingListScreen(
                 .padding(16.dp)
         ) {
             Text(
-                "Listas",
+                "Categorías",
                 style = MaterialTheme.typography.headlineMedium,
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center
@@ -84,7 +99,7 @@ fun ShoppingListScreen(
             Spacer(modifier = Modifier.height(8.dp))
 
 
-            uiState.shoppingLists.forEach { list ->
+            categories.forEach { category ->
 
                 var expanded by remember { mutableStateOf(false) }
 
@@ -119,11 +134,16 @@ fun ShoppingListScreen(
                                 modifier = Modifier
                                     .weight(1f)
                                     .padding(start = 10.dp)
-                                    .clickable { onOpenListDetails(list.id.toLong()) }
                             ) {
                                 Column(modifier = Modifier.padding(12.dp)) {
-                                    Text(list.name, style = MaterialTheme.typography.titleMedium)
-                                    Text(list.description, style = MaterialTheme.typography.bodyMedium)
+                                    Text(
+                                        category.name ?: "Sin nombre",
+                                        style = MaterialTheme.typography.titleMedium
+                                    )
+                                    Text(
+                                        "${0} productos",
+                                        style = MaterialTheme.typography.bodyMedium
+                                    ) // TODO cantidad de productos por categ, tal vez está la función ya
                                 }
                             }
                         }
@@ -142,16 +162,8 @@ fun ShoppingListScreen(
                                     leadingIcon = { Icon(Icons.Default.Edit, null) },
                                     onClick = {
                                         expanded = false
-                                        showEditListBox = true
-                                        editingList = list
-                                    }
-                                )
-                                DropdownMenuItem(
-                                    text = { Text("Compartir") },
-                                    leadingIcon = { Icon(Icons.Default.Share, null) },
-                                    onClick = {
-                                        expanded = false
-                                        onOpenShareScreen()
+                                        showEditCategoryBox = true
+                                        editingCategory = category
                                     }
                                 )
                                 DropdownMenuItem(
@@ -164,37 +176,33 @@ fun ShoppingListScreen(
                     }
                 }
             }
+
         }
 
-        if (showAddListBox) {
-            ManageListBox(
-                title = "Agregar lista",
+        if (showAddCategoryBox) {
+            ManageCategoryBox(
+                title = "Agregar categoría",
                 confirmButtonText = "Agregar",
-                onClose = { showAddListBox = false },
-                onConfirm = { name, description, recurring ->
-                    viewModel.addShoppingList(name, description, recurring) // TODO API
-                    showAddListBox = false
+                onClose = { showAddCategoryBox = false },
+                onConfirm = { name ->
+                    onAddCategory(name) // TODO API
+                    showAddCategoryBox = false
                 }
             )
         }
 
-        if (showEditListBox && editingList != null) {
-            ManageListBox(
-                title = "Editar lista",
-                initialName = editingList!!.name,
-                initialDescription = editingList!!.description,
-                initialRecurring = editingList!!.recurring,
+        if (showEditCategoryBox && editingCategory != null) {
+            ManageCategoryBox(
+                title = "Editar categoría",
+                initialName = editingCategory!!.name ?: "",
                 confirmButtonText = "Guardar",
-                onClose = {
-                    showEditListBox = false
-                    editingList = null
-                },
-                onConfirm = { name, description, recurring ->
-                    viewModel.addShoppingList(name, description, recurring) // TODO API
-                    showEditListBox = false
-                    editingList = null
+                onClose = { showEditCategoryBox = false },
+                onConfirm = { newName ->
+                    // TODO API updateCategory(editingCategory!!.id, newName)
+                    showEditCategoryBox = false
                 }
             )
         }
+
     }
-}
+    }

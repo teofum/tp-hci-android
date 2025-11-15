@@ -20,10 +20,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tphci.MyApplication
+import com.example.tphci.data.model.Category
 import com.example.tphci.ui.home.HomeViewModel
 import com.example.tphci.ui.products.components.AddProductBox
-import com.example.tphci.ui.products.components.ManageCategoriesBox
+import com.example.tphci.ui.products.components.ManageCategoryBox
 import com.example.tphci.ui.shopping_list.components.AddItemBox
+import kotlinx.serialization.json.JsonNull
 
 @Composable
 fun ProductScreen(
@@ -48,7 +50,7 @@ fun ProductScreen(
 
     val productSearch = remember { mutableStateOf("") }
 
-    var showManageCategoriesBox by remember { mutableStateOf(false) }
+    var showCategoryScreen by remember { mutableStateOf(false) }
 
 
     Scaffold(
@@ -92,7 +94,7 @@ fun ProductScreen(
 
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.clickable { showManageCategoriesBox = true }
+                    modifier = Modifier.clickable { showCategoryScreen = true }
                 ) {
                     Text(
                         "Administrar categorías",
@@ -158,12 +160,32 @@ fun ProductScreen(
         )
     }
 
-    if (showManageCategoriesBox) {
-        ManageCategoriesBox(
-            onClose = { showManageCategoriesBox = false },
+
+    // TODO api, hardcoded
+    val hardcodedCategories = listOf(
+        Category(
+            id = 1,
+            name = "Alimentos",
+            metadata = JsonNull,
+            createdAt = "2025-01-10T12:00:00Z",
+            updatedAt = "2025-01-10T12:00:00Z"
+        ),
+        Category(
+            id = 2,
+            name = "Limpieza",
+            metadata = JsonNull,
+            createdAt = "2025-01-11T15:30:00Z",
+            updatedAt = "2025-01-11T15:30:00Z"
+        )
+    )
+
+    if (showCategoryScreen) {
+        CategoryScreen(
+            categories = hardcodedCategories, // TODO api, hardcoded
+            onClose = { showCategoryScreen = false },
             onAddCategory = { name ->
                 //viewModel.addCategory(name) // TODO api
-                showManageCategoriesBox = false
+                showCategoryScreen = false
             }
         )
     }
