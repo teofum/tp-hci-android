@@ -137,11 +137,6 @@ fun AdaptiveApp() {
             NavHost(navController = navController, startDestination = ShoppingLists) {
                 composable<ShoppingLists> {
                     ShoppingListScreen(
-                        onOpenShareScreen = {
-                            navController.navigate(
-                                Share
-                            )
-                        },
                         onOpenListDetails = { listId ->
                             navController.navigate(ShoppingListItem(listId))
                         }
@@ -156,7 +151,12 @@ fun AdaptiveApp() {
                     val listId = args.getLong("listId")
                     ShoppingListItemScreen(
                         listId = listId,
-                        onClose = { navController.popBackStack() }
+                        onClose = { navController.popBackStack() },
+                        onOpenShareScreen = {
+                            navController.navigate(
+                                Share
+                            )
+                        }
                     )
                 }
 

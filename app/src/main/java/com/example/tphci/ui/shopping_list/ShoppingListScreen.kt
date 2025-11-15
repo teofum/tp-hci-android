@@ -21,7 +21,6 @@ import com.example.tphci.ui.shopping_list.components.AddListBox
 
 @Composable
 fun ShoppingListScreen(
-    onOpenShareScreen: () -> Unit,
     onOpenListDetails: (Long) -> Unit,
     viewModel: HomeViewModel = viewModel(
         factory = HomeViewModel.provideFactory(
@@ -58,64 +57,6 @@ fun ShoppingListScreen(
         ) {
             Text("Mis Listas", style = MaterialTheme.typography.headlineMedium)
 
-
-            // TODO share list
-            Button(
-                onClick = { onOpenShareScreen() },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("Compartir lista")
-            }
-
-
-            // agregar lista
-            val listName = remember { mutableStateOf("") }
-            val listDescription = remember { mutableStateOf("") }
-            val recurring = remember { mutableStateOf(false) }
-
-
-            OutlinedTextField(
-                value = listName.value,
-                onValueChange = { listName.value = it },
-                label = { Text("Nombre de la lista") },
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            OutlinedTextField(
-                value = listDescription.value,
-                onValueChange = { listDescription.value = it },
-                label = { Text("Descriptión de la lista") },
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text("Recurrente")
-                Switch(
-                    checked = recurring.value,
-                    onCheckedChange = { recurring.value = it },
-                    colors = SwitchDefaults.colors(checkedThumbColor = Color.Green)
-                )
-            }
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Button(onClick = {
-                viewModel.addShoppingList(
-                    name = listName.value,
-                    description = listDescription.value,
-                    recurring = recurring.value
-                )
-            }) {
-                Text("Agregar lista")
-            }
-
-
-            // listas
             Button(onClick = { viewModel.getShoppingLists() }) {
                 Text("Obtener listas")
             }
@@ -142,7 +83,6 @@ fun ShoppingListScreen(
                     }
                 }
             }
-
         }
 
         if (showAddListBox) {

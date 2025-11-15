@@ -33,7 +33,6 @@ fun HomeScreen() {
         Box(Modifier.padding(innerPadding)) {
             when (currentRoute) {
                 "shopping_list" -> ShoppingListScreen(
-                    onOpenShareScreen = { showShareScreen = true },
                     onOpenListDetails = { id ->
                         selectedListId = id
                         showListDetails = true
@@ -59,7 +58,8 @@ fun HomeScreen() {
             if (showListDetails && selectedListId != null) {
                 ShoppingListItemScreen(
                     listId = selectedListId!!,
-                    onClose = { showListDetails = false }
+                    onClose = { showListDetails = false },
+                    onOpenShareScreen = { showShareScreen = true },
                 )
             }
 

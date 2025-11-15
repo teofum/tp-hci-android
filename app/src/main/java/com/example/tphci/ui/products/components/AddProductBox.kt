@@ -12,6 +12,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -28,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddProductBox(
     onClose: () -> Unit,
@@ -63,24 +68,19 @@ fun AddProductBox(
                 }
             }
 
-            var cantidad by remember { mutableStateOf("1") }
-            var unidad by remember { mutableStateOf("") }
             var producto by remember { mutableStateOf("") }
+            var categoryExpanded by remember { mutableStateOf(false) }
+            var selectedCategory by remember { mutableStateOf("") }
+            val categoryOptions = listOf("Categ0", "Categ1") // TODO hardcoded fetch API
 
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier.fillMaxWidth()
             ) {
                 OutlinedTextField(
-                    value = cantidad,
-                    onValueChange = { cantidad = it },
-                    label = { Text("Cantidad") },
-                    modifier = Modifier.weight(1f)
-                )
-                OutlinedTextField(
-                    value = unidad,
-                    onValueChange = { unidad = it },
-                    label = { Text("Unidad") },
+                    value = producto,
+                    onValueChange = { producto = it },
+                    label = { Text("Producto") },
                     modifier = Modifier.weight(1f)
                 )
             }
@@ -89,12 +89,37 @@ fun AddProductBox(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                OutlinedTextField(
-                    value = producto,
-                    onValueChange = { producto = it },
-                    label = { Text("Producto") },
-                    modifier = Modifier.weight(1f)
-                )
+                ExposedDropdownMenuBox(
+                    expanded = categoryExpanded,
+                    onExpandedChange = { categoryExpanded = !categoryExpanded },
+                    modifier = Modifier.weight(0.8f),
+                ) {
+                    OutlinedTextField(
+                        value = selectedCategory,
+                        onValueChange = {},
+                        readOnly = true,
+                        label = { Text("Categoría") },
+                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = categoryExpanded) },
+                        modifier = Modifier
+                            .menuAnchor()
+                            .fillMaxWidth()
+                    )
+
+                    ExposedDropdownMenu(
+                        expanded = categoryExpanded,
+                        onDismissRequest = { categoryExpanded = false }
+                    ) {
+                        categoryOptions.forEach { option ->
+                            DropdownMenuItem(
+                                text = { Text(option) },
+                                onClick = {
+                                    selectedCategory = option
+                                    categoryExpanded = false
+                                }
+                            )
+                        }
+                    }
+                }
 
             }
 

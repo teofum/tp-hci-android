@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tphci.MyApplication
 import com.example.tphci.ui.home.HomeViewModel
+import com.example.tphci.ui.products.components.AddProductBox
 import com.example.tphci.ui.shopping_list.components.AddItemBox
 
 @Composable
@@ -33,7 +34,7 @@ fun ProductScreen(
 
     var showAddProductScreen by remember { mutableStateOf(false) }
 
-
+    val productSearch = remember { mutableStateOf("") }
 
     Scaffold(
         floatingActionButton = {
@@ -53,31 +54,14 @@ fun ProductScreen(
             val categoryIdInput = remember { mutableStateOf("") }
 
 
+
             OutlinedTextField(
-                value = productName.value,
-                onValueChange = { productName.value = it },
-                label = { Text("Nombre del producto") },
+                value = productSearch.value,
+                onValueChange = { productSearch.value = it },
+                label = { Text("Nombre de la lista") },
                 modifier = Modifier.fillMaxWidth()
             )
 
-            OutlinedTextField(
-                value = categoryIdInput.value,
-                onValueChange = { categoryIdInput.value = it },
-                label = { Text("ID de categoría") },
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Button(onClick = {
-                val name = productName.value
-                val categoryId = categoryIdInput.value.toIntOrNull()
-                viewModel.addProduct(name = name, categoryId = categoryId)
-            }) {
-                Text("Agregar producto")
-            }
-
-            Spacer(modifier = Modifier.width(12.dp))
 
             Row(
                 verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
@@ -114,7 +98,7 @@ fun ProductScreen(
     }
 
     if (showAddProductScreen) {
-        AddItemBox(
+        AddProductBox(
             onClose = { showAddProductScreen = false },
             onAdd = { name, categoryId ->
                 viewModel.addProduct(name, categoryId)

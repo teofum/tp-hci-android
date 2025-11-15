@@ -47,6 +47,7 @@ import com.example.tphci.ui.shopping_list.components.ListItem
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ShoppingListItemScreen(
+    onOpenShareScreen: () -> Unit,
     listId: Long,
     onClose: () -> Unit,
     viewModel: HomeViewModel = viewModel(
@@ -102,7 +103,7 @@ fun ShoppingListItemScreen(
                     }
                 },
                 actions = {
-                    IconButton(onClick = { /* TODO */ }) {
+                    IconButton(onClick = { onOpenShareScreen() }) {
                         Icon(
                             imageVector = Icons.Default.Share,
                             contentDescription = "Compartir"
