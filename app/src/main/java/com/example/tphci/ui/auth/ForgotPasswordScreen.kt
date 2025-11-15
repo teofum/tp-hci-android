@@ -6,18 +6,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tphci.MyApplication
 
 @Composable
-fun SignUpScreen(
-    onSignUpSuccess: (String) -> Unit,
+fun ForgotPasswordScreen(
+    onEmailSent: () -> Unit,
     onNavigateToLogin: () -> Unit,
-    viewModel: SignUpViewModel = viewModel(
-        factory = SignUpViewModel.provideFactory(
+    viewModel: ForgotPasswordViewModel = viewModel(
+        factory = ForgotPasswordViewModel.provideFactory(
             (LocalContext.current.applicationContext as MyApplication).sessionManager,
             (LocalContext.current.applicationContext as MyApplication).userRepository
         )
@@ -25,9 +26,9 @@ fun SignUpScreen(
 ) {
     val uiState = viewModel.uiState
 
-    LaunchedEffect(uiState.isRegistered) {
-        if (uiState.isRegistered) {
-            onSignUpSuccess(viewModel.getRegisteredEmail())
+    LaunchedEffect(uiState.emailSent) {
+        if (uiState.emailSent) {
+            onEmailSent()
         }
     }
 
@@ -36,46 +37,22 @@ fun SignUpScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "Creá tu cuenta",
+                text = "Recuperá tu contraseña",
                 style = MaterialTheme.typography.headlineMedium,
+                modifier = Modifier.padding(bottom = 16.dp)
+            )
+
+            Text(
+                text = "Ingresá tu correo electrónico y te enviaremos un código para restablecer tu contraseña",
+                style = MaterialTheme.typography.bodyMedium,
+                textAlign = TextAlign.Center,
                 modifier = Modifier.padding(bottom = 32.dp)
             )
-
-            OutlinedTextField(
-                value = uiState.name,
-                onValueChange = viewModel::updateName,
-                label = { Text("Nombre") },
-                modifier = Modifier.fillMaxWidth(),
-                enabled = !uiState.isLoading
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            OutlinedTextField(
-                value = uiState.surname,
-                onValueChange = viewModel::updateSurname,
-                label = { Text("Apellido") },
-                modifier = Modifier.fillMaxWidth(),
-                enabled = !uiState.isLoading
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
 
             OutlinedTextField(
                 value = uiState.email,
                 onValueChange = viewModel::updateEmail,
                 label = { Text("Correo electrónico") },
-                modifier = Modifier.fillMaxWidth(),
-                enabled = !uiState.isLoading
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            OutlinedTextField(
-                value = uiState.password,
-                onValueChange = viewModel::updatePassword,
-                label = { Text("Contraseña") },
-                visualTransformation = PasswordVisualTransformation(),
                 modifier = Modifier.fillMaxWidth(),
                 enabled = !uiState.isLoading
             )
@@ -87,7 +64,7 @@ fun SignUpScreen(
                     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer)
                 ) {
                     Text(
-                        text = "Error al crear la cuenta",
+                        text = "Error al enviar el código",
                         modifier = Modifier.padding(16.dp),
                         color = MaterialTheme.colorScheme.onErrorContainer
                     )
@@ -98,21 +75,21 @@ fun SignUpScreen(
             }
 
             Button(
-                onClick = { viewModel.signUp() },
+                onClick = { viewModel.sendResetEmail() },
                 modifier = Modifier.fillMaxWidth(),
-                enabled = !uiState.isLoading && uiState.name.isNotBlank() && uiState.surname.isNotBlank() && uiState.email.isNotBlank() && uiState.password.isNotBlank()
+                enabled = !uiState.isLoading && uiState.email.isNotBlank()
             ) {
                 if (uiState.isLoading) {
                     CircularProgressIndicator(modifier = Modifier.size(16.dp))
                 } else {
-                    Text("Crear Cuenta")
+                    Text("Enviar código")
                 }
             }
 
             Spacer(modifier = Modifier.height(16.dp))
 
             TextButton(onClick = onNavigateToLogin) {
-                Text("¿Ya tenés una cuenta? Iniciar sesión")
+                Text("Volver al inicio de sesión")
             }
         }
     }
