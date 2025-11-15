@@ -25,4 +25,11 @@
     <string name="forgot_password_description">Ingresá tu correo electrónico y te enviaremos un código para restablecer tu contraseña</string>
     <string name="send_code">Enviar código</string>
     <string name="back_to_login">Volver al inicio de sesión</string>
+    
+    <!-- ResetPassword Screen -->
+    <string name="reset_password_title">Resetear contraseña</string>
+    <string name="verification_code">Código de verificación</string>
+    <string name="new_password">Nueva contraseña</string>
+    <string name="confirm_password">Confirmar nueva contraseña</string>
+    <string name="reset_password">Restablecer contraseña</string>
 </resources>
