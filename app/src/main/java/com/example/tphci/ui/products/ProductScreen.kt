@@ -55,7 +55,7 @@ fun ProductScreen(
             FloatingActionButton(
                 onClick = { showAddProductScreen = true }
             ) {
-                Text("+ Producto")
+                Text("Agregar Producto")
             }
         }
     ) { innerPadding ->

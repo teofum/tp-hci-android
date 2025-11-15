@@ -116,7 +116,7 @@ fun ShoppingListItemScreen(
             androidx.compose.material3.FloatingActionButton(
                 onClick = { showAddItemScreen = true }
             ) {
-                Text("+ Agregar producto")
+                Text("Agregar producto")
             }
         }
     ) { innerPadding ->
