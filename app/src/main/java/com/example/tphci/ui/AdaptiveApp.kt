@@ -137,6 +137,11 @@ fun AdaptiveApp() {
             NavHost(navController = navController, startDestination = ShoppingLists) {
                 composable<ShoppingLists> {
                     ShoppingListScreen(
+                        onOpenShareScreen = {
+                            navController.navigate(
+                                Share
+                            )
+                        },
                         onOpenListDetails = { listId ->
                             navController.navigate(ShoppingListItem(listId))
                         }

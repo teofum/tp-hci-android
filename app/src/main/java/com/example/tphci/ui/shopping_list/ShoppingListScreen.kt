@@ -25,11 +25,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tphci.MyApplication
+import com.example.tphci.data.model.ShoppingList
 import com.example.tphci.ui.home.HomeViewModel
 import com.example.tphci.ui.shopping_list.components.AddListBox
+import com.example.tphci.ui.shopping_list.components.EditListBox
 
 @Composable
 fun ShoppingListScreen(
+    onOpenShareScreen: () -> Unit,
     onOpenListDetails: (Long) -> Unit,
     viewModel: HomeViewModel = viewModel(
         factory = HomeViewModel.provideFactory(
@@ -43,6 +46,10 @@ fun ShoppingListScreen(
     val uiState = viewModel.uiState
 
     var showAddListBox by remember { mutableStateOf(false) }
+    var showEditListBox by remember { mutableStateOf(false) }
+
+    var editingList by remember { mutableStateOf<ShoppingList?>(null) }
+
 
 
     LaunchedEffect(Unit) {
@@ -134,17 +141,24 @@ fun ShoppingListScreen(
                                 DropdownMenuItem(
                                     text = { Text("Editar") },
                                     leadingIcon = { Icon(Icons.Default.Edit, null) },
-                                    onClick = { expanded = false }
+                                    onClick = {
+                                        expanded = false
+                                        showEditListBox = true
+                                        editingList = list
+                                    }
                                 )
                                 DropdownMenuItem(
                                     text = { Text("Compartir") },
                                     leadingIcon = { Icon(Icons.Default.Share, null) },
-                                    onClick = { expanded = false }
+                                    onClick = {
+                                        expanded = false
+                                        onOpenShareScreen()
+                                    }
                                 )
                                 DropdownMenuItem(
                                     text = { Text("Eliminar") },
                                     leadingIcon = { Icon(Icons.Default.Delete, null) },
-                                    onClick = { expanded = false }
+                                    onClick = { expanded = false } // TODO api
                                 )
                             }
                         }
@@ -156,8 +170,24 @@ fun ShoppingListScreen(
                 AddListBox(
                     onClose = { showAddListBox = false },
                     onAdd = { name, description, recurring ->
-                        viewModel.addShoppingList(name, description, recurring)
+                        viewModel.addShoppingList(name, description, recurring) // TODO api
                         showAddListBox = false
+                    }
+                )
+            }
+
+            if (showEditListBox && editingList != null) {
+                EditListBox(
+                    initialName = editingList!!.name,
+                    initialDescription = editingList!!.description,
+                    initialRecurring = editingList!!.recurring,
+                    onClose = {
+                        showEditListBox = false
+                        editingList = null
+                    },
+                    onEdit = { name, description, recurring ->
+                        viewModel.addShoppingList(name, description, recurring) // TODO api
+                        showEditListBox = false
                     }
                 )
             }
