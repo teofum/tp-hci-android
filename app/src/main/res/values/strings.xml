@@ -71,4 +71,11 @@
     <string name="new_category">Nueva categoría</string>
     <string name="category">Categoría</string>
     <string name="close">Cerrar</string>
+    
+    <!-- ChangePassword Screen -->
+    <string name="current_password">Contraseña actual</string>
+    <string name="password_changed_success">Contraseña cambiada correctamente</string>
+    <string name="password_change_error">Error al cambiar contraseña</string>
+    <string name="passwords_dont_match">Las contraseñas no coinciden</string>
+    <string name="back_to_profile">Volver al perfil</string>
 </resources>
