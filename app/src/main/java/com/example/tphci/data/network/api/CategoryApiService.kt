@@ -2,7 +2,7 @@ package com.example.tphci.data.network.api
 
 import com.example.tphci.data.network.model.NetworkCategory
 import com.example.tphci.data.network.model.NetworkNewCategory
-import com.example.tphci.data.network.model.NetworkPagedData
+import com.example.tphci.data.network.model.NetworkPagedCategories
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -16,7 +16,7 @@ interface CategoryApiService {
     suspend fun createCategory(@Body categoryData: NetworkNewCategory): Response<NetworkCategory>
 
     @GET("categories")
-    suspend fun getCategories(): Response<NetworkPagedData<NetworkCategory>>
+    suspend fun getCategories(): Response<NetworkPagedCategories>
 
     @PUT("categories/{id}")
     suspend fun updateCategory(

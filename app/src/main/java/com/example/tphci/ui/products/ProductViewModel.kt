@@ -32,26 +32,7 @@ class ProductViewModel(
     val uiState: StateFlow<ProductUiState> = _uiState.asStateFlow()
 
     private var pollingJob: Job? = null
-    private val pollingIntervalMs = 1000L // 1 seconds
-
-    fun login(username: String, password: String) = runOnViewModelScope(
-        { userRepository.login(username, password) },
-        { state, _ -> state.copy(isAuthenticated = true) }
-    )
-
-    fun logout() = runOnViewModelScope(
-        {
-            stopPolling()
-            userRepository.logout()
-        },
-        { state, _ ->
-            state.copy(
-                isAuthenticated = false,
-                categories = emptyList(),
-                products = emptyList(),
-            )
-        }
-    )
+    private val pollingIntervalMs = 5000L
 
     fun createCategory(category: Category) = runOnViewModelScope(
         { categoryRepository.createCategory(category) },
@@ -71,12 +52,13 @@ class ProductViewModel(
         pollingJob = viewModelScope.launch {
             while (true) {
                 try {
-                    // Fetch categories
                     val categories = categoryRepository.getCategories()
+                    val products = productRepository.getProducts()
 
                     _uiState.update { currentState ->
                         currentState.copy(
                             categories = categories,
+                            products = products,
                             error = null
                         )
                     }
@@ -105,10 +87,12 @@ class ProductViewModel(
             _uiState.update { it.copy(isFetching = true, error = null) }
             try {
                 val categories = categoryRepository.getCategories()
+                val products = productRepository.getProducts()
 
                 _uiState.update { currentState ->
                     currentState.copy(
                         categories = categories,
+                        products = products,
                         isFetching = false,
                         error = null
                     )

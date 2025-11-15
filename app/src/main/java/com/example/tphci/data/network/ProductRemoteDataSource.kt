@@ -2,7 +2,6 @@ package com.example.tphci.data.network
 
 import com.example.tphci.data.network.api.ProductApiService
 import com.example.tphci.data.network.model.NetworkNewProduct
-import com.example.tphci.data.network.model.NetworkPagedData
 import com.example.tphci.data.network.model.NetworkProduct
 
 class ProductRemoteDataSource(
@@ -15,7 +14,7 @@ class ProductRemoteDataSource(
     }
 
     suspend fun getProducts(): List<NetworkProduct> {
-        val response: NetworkPagedData<NetworkProduct> = handleApiResponse {
+        val response = handleApiResponse {
             productApiService.getProducts()
         }
 

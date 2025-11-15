@@ -75,7 +75,7 @@ fun ProductScreen(
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            Text("Productos", style = MaterialTheme.typography.headlineMedium)
+            Text("Productos aa", style = MaterialTheme.typography.headlineMedium)
 
             OutlinedTextField(
                 value = productSearch.value,

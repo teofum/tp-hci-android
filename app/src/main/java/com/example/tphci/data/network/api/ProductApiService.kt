@@ -1,7 +1,7 @@
 package com.example.tphci.data.network.api
 
 import com.example.tphci.data.network.model.NetworkNewProduct
-import com.example.tphci.data.network.model.NetworkPagedData
+import com.example.tphci.data.network.model.NetworkPagedProducts
 import com.example.tphci.data.network.model.NetworkProduct
 import retrofit2.Response
 import retrofit2.http.Body
@@ -16,7 +16,7 @@ interface ProductApiService {
     suspend fun createProduct(@Body productData: NetworkNewProduct): Response<NetworkProduct>
 
     @GET("products")
-    suspend fun getProducts(): Response<NetworkPagedData<NetworkProduct>>
+    suspend fun getProducts(): Response<NetworkPagedProducts>
 
     @PUT("products/{id}")
     suspend fun updateProduct(

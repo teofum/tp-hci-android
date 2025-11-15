@@ -8,6 +8,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.kotlinx.serialization.asConverterFactory
+import java.util.Date
 
 object RetrofitClient {
     // No usar localhost o la IP 127.0.0.1 porque es la interfaz de loopback
@@ -32,7 +33,12 @@ object RetrofitClient {
             .addInterceptor(httpLoggingInterceptor)
             .build()
 
-        val json = Json { ignoreUnknownKeys = true }
+        val json = Json {
+            ignoreUnknownKeys = true
+            serializersModule = kotlinx.serialization.modules.SerializersModule {
+                contextual(Date::class, DateSerializer)
+            }
+        }
 
         return Retrofit.Builder()
             .baseUrl(BASE_URL)

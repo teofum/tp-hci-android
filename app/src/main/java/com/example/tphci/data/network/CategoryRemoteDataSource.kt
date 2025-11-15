@@ -3,7 +3,6 @@ package com.example.tphci.data.network
 import com.example.tphci.data.network.api.CategoryApiService
 import com.example.tphci.data.network.model.NetworkCategory
 import com.example.tphci.data.network.model.NetworkNewCategory
-import com.example.tphci.data.network.model.NetworkPagedData
 
 class CategoryRemoteDataSource(
     private val categoryApiService: CategoryApiService
@@ -15,7 +14,7 @@ class CategoryRemoteDataSource(
     }
 
     suspend fun getCategories(): List<NetworkCategory> {
-        val response: NetworkPagedData<NetworkCategory> = handleApiResponse {
+        val response = handleApiResponse {
             categoryApiService.getCategories()
         }
 
