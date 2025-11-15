@@ -1,20 +1,24 @@
 package com.example.tphci.data.repository
 
+import com.example.tphci.data.model.User
 import com.example.tphci.data.network.RemoteDataSource
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.decodeFromJsonElement
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
-import com.example.tphci.data.model.User
+import kotlinx.serialization.json.put
+
 
 class ShareRepository(private val remoteDataSource: RemoteDataSource) {
     private val json = Json { ignoreUnknownKeys = true }
 
-    suspend fun getShared(): List<User> {
-        val response = remoteDataSource.get("shared")// H
-        val sharedJson = response.jsonObject["data"]?.jsonArray ?: return emptyList()
+    suspend fun getSharedUsers(listId: Int): List<User> {
+        val response = remoteDataSource.get("shopping-lists/$listId/shared-users")
+        val usersJson = response.jsonObject["data"]?.jsonArray ?: return emptyList()
 
-        return sharedJson.mapNotNull { element ->
+        return usersJson.mapNotNull { element ->
             try {
                 json.decodeFromJsonElement<User>(element)
             } catch (e: Exception) {
@@ -22,22 +26,26 @@ class ShareRepository(private val remoteDataSource: RemoteDataSource) {
             }
         }
     }
-}
 
-/*
-TODO: la lista de compartidos esta en la llamada de cada lista
-      "ShoppingList": {
-        "type": "object",
-        "properties": {
-          "id": { "type": "integer", "format": "int64" },
-          "name": { "type": "string", "maxLength": 100 },
-          "description": { "type": "string" },
-          "recurring": { "type": "boolean" },
-          "metadata": { "type": "object"},
-          "owner": { "$ref": "#/definitions/User" },
-          "sharedWith": [], <----------------------------------"ACA"/////////////
-          "lastPurchasedAt": { "type": "string", "format": "YYYY-mm-dd HH:MM:SS", "nullable": true },
-          "createdAt": { "type": "string", "format": "YYYY-mm-dd HH:MM:SS" },
-          "updatedAt": { "type": "string", "format": "YYYY-mm-dd HH:MM:SS" }
-        },
- */
+
+
+    suspend fun shareList(listId: Int, email: String): JsonObject {
+
+        val body = buildJsonObject { put("email", email) }
+
+        val response = remoteDataSource.post(
+            endpoint = "shopping-lists/$listId/share",
+            body = body
+        )
+
+        return response.jsonObject
+    }
+
+    suspend fun unShareList(listId: Int, userId: Int): JsonObject {
+
+        val response = remoteDataSource.delete("shopping-lists/$listId/share/$userId")
+
+        return response.jsonObject
+    }
+
+}

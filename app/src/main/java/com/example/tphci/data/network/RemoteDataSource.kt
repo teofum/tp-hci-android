@@ -28,7 +28,7 @@ class RemoteDataSource(val apiService: ApiService) {
         return apiService.get(endpoint, "Bearer ${token.orEmpty()}")
     }
 
-    suspend fun delete(endpoint: String) {
-        apiService.delete(endpoint, "Bearer ${token.orEmpty()}")
+    suspend fun delete(endpoint: String): JsonElement {
+        return apiService.delete(endpoint, "Bearer ${token.orEmpty()}")
     }
 }
