@@ -6,6 +6,11 @@ import kotlinx.serialization.Serializable
 import java.util.Date
 
 @Serializable
+data class NetworkProductId(
+    var id: Int
+)
+
+@Serializable
 data class NetworkNewProduct(
     var name: String?,
     var category: NetworkCategoryId? = null,

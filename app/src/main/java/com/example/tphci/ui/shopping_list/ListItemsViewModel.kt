@@ -6,11 +6,11 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.tphci.MyApplication
 import com.example.tphci.data.DataSourceException
-import com.example.tphci.data.model.Category
 import com.example.tphci.data.model.Error
 import com.example.tphci.data.model.Item
 import com.example.tphci.data.model.Product
 import com.example.tphci.data.repository.ItemRepository
+import com.example.tphci.data.repository.ProductRepository
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -20,14 +20,16 @@ import kotlinx.coroutines.launch
 
 data class ItemUiState(
     val listId: Int? = null,
-    val items: List<Item> = emptyList(),
     val isFetching: Boolean = false,
-    val error: Error? = null
+    val error: Error? = null,
+    val items: List<Item> = emptyList(),
+    val products: List<Product> = emptyList()
 )
 
 class ListItemsViewModel(
     private val listId: Int,
-    private val repository: ItemRepository
+    private val repository: ItemRepository,
+    private val productRepository: ProductRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ItemUiState(listId = listId))
@@ -35,6 +37,7 @@ class ListItemsViewModel(
 
     init {
         loadListItems()
+        loadProducts()
     }
 
     fun loadListItems() = runOnViewModelScope(
@@ -42,30 +45,15 @@ class ListItemsViewModel(
         updateState = { state, items -> state.copy(items = items) }
     )
 
-    private fun executeAddListItem(item: Item) = runOnViewModelScope(
+    fun loadProducts() = runOnViewModelScope(
+        block = { productRepository.getProducts() },
+        updateState = { state, items -> state.copy(products = items) }
+    )
+
+    fun addListItem(item: Item) = runOnViewModelScope(
         block = { repository.addListItem(listId, item) },
         updateState = { state, newItem -> state.copy(items = state.items + newItem) }
     )
-
-    fun addListItem(item: ShoppingListItem) {
-        val itemForRepo = Item(
-            id = 0L,
-            quantity = 1,
-            unit = "unidades",
-            purchased = false,
-            emoji = "🛒",
-            createdAt = null,
-            updatedAt = null,
-            lastPurchasedAt = null,
-            product = Product(
-                name = item.name,
-                categoryId = item.categoryId,
-                emoji = "🛒"
-            )
-        )
-        executeAddListItem(itemForRepo)
-    }
-
 
     fun updateListItem(item: Item) = runOnViewModelScope(
         block = { repository.updateListItem(listId, item) },
@@ -78,15 +66,15 @@ class ListItemsViewModel(
 
     fun deleteListItem(itemId: Int) = runOnViewModelScope(
         block = { repository.deleteListItem(listId, itemId) },
-        updateState = { state, _ -> state.copy(items = state.items.filter { it.id.toInt() != itemId }) }
+        updateState = { state, _ -> state.copy(items = state.items.filter { it.id!!.toInt() != itemId }) }
     )
 
 
     fun toggleCheckStatus(item: Item) {
         val block: suspend () -> Item = if (item.purchased) {
-            { repository.uncheckListItem(listId, item.id.toInt()) }
+            { repository.uncheckListItem(listId, item.id!!.toInt()) }
         } else {
-            { repository.checkListItem(listId, item.id.toInt()) }
+            { repository.checkListItem(listId, item.id!!.toInt()) }
         }
 
         runOnViewModelScope(
@@ -134,7 +122,7 @@ class ListItemsViewModel(
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 val repository = application.itemRepository
-                return ListItemsViewModel(listId, repository) as T
+                return ListItemsViewModel(listId, repository, application.productRepository) as T
             }
         }
     }

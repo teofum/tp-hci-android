@@ -8,7 +8,7 @@ data class NetworkNewItem(
     val quantity: Int,
     val unit: String,
     val metadata: NetworkMetadata?,
-    val productId: Int
+    val product: NetworkProductId,
 )
 
 @Serializable
@@ -29,7 +29,6 @@ data class NetworkItem(
             quantity = quantity,
             unit = unit,
             purchased = purchased,
-            emoji = metadata?.emoji ?: "\uD83D\uDED2",
             createdAt = createdAt,
             updatedAt = updatedAt,
             lastPurchasedAt = lastPurchasedAt,

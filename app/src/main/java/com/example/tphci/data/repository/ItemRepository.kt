@@ -13,7 +13,8 @@ class ItemRepository(private val remoteDataSource: ItemRemoteDataSource) {
     }
 
     suspend fun updateListItem(listId: Int, item: Item): Item {
-        return remoteDataSource.updateListItem(listId, item.id.toInt(), item.asNetworkNewModel()).asModel()
+        return remoteDataSource.updateListItem(listId, item.id!!.toInt(), item.asNetworkNewModel())
+            .asModel()
     }
 
     suspend fun deleteListItem(listId: Int, itemId: Int) {

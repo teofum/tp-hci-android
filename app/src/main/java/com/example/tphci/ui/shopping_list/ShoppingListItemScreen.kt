@@ -39,7 +39,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tphci.MyApplication
-import com.example.tphci.data.model.Item
 import com.example.tphci.ui.shopping_list.components.AddItemBox
 import com.example.tphci.ui.shopping_list.components.ListItem
 
@@ -225,10 +224,11 @@ fun ShoppingListItemScreen(
         if (showAddItemScreen) {
             AddItemBox(
                 onClose = { showAddItemScreen = false },
-                onAdd = { name, categoryId ->
-                    viewModel.addListItem(ShoppingListItem(name = name, categoryId = categoryId))
+                onAdd = { item ->
+                    viewModel.addListItem(item)
                     showAddItemScreen = false
-                }
+                },
+                products = uiState.products
             )
         }
     }
