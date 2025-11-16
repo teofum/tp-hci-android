@@ -143,7 +143,7 @@ fun AddItemBox(
                 TextButton(onClick = onClose) { Text("Cancelar") }
 
                 Button(onClick = {
-                    onAdd(producto, null) // TODO API showEmojiPicker (para emoji en metadata)
+                    onAdd(producto, null) // TODO API agregar item // TODO API showEmojiPicker (para emoji en metadata)
                 }) {
                     Text("Agregar")
                 }
