@@ -18,8 +18,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tphci.MyApplication
+import com.example.tphci.ui.home.rememberWindowInfo
 
-@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
 fun ProfileScreen(
     viewModel: ProfileViewModel = viewModel(
@@ -33,15 +33,8 @@ fun ProfileScreen(
     var showChangePassword by remember { mutableStateOf(false) }
 
 
-    val activity = LocalContext.current as ComponentActivity
-    val windowSize = calculateWindowSizeClass(activity)
-
-    val maxFieldWidth = when (windowSize.widthSizeClass) {
-        androidx.compose.material3.windowsizeclass.WindowWidthSizeClass.Compact -> 400.dp
-        androidx.compose.material3.windowsizeclass.WindowWidthSizeClass.Medium -> 500.dp
-        androidx.compose.material3.windowsizeclass.WindowWidthSizeClass.Expanded -> 600.dp
-        else -> 400.dp
-    }
+    val windowInfo = rememberWindowInfo()
+    val maxWidth = windowInfo.maxWidth
 
     if (showChangePassword) {
         ChangePasswordScreen(
@@ -62,8 +55,10 @@ fun ProfileScreen(
 
     Column(
         modifier = Modifier
-            .widthIn(max = maxFieldWidth)
+            .widthIn(max = maxWidth)
     ) {
+
+        Spacer(modifier = Modifier.height(40.dp))
 
         Text(
             "Perfil",

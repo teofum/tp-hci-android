@@ -1,10 +1,13 @@
 package com.example.tphci.ui.products
 
+import androidx.activity.ComponentActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -26,6 +29,7 @@ import com.example.tphci.data.model.Category
 import com.example.tphci.data.model.Item
 import com.example.tphci.data.model.Product
 import com.example.tphci.ui.home.HomeViewModel
+import com.example.tphci.ui.home.rememberWindowInfo
 import com.example.tphci.ui.products.components.AddProductBox
 import com.example.tphci.ui.products.components.ManageCategoryBox
 import com.example.tphci.ui.shopping_list.components.AddItemBox
@@ -65,6 +69,8 @@ fun ProductScreen(
     } else null
 
 
+    val windowInfo = rememberWindowInfo()
+    val maxWidth = windowInfo.maxWidth
 
     Scaffold(
         floatingActionButton = {
@@ -78,70 +84,126 @@ fun ProductScreen(
             }
         }
     ) { innerPadding ->
-        Column(Modifier.fillMaxSize().padding(16.dp)) {
-
-            Text(
-                "Productos",
-                style = MaterialTheme.typography.headlineMedium,
-                modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.Center
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            OutlinedTextField(
-                value = productSearch.value, // TODO api, buscador de prods
-                onValueChange = { productSearch.value = it },
-                label = { Text("Nombre de la lista") },
-                modifier = Modifier.fillMaxWidth()
-            )
-
-
-            Row(
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding),
+            contentAlignment = Alignment.TopCenter
+        ) {
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp, bottom = 8.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
+                    .widthIn(max = maxWidth)
+                    .padding(16.dp)
+
+        ) {
+
+                Text(
+                    "Productos",
+                    style = MaterialTheme.typography.headlineMedium,
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                OutlinedTextField(
+                    value = productSearch.value, // TODO api, buscador de prods
+                    onValueChange = { productSearch.value = it },
+                    label = { Text("Nombre de la lista") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+
 
                 Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.clickable { showCategoryScreen = true }
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp, bottom = 8.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(
-                        "Administrar categorías",
-                        fontSize = MaterialTheme.typography.bodyMedium.fontSize,
-                        color = MaterialTheme.colorScheme.primary
-                    )
+
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.clickable { showCategoryScreen = true }
+                    ) {
+                        Text(
+                            "Administrar categorías",
+                            fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
+
+
+                    Spacer(modifier = Modifier.width(12.dp))
+
+                    Row(
+                        verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
+                    ) {
+                        Text(
+                            "Agrupar por categoría ",
+                            fontSize = MaterialTheme.typography.bodyMedium.fontSize
+                        )
+                        Switch(
+                            checked = groupByCategory,
+                            onCheckedChange = { groupByCategory = it },
+                            modifier = Modifier.scale(0.8f)
+                        )
+                    }
                 }
 
+                if (groupByCategory && groupedProducts != null && groupedProducts.isNotEmpty()) {
 
-                Spacer(modifier = Modifier.width(12.dp))
+                    groupedProducts.forEach { (categoryName, productsInCategory) ->
 
-                Row(
-                    verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
-                ) {
-                    Text("Agrupar por categoría ", fontSize = MaterialTheme.typography.bodyMedium.fontSize)
-                    Switch(
-                        checked = groupByCategory,
-                        onCheckedChange = { groupByCategory = it },
-                        modifier = Modifier.scale(0.8f)
-                    )
-                }
-            }
+                        Text(
+                            text = categoryName,
+                            style = MaterialTheme.typography.titleMedium,
+                            modifier = Modifier.padding(top = 16.dp, bottom = 4.dp)
+                        )
 
-            if (groupByCategory && groupedProducts != null && groupedProducts.isNotEmpty()) {
+                        productsInCategory.forEach { product ->
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 10.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
 
-                groupedProducts.forEach { (categoryName, productsInCategory) ->
+                                Box(
+                                    modifier = Modifier
+                                        .size(48.dp)
+                                        .background(Color(0xFFF1F1F1), RoundedCornerShape(12.dp)),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        text = "📦", // TODO api
+                                        fontSize = 24.sp,
+                                        fontWeight = FontWeight.Normal
+                                    )
+                                }
 
-                    Text(
-                        text = categoryName,
-                        style = MaterialTheme.typography.titleMedium,
-                        modifier = Modifier.padding(top = 16.dp, bottom = 4.dp)
-                    )
+                                Spacer(Modifier.width(12.dp))
 
-                    productsInCategory.forEach { product ->
+                                Column(modifier = Modifier.weight(1f)) {
+                                    product.name?.let {
+                                        Text(
+                                            it,
+                                            style = MaterialTheme.typography.bodyLarge
+                                        )
+                                    }
+
+                                    Text(
+                                        "${product.category}", // TODO API, check si se accede bien
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = Color.Gray
+                                    )
+                                }
+                            }
+                        }
+                    }
+
+                } else {
+                    uiState.products.forEach { product ->
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -165,7 +227,12 @@ fun ProductScreen(
                             Spacer(Modifier.width(12.dp))
 
                             Column(modifier = Modifier.weight(1f)) {
-                                product.name?.let { Text(it, style = MaterialTheme.typography.bodyLarge) }
+                                product.name?.let {
+                                    Text(
+                                        it,
+                                        style = MaterialTheme.typography.bodyLarge
+                                    )
+                                }
 
                                 Text(
                                     "${product.category}", // TODO API, check si se accede bien
@@ -176,44 +243,7 @@ fun ProductScreen(
                         }
                     }
                 }
-
-            } else {
-                uiState.products.forEach { product ->
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 10.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-
-                        Box(
-                            modifier = Modifier
-                                .size(48.dp)
-                                .background(Color(0xFFF1F1F1), RoundedCornerShape(12.dp)),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = "📦", // TODO api
-                                fontSize = 24.sp,
-                                fontWeight = FontWeight.Normal
-                            )
-                        }
-
-                        Spacer(Modifier.width(12.dp))
-
-                        Column(modifier = Modifier.weight(1f)) {
-                            product.name?.let { Text(it, style = MaterialTheme.typography.bodyLarge) }
-
-                            Text(
-                                "${product.category}", // TODO API, check si se accede bien
-                                style = MaterialTheme.typography.bodySmall,
-                                color = Color.Gray
-                            )
-                        }
-                    }
-                }
             }
-
 
 
 
