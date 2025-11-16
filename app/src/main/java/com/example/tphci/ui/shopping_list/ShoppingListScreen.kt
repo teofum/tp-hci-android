@@ -129,15 +129,6 @@ fun ShoppingListScreen(
                     .widthIn(max = maxWidth)
                     .padding(16.dp)
             ) {
-                Text(
-                    stringResource(R.string.shopping_lists),
-                    style = MaterialTheme.typography.headlineMedium,
-                    modifier = Modifier.fillMaxWidth(),
-                    textAlign = TextAlign.Center
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
                 uiState.shoppingLists.forEach { list ->
                     var expanded by remember { mutableStateOf(false) }
 
