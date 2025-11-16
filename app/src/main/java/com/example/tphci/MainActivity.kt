@@ -1,5 +1,6 @@
 package com.example.tphci
 
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -16,8 +17,21 @@ import com.example.tphci.ui.auth.ResetPasswordScreen
 import com.example.tphci.ui.auth.SignUpScreen
 import com.example.tphci.ui.auth.VerifyAccountScreen
 import com.example.tphci.ui.theme.TPHCITheme
+import com.example.tphci.utils.LocaleUtils
 
 class MainActivity : ComponentActivity() {
+    
+    override fun attachBaseContext(newBase: Context?) {
+        val settingsRepository = (newBase?.applicationContext as? MyApplication)?.settingsRepository
+        val language = settingsRepository?.getLanguage() ?: "automatic"
+        val context = if (language != "automatic" && newBase != null) {
+            LocaleUtils.setLocale(newBase, language)
+        } else {
+            newBase
+        }
+        super.attachBaseContext(context)
+    }
+    
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()

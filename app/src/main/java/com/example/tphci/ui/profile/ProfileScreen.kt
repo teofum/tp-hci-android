@@ -3,6 +3,8 @@ package com.example.tphci.ui.profile
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
@@ -14,12 +16,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.example.tphci.R
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tphci.MyApplication
 import com.example.tphci.ui.home.rememberWindowInfo
+import com.example.tphci.ui.SettingsBox
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(
     viewModel: ProfileViewModel = viewModel(
@@ -31,6 +37,7 @@ fun ProfileScreen(
 ) {
     val uiState = viewModel.uiState
     var showChangePassword by remember { mutableStateOf(false) }
+    var showSettingsBox by remember { mutableStateOf(false) }
 
 
     val windowInfo = rememberWindowInfo()
@@ -45,37 +52,46 @@ fun ProfileScreen(
     }
 
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        contentAlignment = Alignment.TopCenter
-    ) {
-
-
-    Column(
-        modifier = Modifier
-            .widthIn(max = maxWidth)
-    ) {
-
-        Spacer(modifier = Modifier.height(40.dp))
-
-        Text(
-            "Perfil",
-            style = MaterialTheme.typography.headlineMedium,
-            modifier = Modifier.fillMaxWidth(),
-            textAlign = TextAlign.Center
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        stringResource(R.string.profile),
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Center
+                    )
+                },
+                actions = {
+                    IconButton(onClick = { showSettingsBox = true }) {
+                        Icon(
+                            Icons.Default.Settings,
+                            contentDescription = stringResource(R.string.settings)
+                        )
+                    }
+                }
+            )
+        }
+    ) { innerPadding ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .padding(16.dp),
+            contentAlignment = Alignment.TopCenter
+        ) {
+            Column(
+                modifier = Modifier
+                    .widthIn(max = maxWidth)
+            ) {
 
         if (!uiState.isAuthenticated) {
-            Text("No has iniciado sesión", style = MaterialTheme.typography.bodyLarge)
+            Text(stringResource(R.string.not_logged_in), style = MaterialTheme.typography.bodyLarge)
         } else {
             OutlinedTextField(
                 value = uiState.name,
                 onValueChange = viewModel::updateName,
-                label = { Text("Nombre") },
+                label = { Text(stringResource(R.string.first_name)) },
                 modifier = Modifier.fillMaxWidth(),
                 enabled = !uiState.isLoading
             )
@@ -85,7 +101,7 @@ fun ProfileScreen(
             OutlinedTextField(
                 value = uiState.surname,
                 onValueChange = viewModel::updateSurname,
-                label = { Text("Apellido") },
+                label = { Text(stringResource(R.string.last_name)) },
                 modifier = Modifier.fillMaxWidth(),
                 enabled = !uiState.isLoading
             )
@@ -95,7 +111,7 @@ fun ProfileScreen(
             OutlinedTextField(
                 value = uiState.email,
                 onValueChange = {},
-                label = { Text("Correo electrónico") },
+                label = { Text(stringResource(R.string.email)) },
                 modifier = Modifier.fillMaxWidth(),
                 enabled = false
             )
@@ -110,7 +126,7 @@ fun ProfileScreen(
                     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
                 ) {
                     Text(
-                        text = "Perfil actualizado correctamente",
+                        text = stringResource(R.string.profile_updated),
                         modifier = Modifier.padding(16.dp),
                         color = MaterialTheme.colorScheme.onPrimaryContainer
                     )
@@ -125,7 +141,7 @@ fun ProfileScreen(
                     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer)
                 ) {
                     Text(
-                        text = "Error al actualizar perfil",
+                        text = stringResource(R.string.profile_update_error),
                         modifier = Modifier.padding(16.dp),
                         color = MaterialTheme.colorScheme.onErrorContainer
                     )
@@ -140,7 +156,7 @@ fun ProfileScreen(
                 if (uiState.isLoading) {
                     CircularProgressIndicator(modifier = Modifier.size(16.dp))
                 } else {
-                    Text("Guardar cambios")
+                    Text(stringResource(R.string.save_changes))
                 }
             }
 
@@ -150,15 +166,22 @@ fun ProfileScreen(
                 onClick = { showChangePassword = true },
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Cambiar contraseña")
+                Text(stringResource(R.string.change_password))
             }
 
             TextButton(
                 onClick = { viewModel.logout() },
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Cerrar sesión")
+                Text(stringResource(R.string.logout))
+            }
             }
         }
+    }
+
+    if (showSettingsBox) {
+        SettingsBox(
+            onClose = { showSettingsBox = false }
+        )
     }
 }}

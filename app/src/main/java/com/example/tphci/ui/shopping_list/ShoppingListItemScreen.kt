@@ -43,7 +43,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.tphci.R
 import com.example.tphci.MyApplication
 import com.example.tphci.ui.home.rememberWindowInfo
 import com.example.tphci.ui.shopping_list.components.AddItemBox
@@ -69,9 +71,13 @@ fun ShoppingListItemScreen(
 
     // TODO
     var searchQuery by remember { mutableStateOf("") }
-    var selectedFilter by remember { mutableStateOf("Todos") }
-    val filterOptions = listOf("Todos", "Comprados", "Pendientes")
     var filterExpanded by remember { mutableStateOf(false) }
+    val filterAllText = stringResource(R.string.filter_all)
+    val filterPurchasedText = stringResource(R.string.filter_purchased)
+    val filterPendingText = stringResource(R.string.filter_pending)
+    
+    var selectedFilter by remember { mutableStateOf(filterAllText) }
+    val filterOptions = listOf(filterAllText, filterPurchasedText, filterPendingText)
 
     var groupByCategory by remember { mutableStateOf(false) }
 
@@ -98,7 +104,7 @@ fun ShoppingListItemScreen(
                 contentColor = MaterialTheme.colorScheme.onPrimary,
                 modifier = Modifier.width(150.dp)
             ) {
-                Text("+ Agregar producto")
+                Text(stringResource(R.string.add_product))
             }
         }
     ) { innerPadding ->
@@ -115,7 +121,6 @@ fun ShoppingListItemScreen(
 
             ) {
 
-
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -127,7 +132,7 @@ fun ShoppingListItemScreen(
                     IconButton(onClick = onClose) {
                         Icon(
                             imageVector = Icons.Default.Close,
-                            contentDescription = "Cerrar"
+                            contentDescription = stringResource(R.string.close)
                         )
                     }
 
@@ -140,7 +145,7 @@ fun ShoppingListItemScreen(
                     IconButton(onClick = onOpenShareScreen) {
                         Icon(
                             imageVector = Icons.Default.Share,
-                            contentDescription = "Compartir"
+                            contentDescription = stringResource(R.string.share)
                         )
                     }
                 }
@@ -149,7 +154,7 @@ fun ShoppingListItemScreen(
                 OutlinedTextField(
                     value = searchQuery,
                     onValueChange = { searchQuery = it },
-                    label = { Text("Buscar producto") },
+                    label = { Text(stringResource(R.string.search_product)) },
                     modifier = Modifier.fillMaxWidth()
                 )
 
@@ -168,9 +173,9 @@ fun ShoppingListItemScreen(
                     ) {
                         OutlinedTextField(
                             value = selectedFilter,
-                            onValueChange = {}, // TODO API filtros (igual creo que esto era de front :p sry y thx!)
+                            onValueChange = {},
                             readOnly = true,
-                            label = { Text("Filtrar") },
+                            label = { Text(stringResource(R.string.filter)) },
                             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = filterExpanded) },
                             modifier = Modifier
                                 .menuAnchor()
@@ -199,7 +204,7 @@ fun ShoppingListItemScreen(
                         verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
                     ) {
                         Text(
-                            "Agrupar por categoría ",
+                            stringResource(R.string.group_by_category) + " ",
                             fontSize = MaterialTheme.typography.bodyMedium.fontSize
                         )
                         Switch(

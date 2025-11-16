@@ -9,7 +9,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.tphci.R
 import com.example.tphci.MyApplication
 
 @Composable
@@ -41,13 +43,13 @@ fun VerifyAccountScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "Verificar cuenta",
+                text = stringResource(R.string.verify_account_title),
                 style = MaterialTheme.typography.headlineMedium,
                 modifier = Modifier.padding(bottom = 16.dp)
             )
 
             Text(
-                text = "Ingresá el código de verificación que enviamos a $email",
+                text = stringResource(R.string.verify_account_description, email),
                 style = MaterialTheme.typography.bodyMedium,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(bottom = 32.dp)
@@ -56,7 +58,7 @@ fun VerifyAccountScreen(
             OutlinedTextField(
                 value = uiState.code,
                 onValueChange = viewModel::updateCode,
-                label = { Text("Código de verificación") },
+                label = { Text(stringResource(R.string.verification_code)) },
                 modifier = Modifier.fillMaxWidth(),
                 enabled = !uiState.isLoading
             )
@@ -86,18 +88,18 @@ fun VerifyAccountScreen(
                 if (uiState.isLoading) {
                     CircularProgressIndicator(modifier = Modifier.size(16.dp))
                 } else {
-                    Text("Verificar")
+                    Text(stringResource(R.string.verify))
                 }
             }
 
             Spacer(modifier = Modifier.height(16.dp))
 
             TextButton(onClick = { viewModel.resendCode() }) {
-                Text("Reenviar código")
+                Text(stringResource(R.string.resend_code))
             }
 
             TextButton(onClick = onNavigateToLogin) {
-                Text("Volver al inicio de sesión")
+                Text(stringResource(R.string.back_to_login))
             }
         }
     }
