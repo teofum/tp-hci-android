@@ -71,6 +71,7 @@ fun ProductScreen(
 
     val windowInfo = rememberWindowInfo()
     val maxWidth = windowInfo.maxWidth
+    val isTablet = windowInfo.maxWidth > 600.dp
 
     Scaffold(
         floatingActionButton = {
@@ -251,13 +252,35 @@ fun ProductScreen(
     }
 
     if (showAddProductScreen) {
-        AddProductBox(
-            onClose = { showAddProductScreen = false },
-            onAdd = { name, categoryId ->
-                viewModel.addProduct(name, categoryId) // TODO API, check contrato
-                showAddProductScreen = false
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black.copy(alpha = 0.5f)),
+            contentAlignment = Alignment.Center
+        ) {
+            Box(
+                modifier = if (isTablet) {
+                    Modifier
+                        .widthIn(max = 600.dp)
+                        .heightIn(max = 500.dp)
+                        .background(MaterialTheme.colorScheme.background, RoundedCornerShape(16.dp))
+                        .padding(16.dp)
+                } else {
+                    Modifier
+                        .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.background)
+                        .padding(16.dp)
+                }
+            ) {
+                AddProductBox(
+                    onClose = { showAddProductScreen = false },
+                    onAdd = { name, categoryId ->
+                        viewModel.addProduct(name, categoryId) // TODO API, check contrato
+                        showAddProductScreen = false
+                    }
+                )
             }
-        )
+        }
     }
 
 
@@ -282,14 +305,36 @@ fun ProductScreen(
     // TODO eliminar, hasta acá
 
     if (showCategoryScreen) {
-        CategoryScreen(
-            categories = hardcodedCategories, // TODO api, hardcoded
-            onClose = { showCategoryScreen = false },
-            onAddCategory = { name ->
-                //viewModel.addCategory(name) // TODO api
-                showCategoryScreen = false
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black.copy(alpha = 0.5f)),
+            contentAlignment = Alignment.Center
+        ) {
+            Box(
+                modifier = if (isTablet) {
+                    Modifier
+                        .widthIn(max = 600.dp)
+                        .heightIn(max = 500.dp)
+                        .background(MaterialTheme.colorScheme.background, RoundedCornerShape(16.dp))
+                        .padding(16.dp)
+                } else {
+                    Modifier
+                        .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.background)
+                        .padding(16.dp)
+                }
+            ) {
+                CategoryScreen(
+                    categories = hardcodedCategories, // TODO api, hardcoded
+                    onClose = { showCategoryScreen = false },
+                    onAddCategory = { name ->
+                        //viewModel.addCategory(name) // TODO API
+                        showCategoryScreen = false
+                    }
+                )
             }
-        )
+        }
     }
 
 }

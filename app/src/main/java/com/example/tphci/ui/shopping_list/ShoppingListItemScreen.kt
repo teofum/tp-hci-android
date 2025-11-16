@@ -1,5 +1,6 @@
 package com.example.tphci.ui.shopping_list
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -7,11 +8,13 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Share
@@ -36,6 +39,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -86,6 +90,7 @@ fun ShoppingListItemScreen(
 
     val windowInfo = rememberWindowInfo()
     val maxWidth = windowInfo.maxWidth
+    val isTablet = maxWidth > 600.dp
 
 
     LaunchedEffect(Unit) {
@@ -252,13 +257,35 @@ fun ShoppingListItemScreen(
             }
 
         if (showAddItemScreen) {
-            AddItemBox(
-                onClose = { showAddItemScreen = false },
-                onAdd = { name, categoryId ->
-                    viewModel.addProduct(name, categoryId) // TODO API, check contrato
-                    showAddItemScreen = false
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.5f)),
+                contentAlignment = Alignment.Center
+            ) {
+                Box(
+                    modifier = if (isTablet) {
+                        Modifier
+                            .widthIn(max = 600.dp)
+                            .heightIn(max = 400.dp)
+                            .background(MaterialTheme.colorScheme.background, RoundedCornerShape(16.dp))
+                            .padding(16.dp)
+                    } else {
+                        Modifier
+                            .fillMaxSize()
+                            .background(MaterialTheme.colorScheme.background)
+                            .padding(16.dp)
+                    }
+                ) {
+                    AddItemBox(
+                        onClose = { showAddItemScreen = false },
+                        onAdd = { name, categoryId ->
+                            viewModel.addProduct(name, categoryId) // TODO API, check contrato
+                            showAddItemScreen = false
+                        }
+                    )
                 }
-            )
+            }
         }
     }
 }

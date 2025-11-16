@@ -54,6 +54,7 @@ fun ShoppingListScreen(
 
     val windowInfo = rememberWindowInfo()
     val maxWidth = windowInfo.maxWidth
+    val isTablet = maxWidth > 600.dp
 
     LaunchedEffect(Unit) {
         viewModel.getShoppingLists()
@@ -198,34 +199,78 @@ fun ShoppingListScreen(
             }
 
         if (showAddListBox) {
-            ManageListBox(
-                title = "Agregar lista",
-                confirmButtonText = "Agregar",
-                onClose = { showAddListBox = false },
-                onConfirm = { name, description, recurring ->
-                    viewModel.addShoppingList(name, description, recurring) // TODO API
-                    showAddListBox = false
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.5f)),
+                contentAlignment = Alignment.Center
+            ) {
+                Box(
+                    modifier = if (isTablet) {
+                        Modifier
+                            .widthIn(max = 600.dp)
+                            .heightIn(max = 400.dp)
+                            .background(MaterialTheme.colorScheme.background, RoundedCornerShape(16.dp))
+                            .padding(16.dp)
+                    } else {
+                        Modifier
+                            .fillMaxSize()
+                            .padding(16.dp)
+                            .background(MaterialTheme.colorScheme.background)
+                    }
+                ) {
+                    ManageListBox(
+                        title = "Agregar lista",
+                        confirmButtonText = "Agregar",
+                        onClose = { showAddListBox = false },
+                        onConfirm = { name, description, recurring ->
+                            viewModel.addShoppingList(name, description, recurring) // TODO API
+                            showAddListBox = false
+                        }
+                    )
                 }
-            )
+            }
         }
 
         if (showEditListBox && editingList != null) {
-            ManageListBox(
-                title = "Editar lista",
-                initialName = editingList!!.name,
-                initialDescription = editingList!!.description,
-                initialRecurring = editingList!!.recurring,
-                confirmButtonText = "Guardar",
-                onClose = {
-                    showEditListBox = false
-                    editingList = null
-                },
-                onConfirm = { name, description, recurring ->
-                    viewModel.addShoppingList(name, description, recurring) // TODO API
-                    showEditListBox = false
-                    editingList = null
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.5f)),
+                contentAlignment = Alignment.Center
+            ) {
+                Box(
+                    modifier = if (isTablet) {
+                        Modifier
+                            .widthIn(max = 600.dp)
+                            .heightIn(max = 400.dp)
+                            .background(MaterialTheme.colorScheme.background, RoundedCornerShape(16.dp))
+                            .padding(16.dp)
+                    } else {
+                        Modifier
+                            .fillMaxSize()
+                            .padding(16.dp)
+                            .background(MaterialTheme.colorScheme.background)
+                    }
+                ) {
+                    ManageListBox(
+                        title = "Editar lista",
+                        initialName = editingList!!.name,
+                        initialDescription = editingList!!.description,
+                        initialRecurring = editingList!!.recurring,
+                        confirmButtonText = "Guardar",
+                        onClose = {
+                            showEditListBox = false
+                            editingList = null
+                        },
+                        onConfirm = { name, description, recurring ->
+                            viewModel.addShoppingList(name, description, recurring) // TODO API
+                            showEditListBox = false
+                            editingList = null
+                        }
+                    )
                 }
-            )
+            }
         }
     }
 }
