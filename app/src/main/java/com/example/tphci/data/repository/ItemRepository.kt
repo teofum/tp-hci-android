@@ -4,8 +4,8 @@ import com.example.tphci.data.model.Item
 import com.example.tphci.data.network.ItemRemoteDataSource
 
 class ItemRepository(private val remoteDataSource: ItemRemoteDataSource) {
-    suspend fun getListItems(listId: Int): List<Item> {
-        return remoteDataSource.getListItems(listId).map { it.asModel() }
+    suspend fun getListItems(listId: Int, search: String?, purchased: Boolean?): List<Item> {
+        return remoteDataSource.getListItems(listId, search, purchased).map { it.asModel() }
     }
 
     suspend fun addListItem(listId: Int, item: Item): Item {

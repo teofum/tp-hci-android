@@ -27,6 +27,9 @@ data class ItemUiState(
     val items: List<Item> = emptyList(),
     val products: List<Product> = emptyList(),
     val list: ShoppingList? = null,
+
+    val search: String? = null,
+    val purchased: Boolean? = null,
 )
 
 class ListItemsViewModel(
@@ -51,7 +54,13 @@ class ListItemsViewModel(
     )
 
     fun loadListItems() = runOnViewModelScope(
-        block = { repository.getListItems(listId) },
+        block = {
+            repository.getListItems(
+                listId,
+                _uiState.value.search,
+                _uiState.value.purchased
+            )
+        },
         updateState = { state, items -> state.copy(items = items) }
     )
 
@@ -64,6 +73,16 @@ class ListItemsViewModel(
         block = { repository.addListItem(listId, item) },
         updateState = { state, newItem -> state.copy(items = state.items + newItem) }
     )
+
+    fun updateSearch(search: String?) {
+        _uiState.update { it.copy(search = search) }
+        loadListItems()
+    }
+
+    fun updateFilter(filter: Boolean?) {
+        _uiState.update { it.copy(purchased = filter) }
+        loadListItems()
+    }
 
     fun updateListItem(item: Item) = runOnViewModelScope(
         block = { repository.updateListItem(listId, item) },

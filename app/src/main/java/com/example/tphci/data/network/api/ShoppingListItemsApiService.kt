@@ -12,12 +12,16 @@ import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface ShoppingListItemsApiService {
 
     @GET("shopping-lists/{listId}/items")
     suspend fun getListItems(
-        @Path("listId") listId: Int
+        @Path("listId") listId: Int,
+        @Query("search") search: String?,
+        @Query("purchased") purchased: Boolean?,
+        @Query("per_page") page: Int = 9999,
     ): Response<NetworkPagedItems>
 
     @POST("shopping-lists/{listId}/items")

@@ -8,9 +8,9 @@ import com.example.tphci.data.network.model.NetworkNewItem
 class ItemRemoteDataSource(
     private val shoppingListItemsApiService: ShoppingListItemsApiService
 ) : RemoteDataSource() {
-    suspend fun getListItems(listId: Int): List<NetworkItem> {
+    suspend fun getListItems(listId: Int, search: String?, purchased: Boolean?): List<NetworkItem> {
         val response = handleApiResponse {
-            shoppingListItemsApiService.getListItems(listId)
+            shoppingListItemsApiService.getListItems(listId, search, purchased)
         }
         return response.data
     }
