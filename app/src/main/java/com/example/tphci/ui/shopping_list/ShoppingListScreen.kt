@@ -70,11 +70,7 @@ fun ShoppingListScreen(
                 contentColor = MaterialTheme.colorScheme.onPrimary,
                 modifier = Modifier.width(150.dp)
             ) {
-<<<<<<< HEAD
                 Text(stringResource(R.string.add_list))
-=======
-                Text("+ Agregar Lista")
->>>>>>> master
             }
         }
     ) { innerPadding ->
