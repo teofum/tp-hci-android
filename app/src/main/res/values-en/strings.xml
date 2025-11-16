@@ -91,6 +91,13 @@
     <string name="new_category">New category</string>
     <string name="category">Category</string>
     <string name="close">Close</string>
+    <string name="categories">Categories</string>
+    <string name="add_category">Add category</string>
+    <string name="edit_category">Edit category</string>
+    <string name="save">Save</string>
+    <string name="no_name">No name</string>
+    <string name="products_count">%1$d products</string>
+    <string name="name">Name</string>
     
     <!-- Share Screen -->
     <string name="done">Done</string>

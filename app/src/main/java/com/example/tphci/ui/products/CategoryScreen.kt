@@ -48,10 +48,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.tphci.R
 import com.example.tphci.data.model.Category
 import com.example.tphci.data.model.ShoppingList
 import com.example.tphci.ui.home.rememberWindowInfo
@@ -90,7 +92,7 @@ fun CategoryScreen(
                 contentColor = MaterialTheme.colorScheme.onPrimary,
                 modifier = Modifier.width(150.dp)
             ) {
-                Text("+ Agregar categoría")
+                Text("+ " + stringResource(R.string.add_category))
             }
         }
     ) { innerPadding ->
@@ -109,7 +111,7 @@ fun CategoryScreen(
                 .padding(16.dp)
         ) {
             Text(
-                "Categorías",
+                stringResource(R.string.categories),
                 style = MaterialTheme.typography.headlineMedium,
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center
@@ -163,11 +165,11 @@ fun CategoryScreen(
                             ) {
                                 Column(modifier = Modifier.padding(12.dp)) {
                                     Text(
-                                        category.name ?: "Sin nombre",
+                                        category.name ?: stringResource(R.string.no_name),
                                         style = MaterialTheme.typography.titleMedium
                                     )
                                     Text(
-                                        "${0} productos",
+                                        stringResource(R.string.products_count, 0),
                                         style = MaterialTheme.typography.bodyMedium
                                     ) // TODO cantidad de productos por categ, tal vez está la función ya
                                 }
@@ -176,7 +178,7 @@ fun CategoryScreen(
 
                         Box {
                             IconButton(onClick = { expanded = true }) {
-                                Icon(Icons.Default.MoreVert, contentDescription = "Opciones")
+                                Icon(Icons.Default.MoreVert, contentDescription = stringResource(R.string.options))
                             }
 
                             DropdownMenu(
@@ -184,7 +186,7 @@ fun CategoryScreen(
                                 onDismissRequest = { expanded = false }
                             ) {
                                 DropdownMenuItem(
-                                    text = { Text("Modificar") },
+                                    text = { Text(stringResource(R.string.edit)) },
                                     leadingIcon = { Icon(Icons.Default.Edit, null) },
                                     onClick = {
                                         expanded = false
@@ -193,7 +195,7 @@ fun CategoryScreen(
                                     }
                                 )
                                 DropdownMenuItem(
-                                    text = { Text("Eliminar") },
+                                    text = { Text(stringResource(R.string.delete)) },
                                     leadingIcon = { Icon(Icons.Default.Delete, null) },
                                     onClick = { expanded = false } // TODO API
                                 )
@@ -207,8 +209,8 @@ fun CategoryScreen(
 
         if (showAddCategoryBox) {
             ManageCategoryBox(
-                title = "Agregar categoría",
-                confirmButtonText = "Agregar",
+                title = stringResource(R.string.add_category),
+                confirmButtonText = stringResource(R.string.add),
                 onClose = { showAddCategoryBox = false },
                 onConfirm = { name ->
                     onAddCategory(name) // TODO API
@@ -219,9 +221,9 @@ fun CategoryScreen(
 
         if (showEditCategoryBox && editingCategory != null) {
             ManageCategoryBox(
-                title = "Editar categoría",
+                title = stringResource(R.string.edit_category),
                 initialName = editingCategory!!.name ?: "",
-                confirmButtonText = "Guardar",
+                confirmButtonText = stringResource(R.string.save),
                 onClose = { showEditCategoryBox = false },
                 onConfirm = { newName ->
                     // updateCategory(editingCategory!!.id, newName) // TODO API (están las variables "useState" ya creadas al principio)
