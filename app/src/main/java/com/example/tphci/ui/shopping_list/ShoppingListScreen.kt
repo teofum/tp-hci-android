@@ -29,6 +29,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tphci.MyApplication
 import com.example.tphci.data.model.ShoppingList
 import com.example.tphci.ui.home.HomeViewModel
+import com.example.tphci.ui.home.rememberWindowInfo
 import com.example.tphci.ui.shopping_list.components.ManageListBox
 
 @Composable
@@ -51,7 +52,9 @@ fun ShoppingListScreen(
 
     var editingList by remember { mutableStateOf<ShoppingList?>(null) }
 
-
+    val windowInfo = rememberWindowInfo()
+    val maxWidth = windowInfo.maxWidth
+    val isTablet = maxWidth > 600.dp
 
     LaunchedEffect(Unit) {
         viewModel.getShoppingLists()
@@ -70,140 +73,204 @@ fun ShoppingListScreen(
         }
     ) { innerPadding ->
 
-
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp)
+                .padding(innerPadding),
+            contentAlignment = Alignment.TopCenter
         ) {
-            Text(
-                "Listas",
-                style = MaterialTheme.typography.headlineMedium,
-                modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.Center
-            )
+            Column(
+                modifier = Modifier
+                    .widthIn(max = maxWidth)
+                    .padding(16.dp)
 
-            Spacer(modifier = Modifier.height(8.dp))
+            ) {
+
+                    Text(
+                        "Listas",
+                        style = MaterialTheme.typography.headlineMedium,
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Center
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
 
 
-            uiState.shoppingLists.forEach { list ->
+                    uiState.shoppingLists.forEach { list ->
 
-                var expanded by remember { mutableStateOf(false) }
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 10.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-
-                ) {
-
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
+                        var expanded by remember { mutableStateOf(false) }
 
                         Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 10.dp),
                             verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.weight(1f)
+                            horizontalArrangement = Arrangement.SpaceBetween
+
                         ) {
-                            Box(
-                                modifier = Modifier
-                                    .size(48.dp)
-                                    .background(Color(0xFFF1F1F1), RoundedCornerShape(12.dp)),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text(
-                                    text = "📦", // TODO api
-                                    fontSize = 24.sp,
-                                    fontWeight = FontWeight.Normal
-                                )
-                            }
 
-                            Card(
-                                colors = CardDefaults.cardColors(
-                                    containerColor = MaterialTheme.colorScheme.background
-                                ),
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .padding(start = 10.dp)
-                                    .clickable { onOpenListDetails(list.id.toLong()) }
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.fillMaxWidth()
                             ) {
-                                Column(modifier = Modifier.padding(12.dp)) {
-                                    Text(list.name, style = MaterialTheme.typography.titleMedium)
-                                    Text(list.description, style = MaterialTheme.typography.bodyMedium)
+
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    modifier = Modifier.weight(1f)
+                                ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .size(48.dp)
+                                            .background(
+                                                Color(0xFFF1F1F1),
+                                                RoundedCornerShape(12.dp)
+                                            ),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Text(
+                                            text = "📦", // TODO api
+                                            fontSize = 24.sp,
+                                            fontWeight = FontWeight.Normal
+                                        )
+                                    }
+
+                                    Card(
+                                        colors = CardDefaults.cardColors(
+                                            containerColor = MaterialTheme.colorScheme.background
+                                        ),
+                                        modifier = Modifier
+                                            .weight(1f)
+                                            .padding(start = 10.dp)
+                                            .clickable { onOpenListDetails(list.id.toLong()) }
+                                    ) {
+                                        Column(modifier = Modifier.padding(12.dp)) {
+                                            Text(
+                                                list.name,
+                                                style = MaterialTheme.typography.titleMedium
+                                            )
+                                            Text(
+                                                list.description,
+                                                style = MaterialTheme.typography.bodyMedium
+                                            )
+                                        }
+                                    }
                                 }
-                            }
-                        }
 
-                        Box {
-                            IconButton(onClick = { expanded = true }) {
-                                Icon(Icons.Default.MoreVert, contentDescription = "Opciones")
-                            }
+                                Box {
+                                    IconButton(onClick = { expanded = true }) {
+                                        Icon(
+                                            Icons.Default.MoreVert,
+                                            contentDescription = "Opciones"
+                                        )
+                                    }
 
-                            DropdownMenu(
-                                expanded = expanded,
-                                onDismissRequest = { expanded = false }
-                            ) {
-                                DropdownMenuItem(
-                                    text = { Text("Modificar") },
-                                    leadingIcon = { Icon(Icons.Default.Edit, null) },
-                                    onClick = {
-                                        expanded = false
-                                        showEditListBox = true
-                                        editingList = list
+                                    DropdownMenu(
+                                        expanded = expanded,
+                                        onDismissRequest = { expanded = false }
+                                    ) {
+                                        DropdownMenuItem(
+                                            text = { Text("Modificar") },
+                                            leadingIcon = { Icon(Icons.Default.Edit, null) },
+                                            onClick = {
+                                                expanded = false
+                                                showEditListBox = true
+                                                editingList = list
+                                            }
+                                        )
+                                        DropdownMenuItem(
+                                            text = { Text("Compartir") },
+                                            leadingIcon = { Icon(Icons.Default.Share, null) },
+                                            onClick = {
+                                                expanded = false
+                                                onOpenShareScreen()
+                                            }
+                                        )
+                                        DropdownMenuItem(
+                                            text = { Text("Eliminar") },
+                                            leadingIcon = { Icon(Icons.Default.Delete, null) },
+                                            onClick = { expanded = false } // TODO api
+                                        )
                                     }
-                                )
-                                DropdownMenuItem(
-                                    text = { Text("Compartir") },
-                                    leadingIcon = { Icon(Icons.Default.Share, null) },
-                                    onClick = {
-                                        expanded = false
-                                        onOpenShareScreen()
-                                    }
-                                )
-                                DropdownMenuItem(
-                                    text = { Text("Eliminar") },
-                                    leadingIcon = { Icon(Icons.Default.Delete, null) },
-                                    onClick = { expanded = false } // TODO api
-                                )
+                                }
                             }
                         }
                     }
                 }
             }
-        }
 
         if (showAddListBox) {
-            ManageListBox(
-                title = "Agregar lista",
-                confirmButtonText = "Agregar",
-                onClose = { showAddListBox = false },
-                onConfirm = { name, description, recurring ->
-                    viewModel.addShoppingList(name, description, recurring) // TODO API
-                    showAddListBox = false
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.5f)),
+                contentAlignment = Alignment.Center
+            ) {
+                Box(
+                    modifier = if (isTablet) {
+                        Modifier
+                            .widthIn(max = 600.dp)
+                            .heightIn(max = 400.dp)
+                            .background(MaterialTheme.colorScheme.background, RoundedCornerShape(16.dp))
+                            .padding(16.dp)
+                    } else {
+                        Modifier
+                            .fillMaxSize()
+                            .background(MaterialTheme.colorScheme.background)
+                            .padding(16.dp)
+                    }
+                ) {
+                    ManageListBox(
+                        title = "Agregar lista",
+                        confirmButtonText = "Agregar",
+                        onClose = { showAddListBox = false },
+                        onConfirm = { name, description, recurring ->
+                            viewModel.addShoppingList(name, description, recurring) // TODO API
+                            showAddListBox = false
+                        }
+                    )
                 }
-            )
+            }
         }
 
         if (showEditListBox && editingList != null) {
-            ManageListBox(
-                title = "Editar lista",
-                initialName = editingList!!.name,
-                initialDescription = editingList!!.description,
-                initialRecurring = editingList!!.recurring,
-                confirmButtonText = "Guardar",
-                onClose = {
-                    showEditListBox = false
-                    editingList = null
-                },
-                onConfirm = { name, description, recurring ->
-                    viewModel.addShoppingList(name, description, recurring) // TODO API
-                    showEditListBox = false
-                    editingList = null
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.5f)),
+                contentAlignment = Alignment.Center
+            ) {
+                Box(
+                    modifier = if (isTablet) {
+                        Modifier
+                            .widthIn(max = 600.dp)
+                            .heightIn(max = 400.dp)
+                            .background(MaterialTheme.colorScheme.background, RoundedCornerShape(16.dp))
+                            .padding(16.dp)
+                    } else {
+                        Modifier
+                            .fillMaxSize()
+                            .background(MaterialTheme.colorScheme.background)
+                            .padding(16.dp)
+                    }
+                ) {
+                    ManageListBox(
+                        title = "Editar lista",
+                        initialName = editingList!!.name,
+                        initialDescription = editingList!!.description,
+                        initialRecurring = editingList!!.recurring,
+                        confirmButtonText = "Guardar",
+                        onClose = {
+                            showEditListBox = false
+                            editingList = null
+                        },
+                        onConfirm = { name, description, recurring ->
+                            viewModel.addShoppingList(name, description, recurring) // TODO API
+                            showEditListBox = false
+                            editingList = null
+                        }
+                    )
                 }
-            )
+            }
         }
     }
 }
