@@ -5,7 +5,6 @@ import android.content.SharedPreferences
 import androidx.core.content.edit
 
 class SessionManager(context: Context) {
-
     private var preferences: SharedPreferences =
         context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)
 

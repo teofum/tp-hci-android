@@ -78,6 +78,10 @@
     <string name="unit">Unidad</string>
     <string name="product">Producto</string>
     <string name="edit_lists">Editar listas</string>
+    <string name="options">Opciones</string>
+    <string name="edit">Modificar</string>
+    <string name="delete">Eliminar</string>
+    <string name="select_product">Seleccionar producto</string>
     <string name="filter_all">Todos</string>
     <string name="filter_purchased">Comprados</string>
     <string name="filter_pending">Pendientes</string>

@@ -10,10 +10,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Button
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -28,15 +34,22 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.toSize
 import com.example.tphci.R
+import com.example.tphci.data.model.Item
+import com.example.tphci.data.model.Product
 import com.example.tphci.ui.EmojiPicker
 
 @Composable
 fun AddItemBox(
     onClose: () -> Unit,
-    onAdd: (name: String, categoryId: Int?) -> Unit
+    onAdd: (item: Item) -> Unit,
+    products: List<Product>
 ) {
     Box(
         modifier = Modifier
@@ -66,60 +79,32 @@ fun AddItemBox(
                 }
             }
 
-            var cantidad by remember { mutableStateOf("1") }
-            var unidad by remember { mutableStateOf("") }
-            var producto by remember { mutableStateOf("") }
-            var selectedEmoji by remember { mutableStateOf("📦") }
-            var showEmojiPicker by remember { mutableStateOf(false) }
+            var quantity by remember { mutableStateOf(1) }
+            var unit by remember { mutableStateOf("") }
+            var product by remember { mutableStateOf<Product?>(null) }
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(70.dp)
-                        .background(Color.LightGray, RoundedCornerShape(20.dp))
-                        .clickable { showEmojiPicker = true },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = selectedEmoji,
-                        style = MaterialTheme.typography.headlineLarge
-                    )
-                }
-            }
-
-            if (showEmojiPicker) {
-                androidx.compose.ui.window.Dialog(
-                    onDismissRequest = { showEmojiPicker = false }
-                ) {
-                    EmojiPicker(
-                        onSelect = {
-                            selectedEmoji = it
-                            showEmojiPicker = false
-                        },
-                        onDismiss = { showEmojiPicker = false }
-                    )
-                }
-            }
-
-
-
+            var expanded by remember { mutableStateOf(false) }
+            var textFieldSize by remember { mutableStateOf(androidx.compose.ui.geometry.Size.Zero) }
+            val icon =
+                if (expanded) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown
 
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier.fillMaxWidth()
             ) {
                 OutlinedTextField(
-                    value = cantidad,
-                    onValueChange = { cantidad = it },
+                    value = quantity.toString(),
+                    onValueChange = {
+                        quantity = it.filter { char -> char.isDigit() }.toIntOrNull() ?: 0
+                    },
                     label = { Text(stringResource(R.string.quantity)) },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    singleLine = true,
                     modifier = Modifier.weight(1f)
                 )
                 OutlinedTextField(
-                    value = unidad,
-                    onValueChange = { unidad = it },
+                    value = unit,
+                    onValueChange = { unit = it },
                     label = { Text(stringResource(R.string.unit)) },
                     modifier = Modifier.weight(1f)
                 )
@@ -129,13 +114,38 @@ fun AddItemBox(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                OutlinedTextField(
-                    value = producto,
-                    onValueChange = { producto = it },
-                    label = { Text(stringResource(R.string.product)) },
-                    modifier = Modifier.weight(1f)
-                )
-
+                Box(modifier = Modifier.weight(1f)) {
+                    OutlinedTextField(
+                        value = product?.name ?: "",
+                        onValueChange = { },
+                        readOnly = true,
+                        label = { Text(stringResource(R.string.product)) },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .onSizeChanged {
+                                textFieldSize = it.toSize()
+                            },
+                        trailingIcon = {
+                            IconButton(onClick = { expanded = !expanded }) {
+                                Icon(icon, stringResource(R.string.select_product))
+                            }
+                        }
+                    )
+                    DropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false },
+                        modifier = Modifier.width(with(LocalDensity.current) { textFieldSize.width.toDp() })
+                    ) {
+                        products.forEach { p ->
+                            DropdownMenuItem(
+                                text = { Text(p.name ?: "") },
+                                onClick = {
+                                    product = p
+                                    expanded = false
+                                })
+                        }
+                    }
+                }
             }
 
             Row(
@@ -145,7 +155,7 @@ fun AddItemBox(
                 TextButton(onClick = onClose) { Text(stringResource(R.string.cancel)) }
 
                 Button(onClick = {
-                    onAdd(producto, null) // TODO API agregar item // TODO API showEmojiPicker (para emoji en metadata)
+                    product?.let { onAdd(Item(quantity, unit, it)) }
                 }) {
                     Text(stringResource(R.string.add))
                 }

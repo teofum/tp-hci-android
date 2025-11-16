@@ -12,19 +12,14 @@ import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffo
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.navigation.NavDestination.Companion.hasRoute
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.dialog
 import androidx.navigation.compose.rememberNavController
-import androidx.compose.ui.window.DialogProperties
-import androidx.navigation.navArgument
 import androidx.window.core.layout.WindowSizeClass
 import com.example.tphci.R
 import com.example.tphci.ui.products.ProductScreen
@@ -48,15 +43,13 @@ object Profile
 object Share
 
 @Serializable
-data class ShoppingListItem(val listId: Long)
+data class Item(val listId: Int)
 
 
 @Composable
 fun AdaptiveApp() {
     TPHCITheme {
-
-        val SHOPPING_LIST_ITEM = "shopping_list_item/{listId}"
-        fun shoppingListItem(listId: Long) = "shopping_list_item/$listId"
+        fun item(listId: Int) = "item/$listId"
 
         val adaptiveInfo = currentWindowAdaptiveInfo()
         val customNavSuiteType = with(adaptiveInfo) {
@@ -144,36 +137,29 @@ fun AdaptiveApp() {
                             )
                         },
                         onOpenListDetails = { listId ->
-                            navController.navigate(ShoppingListItem(listId))
+                            navController.navigate(Item(listId))
                         }
                     )
                 }
                 composable<Products> { ProductScreen() }
                 composable<Profile> { ProfileScreen() }
-                composable<ShoppingListItem> { entry ->
+                composable<Item> { entry ->
                     val args = entry.arguments!!
-                    val listId = args.getLong("listId")
+                    val listId = args.getInt("listId")
                     ShoppingListItemScreen(
+                        onOpenShareScreen = { navController.navigate(Share) },
                         listId = listId,
-                        onClose = { navController.popBackStack() },
-                        onOpenShareScreen = {
-                            navController.navigate(
-                                Share
-                            )
-                        }
+                        onClose = { navController.popBackStack() }
                     )
                 }
-
-                dialog<Share>(
-                    dialogProperties = DialogProperties(usePlatformDefaultWidth = false)
-                ) {
+                composable<Share> { // TODO make the dialog fullscreen (TODO connect to /shareList)
                     ShareListScreen(
-                        selectedUsers = emptyList(),
-                        suggestedUsers = emptyList(),
+                        selectedShareUsers = emptyList(),
+                        suggestedShareUsers = emptyList(),
                         searchQuery = "",
                         onSearchQueryChange = {},
-                        onUserToggle = {},
-                        onRemoveSelectedUser = {},
+                        onShareUserToggle = {},
+                        onRemoveSelectedShareUser = {},
                         onBackClick = { navController.popBackStack() },
                         onDoneClick = { navController.popBackStack() },
                     )
