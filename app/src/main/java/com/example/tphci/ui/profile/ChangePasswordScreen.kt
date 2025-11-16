@@ -1,16 +1,22 @@
 package com.example.tphci.ui.profile
 
+import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.window.core.layout.WindowSizeClass
 import com.example.tphci.MyApplication
 
+@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
 fun ChangePasswordScreen(
     onPasswordChanged: () -> Unit,
@@ -24,16 +30,32 @@ fun ChangePasswordScreen(
 ) {
     val uiState = viewModel.uiState
 
+    val activity = LocalContext.current as ComponentActivity
+    val windowSize = calculateWindowSizeClass(activity)
+
+    val maxFieldWidth = when (windowSize.widthSizeClass) {
+        androidx.compose.material3.windowsizeclass.WindowWidthSizeClass.Compact -> 400.dp
+        androidx.compose.material3.windowsizeclass.WindowWidthSizeClass.Medium -> 500.dp
+        androidx.compose.material3.windowsizeclass.WindowWidthSizeClass.Expanded -> 600.dp
+        else -> 400.dp
+    }
+
     LaunchedEffect(uiState.changeSuccess) {
         if (uiState.changeSuccess) {
             onPasswordChanged()
         }
     }
 
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp),
+        contentAlignment = Alignment.TopCenter
+    ) {
+
+    Column(
+        modifier = Modifier
+            .widthIn(max = maxFieldWidth)
     ) {
         Text("Cambiar contraseña", style = MaterialTheme.typography.headlineMedium)
         Spacer(modifier = Modifier.height(16.dp))
@@ -136,4 +158,5 @@ fun ChangePasswordScreen(
             Text("Volver al perfil")
         }
     }
+}
 }

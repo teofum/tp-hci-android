@@ -1,13 +1,17 @@
 package com.example.tphci.ui.profile
 
+import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
@@ -15,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tphci.MyApplication
 
+@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
 fun ProfileScreen(
     viewModel: ProfileViewModel = viewModel(
@@ -27,6 +32,17 @@ fun ProfileScreen(
     val uiState = viewModel.uiState
     var showChangePassword by remember { mutableStateOf(false) }
 
+
+    val activity = LocalContext.current as ComponentActivity
+    val windowSize = calculateWindowSizeClass(activity)
+
+    val maxFieldWidth = when (windowSize.widthSizeClass) {
+        androidx.compose.material3.windowsizeclass.WindowWidthSizeClass.Compact -> 400.dp
+        androidx.compose.material3.windowsizeclass.WindowWidthSizeClass.Medium -> 500.dp
+        androidx.compose.material3.windowsizeclass.WindowWidthSizeClass.Expanded -> 600.dp
+        else -> 400.dp
+    }
+
     if (showChangePassword) {
         ChangePasswordScreen(
             onPasswordChanged = { showChangePassword = false },
@@ -35,10 +51,18 @@ fun ProfileScreen(
         return
     }
 
-    Column(
+
+    Box(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp),
+        contentAlignment = Alignment.TopCenter
+    ) {
+
+
+    Column(
+        modifier = Modifier
+            .widthIn(max = maxFieldWidth)
     ) {
 
         Text(
@@ -142,4 +166,4 @@ fun ProfileScreen(
             }
         }
     }
-}
+}}
