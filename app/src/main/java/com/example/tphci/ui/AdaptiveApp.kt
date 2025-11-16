@@ -43,15 +43,14 @@ object Profile
 object Share
 
 @Serializable
-data class ShoppingListItem(val listId: Long)
+data class Item(val listId: Long)
 
 
 @Composable
 fun AdaptiveApp() {
     TPHCITheme {
 
-        val SHOPPING_LIST_ITEM = "shopping_list_item/{listId}"
-        fun shoppingListItem(listId: Long) = "shopping_list_item/$listId"
+        fun item(listId: Long) = "item/$listId"
 
         val adaptiveInfo = currentWindowAdaptiveInfo()
         val customNavSuiteType = with(adaptiveInfo) {
@@ -134,17 +133,19 @@ fun AdaptiveApp() {
                 composable<ShoppingLists> {
                     ShoppingListScreen(
                         onOpenListDetails = { listId ->
-                            navController.navigate(ShoppingListItem(listId))
+                            navController.navigate(Item(listId))
                         }
                     )
                 }
                 composable<Products> { ProductScreen() }
                 composable<Profile> { ProfileScreen() }
-                composable<ShoppingListItem> { entry ->
+                composable<Item> { entry ->
                     val args = entry.arguments!!
                     val listId = args.getLong("listId")
                     ShoppingListItemScreen(
-                        onOpenShareScreen = { navController.navigate(Share) }
+                        onOpenShareScreen = { navController.navigate(Share) },
+                        listId = listId,
+                        onClose = { navController.popBackStack() }
                     )
                 }
                 composable<Share> { // TODO make the dialog fullscreen (TODO connect to /shareList)

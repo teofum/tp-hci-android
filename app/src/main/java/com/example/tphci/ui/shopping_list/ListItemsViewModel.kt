@@ -7,8 +7,8 @@ import androidx.lifecycle.viewModelScope
 import com.example.tphci.MyApplication
 import com.example.tphci.data.DataSourceException
 import com.example.tphci.data.model.Error
-import com.example.tphci.data.model.ShoppingListItem
-import com.example.tphci.data.repository.ShoppingListItemsRepository
+import com.example.tphci.data.model.Item
+import com.example.tphci.data.repository.ItemRepository
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -16,34 +16,36 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-data class ShoppingListItemUiState(
+data class ItemUiState(
     val listId: Int? = null,
-    val items: List<ShoppingListItem> = emptyList(),
+    val items: List<Item> = emptyList(),
     val isFetching: Boolean = false,
     val error: Error? = null
 )
 
-class ShoppingListItemsViewModel(
+class ListItemsViewModel(
     private val listId: Int,
-    private val repository: ShoppingListItemsRepository
+    private val repository: ItemRepository
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(ShoppingListItemUiState(listId = listId))
-    val uiState: StateFlow<ShoppingListItemUiState> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow(ItemUiState(listId = listId))
+    val uiState: StateFlow<ItemUiState> = _uiState.asStateFlow()
 
-    init { loadListItems() }
+    init {
+        loadListItems()
+    }
 
     fun loadListItems() = runOnViewModelScope(
         block = { repository.getListItems(listId) },
         updateState = { state, items -> state.copy(items = items) }
     )
 
-    fun addListItem(item: ShoppingListItem) = runOnViewModelScope(
+    fun addListItem(item: Item) = runOnViewModelScope(
         block = { repository.addListItem(listId, item) },
         updateState = { state, newItem -> state.copy(items = state.items + newItem) }
     )
 
-    fun updateListItem(item: ShoppingListItem) = runOnViewModelScope(
+    fun updateListItem(item: Item) = runOnViewModelScope(
         block = { repository.updateListItem(listId, item) },
         updateState = { state, updatedItem ->
             state.copy(items = state.items.map {
@@ -54,15 +56,15 @@ class ShoppingListItemsViewModel(
 
     fun deleteListItem(itemId: Int) = runOnViewModelScope(
         block = { repository.deleteListItem(listId, itemId) },
-        updateState = { state, _ -> state.copy(items = state.items.filter { it.id != itemId }) }
+        updateState = { state, _ -> state.copy(items = state.items.filter { it.id.toInt() != itemId }) }
     )
 
 
-    fun toggleCheckStatus(item: ShoppingListItem) {
-        val block: suspend () -> ShoppingListItem = if (item.checked) {
-            { repository.uncheckListItem(listId, item.id!!) }
+    fun toggleCheckStatus(item: Item) {
+        val block: suspend () -> Item = if (item.purchased) {
+            { repository.uncheckListItem(listId, item.id.toInt()) }
         } else {
-            { repository.checkListItem(listId, item.id!!) }
+            { repository.checkListItem(listId, item.id.toInt()) }
         }
 
         runOnViewModelScope(
@@ -77,7 +79,7 @@ class ShoppingListItemsViewModel(
 
     private fun <R> runOnViewModelScope(
         block: suspend () -> R,
-        updateState: (ShoppingListItemUiState, R) -> ShoppingListItemUiState
+        updateState: (ItemUiState, R) -> ItemUiState
     ): Job = viewModelScope.launch {
         _uiState.update { it.copy(isFetching = true, error = null) }
         runCatching {
@@ -101,7 +103,7 @@ class ShoppingListItemsViewModel(
     }
 
     companion object {
-        const val TAG = "ShoppingListItemsVM"
+        const val TAG = "ItemViewModel"
 
         fun provideFactory(
             application: MyApplication,
@@ -109,8 +111,8 @@ class ShoppingListItemsViewModel(
         ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                val repository = application.shopingListItemsRepository
-                return ShoppingListItemsViewModel(listId, repository) as T
+                val repository = application.itemRepository
+                return ListItemsViewModel(listId, repository) as T
             }
         }
     }

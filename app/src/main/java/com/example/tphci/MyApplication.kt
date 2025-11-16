@@ -2,13 +2,14 @@ package com.example.tphci
 
 import android.app.Application
 import com.example.tphci.data.network.CategoryRemoteDataSource
+import com.example.tphci.data.network.ItemRemoteDataSource
 import com.example.tphci.data.network.ProductRemoteDataSource
 import com.example.tphci.data.network.ShoppingListRemoteDataSource
 import com.example.tphci.data.network.UserRemoteDataSource
 import com.example.tphci.data.network.api.RetrofitClient
 import com.example.tphci.data.repository.CategoryRepository
+import com.example.tphci.data.repository.ItemRepository
 import com.example.tphci.data.repository.ProductRepository
-import com.example.tphci.data.repository.ShoppingListItemsRepository
 import com.example.tphci.data.repository.ShoppingListRepository
 import com.example.tphci.data.repository.UserRepository
 
@@ -18,7 +19,7 @@ class MyApplication : Application() {
     lateinit var categoryRepository: CategoryRepository
     lateinit var productRepository: ProductRepository
     lateinit var shoppingListRepository: ShoppingListRepository
-    lateinit var shopingListItemsRepository: ShoppingListItemsRepository
+    lateinit var itemRepository: ItemRepository
 
     override fun onCreate() {
         super.onCreate()
@@ -37,10 +38,13 @@ class MyApplication : Application() {
         val shoppingListApiService = RetrofitClient.getShoppingListApiService(this)
         val shoppingListRemoteDataSource = ShoppingListRemoteDataSource(shoppingListApiService)
 
+        val shoppingListItemsApiService = RetrofitClient.getShoppingListItemsApiService(this)
+        val itemRemoteDataSource = ItemRemoteDataSource(shoppingListItemsApiService)
 
         userRepository = UserRepository(userRemoteDataSource)
         categoryRepository = CategoryRepository(categoryRemoteDataSource)
         productRepository = ProductRepository(productRemoteDataSource)
         shoppingListRepository = ShoppingListRepository(shoppingListRemoteDataSource)
+        itemRepository = ItemRepository(itemRemoteDataSource)
     }
 }

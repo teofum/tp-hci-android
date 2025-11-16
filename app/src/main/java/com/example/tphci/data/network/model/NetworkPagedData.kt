@@ -13,12 +13,6 @@ data class NetworkPaginationMetadata(
 )
 
 @Serializable
-sealed interface NetworkPagedData<T : @Serializable Any> {
-    val data: List<T>
-    val pagination: NetworkPaginationMetadata
-}
-
-@Serializable
 data class NetworkPagedCategories(
     val data: List<NetworkCategory>,
     val pagination: NetworkPaginationMetadata
@@ -33,5 +27,11 @@ data class NetworkPagedProducts(
 @Serializable
 data class NetworkPagedShopingLists(
     val data: List<NetworkShoppingList>,
+    val pagination: NetworkPaginationMetadata
+)
+
+@Serializable
+data class NetworkPagedItems(
+    val data: List<NetworkItem>,
     val pagination: NetworkPaginationMetadata
 )

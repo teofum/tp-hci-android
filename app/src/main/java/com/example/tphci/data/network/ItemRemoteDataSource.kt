@@ -1,31 +1,26 @@
 package com.example.tphci.data.network
 
 import com.example.tphci.data.network.api.ShoppingListItemsApiService
-import com.example.tphci.data.network.model.NetworkNewShoppingListItem
-import com.example.tphci.data.network.model.NetworkShoppingListItem
+import com.example.tphci.data.network.model.NetworkItem
+import com.example.tphci.data.network.model.NetworkNewItem
 
-class ShoppingListItemsRemoteDataSource(
+class ItemRemoteDataSource(
     private val shoppingListItemsApiService: ShoppingListItemsApiService
 ) : RemoteDataSource() {
-
-    suspend fun getListItems(listId: Int): List<NetworkShoppingListItem> {
+    suspend fun getListItems(listId: Int): List<NetworkItem> {
         val response = handleApiResponse {
             shoppingListItemsApiService.getListItems(listId)
         }
         return response.data
     }
 
-    suspend fun addListItem(listId: Int, itemData: NetworkNewShoppingListItem): NetworkShoppingListItem {
+    suspend fun addListItem(listId: Int, itemData: NetworkNewItem): NetworkItem {
         return handleApiResponse {
             shoppingListItemsApiService.addListItem(listId, itemData)
         }
     }
 
-    suspend fun updateListItem(
-        listId: Int,
-        itemId: Int,
-        itemData: NetworkNewShoppingListItem
-    ): NetworkShoppingListItem {
+    suspend fun updateListItem(listId: Int, itemId: Int, itemData: NetworkNewItem): NetworkItem {
         return handleApiResponse {
             shoppingListItemsApiService.updateListItem(listId, itemId, itemData)
         }
@@ -37,13 +32,13 @@ class ShoppingListItemsRemoteDataSource(
         }
     }
 
-    suspend fun checkListItem(listId: Int, itemId: Int): NetworkShoppingListItem {
+    suspend fun checkListItem(listId: Int, itemId: Int): NetworkItem {
         return handleApiResponse {
             shoppingListItemsApiService.checkListItem(listId, itemId)
         }
     }
 
-    suspend fun uncheckListItem(listId: Int, itemId: Int): NetworkShoppingListItem {
+    suspend fun uncheckListItem(listId: Int, itemId: Int): NetworkItem {
         return handleApiResponse {
             shoppingListItemsApiService.uncheckListItem(listId, itemId)
         }

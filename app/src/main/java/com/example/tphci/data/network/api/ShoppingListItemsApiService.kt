@@ -1,8 +1,8 @@
 package com.example.tphci.data.network.api
 
-import com.example.tphci.data.network.model.NetworkNewShoppingListItem
-import com.example.tphci.data.network.model.NetworkPagedShoppingListItems
-import com.example.tphci.data.network.model.NetworkShoppingListItem
+import com.example.tphci.data.network.model.NetworkItem
+import com.example.tphci.data.network.model.NetworkNewItem
+import com.example.tphci.data.network.model.NetworkPagedItems
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -13,39 +13,39 @@ import retrofit2.http.Path
 
 interface ShoppingListItemsApiService {
 
-    @GET("shopping-lists/{id}/items")
+    @GET("shopping-lists/{listId}/items")
     suspend fun getListItems(
-        @Path("id") listId: Int
-    ): Response<NetworkPagedShoppingListItems>
+        @Path("listId") listId: Int
+    ): Response<NetworkPagedItems>
 
-    @POST("shopping-lists/{id}/items")
+    @POST("shopping-lists/{listId}/items")
     suspend fun addListItem(
-        @Path("id") listId: Int,
-        @Body itemData: NetworkNewShoppingListItem
-    ): Response<NetworkShoppingListItem>
+        @Path("listId") listId: Int,
+        @Body itemData: NetworkNewItem
+    ): Response<NetworkItem>
 
-    @PUT("shopping-lists/{id}/items/{item_id}")
+    @PUT("shopping-lists/{listId}/items/{itemId}")
     suspend fun updateListItem(
-        @Path("id") listId: Int,
-        @Path("item_id") itemId: Int,
-        @Body itemData: NetworkNewShoppingListItem
-    ): Response<NetworkShoppingListItem>
+        @Path("listId") listId: Int,
+        @Path("itemId") itemId: Int,
+        @Body itemData: NetworkNewItem
+    ): Response<NetworkItem>
 
-    @DELETE("shopping-lists/{id}/items/{item_id}")
+    @DELETE("shopping-lists/{listId}/items/{itemId}")
     suspend fun deleteListItem(
-        @Path("id") listId: Int,
-        @Path("item_id") itemId: Int
+        @Path("listId") listId: Int,
+        @Path("itemId") itemId: Int,
     ): Response<Unit>
 
-    @POST("shopping-lists/{id}/items/{item_id}/check")
+    @POST("shopping-lists/{listId}/items/{itemId}/check")
     suspend fun checkListItem(
-        @Path("id") listId: Int,
-        @Path("item_id") itemId: Int
-    ): Response<NetworkShoppingListItem>
+        @Path("listId") listId: Int,
+        @Path("itemId") itemId: Int
+    ): Response<NetworkItem>
 
-    @POST("shopping-lists/{id}/items/{item_id}/uncheck")
+    @POST("shopping-lists/{listId}/items/{itemId}/uncheck")
     suspend fun uncheckListItem(
-        @Path("id") listId: Int,
-        @Path("item_id") itemId: Int
-    ): Response<NetworkShoppingListItem>
+        @Path("listId") listId: Int,
+        @Path("itemId") itemId: Int
+    ): Response<NetworkItem>
 }

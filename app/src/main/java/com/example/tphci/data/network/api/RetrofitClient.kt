@@ -66,4 +66,8 @@ object RetrofitClient {
     fun getShoppingListApiService(context: Context): ShoppingListApiService {
         return getInstance(context).create(ShoppingListApiService::class.java)
     }
+
+    fun getShoppingListItemsApiService(context: Context): ShoppingListItemsApiService {
+        return getInstance(context).create(ShoppingListItemsApiService::class.java)
+    }
 }

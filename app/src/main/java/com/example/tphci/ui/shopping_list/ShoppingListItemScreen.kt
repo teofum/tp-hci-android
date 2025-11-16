@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Share
@@ -24,9 +23,9 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -39,9 +38,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tphci.MyApplication
-import com.example.tphci.data.model.Item
-import com.example.tphci.ui.home.HomeViewModel
-import com.example.tphci.ui.shopping_list.components.AddItemBox
 import com.example.tphci.ui.shopping_list.components.ListItem
 
 
@@ -51,18 +47,16 @@ fun ShoppingListItemScreen(
     onOpenShareScreen: () -> Unit,
     listId: Long,
     onClose: () -> Unit,
-    viewModel: HomeViewModel = viewModel(
-        factory = HomeViewModel.provideFactory(
-            (LocalContext.current.applicationContext as MyApplication).sessionManager,
-            (LocalContext.current.applicationContext as MyApplication).userRepository,
-            (LocalContext.current.applicationContext as MyApplication).shoppingRepository
+    viewModel: ListItemsViewModel = viewModel(
+        factory = ListItemsViewModel.provideFactory(
+            LocalContext.current.applicationContext as MyApplication,
+            listId.toInt()
         )
     )
 ) {
-    val uiState = viewModel.uiState
+    val uiState = viewModel.uiState.collectAsState().value
 
-    val items = uiState.shoppingListItems[listId] ?: emptyList()
-    val currentList = uiState.shoppingLists.firstOrNull { it.id.toLong() == listId }
+    val items = uiState.items
 
     // TODO
     var searchQuery by remember { mutableStateOf("") }
@@ -74,20 +68,13 @@ fun ShoppingListItemScreen(
 
     var showAddItemScreen by remember { mutableStateOf(false) }
 
-    fun Item.categoryName(): String =
-        this.product.category?.name ?: "Sin categoría"
-
     val groupedItems = if (groupByCategory) {
-        items.groupBy { it.categoryName() }
+        items.groupBy { it.product.category?.name ?: "Sin categoría" }
     } else null
 
 
     LaunchedEffect(Unit) {
-        viewModel.getShoppingLists()
-    }
-
-    LaunchedEffect(listId) {
-        viewModel.getShoppingListsItems(listId)
+        viewModel.loadListItems()
     }
 
     Scaffold(
@@ -125,7 +112,7 @@ fun ShoppingListItemScreen(
                 }
 
                 Text(
-                    text = currentList?.name ?: "",
+                    text = "TODO list name",
                     fontWeight = FontWeight.SemiBold,
                     style = MaterialTheme.typography.headlineSmall
                 )
@@ -189,9 +176,12 @@ fun ShoppingListItemScreen(
                 Spacer(modifier = Modifier.width(12.dp))
 
                 Row(
-                    verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Text("Agrupar por categoría ", fontSize = MaterialTheme.typography.bodyMedium.fontSize)
+                    Text(
+                        "Agrupar por categoría ",
+                        fontSize = MaterialTheme.typography.bodyMedium.fontSize
+                    )
                     Switch(
                         checked = groupByCategory,
                         onCheckedChange = { groupByCategory = it },
@@ -205,29 +195,24 @@ fun ShoppingListItemScreen(
                     .fillMaxSize(),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-
                 if (groupByCategory && groupedItems != null && groupedItems.isNotEmpty()) {
-
                     groupedItems.forEach { (categoryName, itemsInCategory) ->
-
                         item {
                             Text(
-                                text = categoryName,
+                                text = categoryName.toString(), // TODO
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold,
                                 modifier = Modifier.padding(top = 16.dp, bottom = 4.dp)
                             )
                         }
 
-                        items(itemsInCategory, key = { it.id }) { item ->
-                            ListItem(item = item, onToggle = {})
+                        items(itemsInCategory.size, key = { it }) { item ->
+                            ListItem(item = itemsInCategory[item], onToggle = {})
                         }
                     }
-
                 } else {
-
-                    items(items, key = { it.id }) { item ->
-                        ListItem(item = item, onToggle = {})
+                    items(items.size, key = { it }) { item ->
+                        ListItem(item = items[item], onToggle = {})
                     }
                 }
 
@@ -235,13 +220,14 @@ fun ShoppingListItemScreen(
         }
 
         if (showAddItemScreen) {
-            AddItemBox(
-                onClose = { showAddItemScreen = false },
-                onAdd = { name, categoryId ->
-                    viewModel.addProduct(name, categoryId)
-                    showAddItemScreen = false
-                }
-            )
+            // TODO
+//            AddItemBox(
+//                onClose = { showAddItemScreen = false },
+//                onAdd = { name, categoryId ->
+//                    viewModel.addListItem(ShoppingListItem(name = name, categoryId = categoryId))
+//                    showAddItemScreen = false
+//                }
+//            )
         }
     }
 }
