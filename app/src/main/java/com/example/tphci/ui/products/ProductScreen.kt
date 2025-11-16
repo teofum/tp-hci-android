@@ -21,6 +21,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tphci.MyApplication
 import com.example.tphci.data.model.Category
+import com.example.tphci.data.model.Item
+import com.example.tphci.data.model.Product
 import com.example.tphci.ui.home.HomeViewModel
 import com.example.tphci.ui.products.components.AddProductBox
 import com.example.tphci.ui.products.components.ManageCategoryBox
@@ -51,6 +53,14 @@ fun ProductScreen(
     val productSearch = remember { mutableStateOf("") }
 
     var showCategoryScreen by remember { mutableStateOf(false) }
+
+    fun categoryNameOf(product: Product): String =
+        product.category?.name ?: "Sin categoría"
+
+    val groupedProducts = if (groupByCategory) {
+        uiState.products.groupBy { categoryNameOf(it) }
+    } else null
+
 
 
     Scaffold(
@@ -118,35 +128,82 @@ fun ProductScreen(
                 }
             }
 
-            uiState.products.forEach { product ->
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 10.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
+            if (groupByCategory && groupedProducts != null && groupedProducts.isNotEmpty()) {
 
-                    Box(
-                        modifier = Modifier
-                            .size(48.dp)
-                            .background(Color(0xFFF1F1F1), RoundedCornerShape(12.dp))
-                    ) {
-                        // TODO emoji
+                groupedProducts.forEach { (categoryName, productsInCategory) ->
+
+                    Text(
+                        text = categoryName,
+                        style = MaterialTheme.typography.titleMedium,
+                        modifier = Modifier.padding(top = 16.dp, bottom = 4.dp)
+                    )
+
+                    productsInCategory.forEach { product ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 10.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+
+                            Box(
+                                modifier = Modifier
+                                    .size(48.dp)
+                                    .background(Color(0xFFF1F1F1), RoundedCornerShape(12.dp))
+                            ) {
+                                // TODO emoji
+                            }
+
+                            Spacer(Modifier.width(12.dp))
+
+                            Column(modifier = Modifier.weight(1f)) {
+                                product.name?.let { Text(it, style = MaterialTheme.typography.bodyLarge) }
+
+                                Text(
+                                    "${product.category}",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = Color.Gray
+                                )
+                            }
+                        }
                     }
+                }
 
-                    Spacer(Modifier.width(12.dp))
+            } else {
+                uiState.products.forEach { product ->
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 10.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
 
-                    Column(modifier = Modifier.weight(1f)) {
-                        product.name?.let { Text(it, style = MaterialTheme.typography.bodyLarge) }
+                        Box(
+                            modifier = Modifier
+                                .size(48.dp)
+                                .background(Color(0xFFF1F1F1), RoundedCornerShape(12.dp))
+                        ) {
+                            // TODO emoji
+                        }
 
-                        Text(
-                            "${product.category}",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = Color.Gray
-                        )
+                        Spacer(Modifier.width(12.dp))
+
+                        Column(modifier = Modifier.weight(1f)) {
+                            product.name?.let { Text(it, style = MaterialTheme.typography.bodyLarge) }
+
+                            Text(
+                                "${product.category}",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = Color.Gray
+                            )
+                        }
                     }
                 }
             }
+
+
+
+
         }
     }
 

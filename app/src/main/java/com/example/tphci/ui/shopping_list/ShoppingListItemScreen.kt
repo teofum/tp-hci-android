@@ -39,6 +39,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tphci.MyApplication
+import com.example.tphci.data.model.Item
 import com.example.tphci.ui.home.HomeViewModel
 import com.example.tphci.ui.shopping_list.components.AddItemBox
 import com.example.tphci.ui.shopping_list.components.ListItem
@@ -72,6 +73,14 @@ fun ShoppingListItemScreen(
     var groupByCategory by remember { mutableStateOf(false) }
 
     var showAddItemScreen by remember { mutableStateOf(false) }
+
+    fun Item.categoryName(): String =
+        this.product.category?.name ?: "Sin categoría"
+
+    val groupedItems = if (groupByCategory) {
+        items.groupBy { it.categoryName() }
+    } else null
+
 
     LaunchedEffect(Unit) {
         viewModel.getShoppingLists()
@@ -196,14 +205,32 @@ fun ShoppingListItemScreen(
                     .fillMaxSize(),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                items(items) { item ->
-                    ListItem(
-                        item = item,
-                        onToggle = {
-                            // TODO viewModel.toggleItemPurchased(item.id)
+
+                if (groupByCategory && groupedItems != null && groupedItems.isNotEmpty()) {
+
+                    groupedItems.forEach { (categoryName, itemsInCategory) ->
+
+                        item {
+                            Text(
+                                text = categoryName,
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier.padding(top = 16.dp, bottom = 4.dp)
+                            )
                         }
-                    )
+
+                        items(itemsInCategory, key = { it.id }) { item ->
+                            ListItem(item = item, onToggle = {})
+                        }
+                    }
+
+                } else {
+
+                    items(items, key = { it.id }) { item ->
+                        ListItem(item = item, onToggle = {})
+                    }
                 }
+
             }
         }
 
