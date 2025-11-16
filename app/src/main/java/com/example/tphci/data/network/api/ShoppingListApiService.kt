@@ -3,7 +3,9 @@ package com.example.tphci.data.network.api
 import com.example.tphci.data.network.model.NetworkNewShoppingList
 import com.example.tphci.data.network.model.NetworkPagedShopingLists
 import com.example.tphci.data.network.model.NetworkPurchaseShoppingList
+import com.example.tphci.data.network.model.NetworkShareData
 import com.example.tphci.data.network.model.NetworkShoppingList
+import com.example.tphci.ui.shareList.ShareUser
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -34,5 +36,20 @@ interface ShoppingListApiService {
         @Body data: NetworkPurchaseShoppingList
     ): Response<NetworkShoppingList>
 
-    // TODO share
+    @POST("shopping-lists/{id}/share")
+    suspend fun share(
+        @Path("id") id: Int,
+        @Body shareData: NetworkShareData
+    ): Response<Unit>
+
+    @GET("shopping-lists/{id}/shared-users")
+    suspend fun sharedUsers(
+        @Path("id") id: Int
+    ): Response<List<ShareUser>>
+
+    @DELETE("shopping-lists/{id}/share/{user_id}")
+    suspend fun unshare(
+        @Path("id") id: Int,
+        @Path("user_id") userId: Int
+    ): Response<Unit>
 }

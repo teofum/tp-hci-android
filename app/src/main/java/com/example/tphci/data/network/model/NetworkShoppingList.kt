@@ -3,6 +3,7 @@ package com.example.tphci.data.network.model
 import com.example.tphci.data.model.ShoppingList
 import com.example.tphci.data.model.User
 import kotlinx.serialization.Contextual
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import java.util.Date
 
@@ -50,3 +51,9 @@ data class NetworkShoppingList(
         )
     }
 }
+
+@Serializable
+data class NetworkShareData(
+    @SerialName("email")
+    val email: String
+)

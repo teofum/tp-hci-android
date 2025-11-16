@@ -30,27 +30,34 @@ import androidx.compose.ui.unit.sp
 import com.example.tphci.ui.theme.TPHCITheme
 
 /**
- * Basic user model – adapt it to your backend DTO.
+ * Basic ShareUser model – adapt it to your backend DTO.
  */
-data class User(
-    val id: String,
-    val fullName: String,
-    val handle: String,
-    val avatarRes: Int? = null, // local drawable, or null if you load from URL
+data class ShareUser(
+    val id: Int,
+    val name: String,
+    val surname: String,
+    val email: String,
+    val metadata: Unit,
+    val createdAt: String,
+    val updatedAt: String
 )
+
+// Helper property to minimize changes in composables
+private val ShareUser.fullName: String
+    get() = "$name $surname"
 
 /**
  * Main screen. Stateless: only UI + callbacks.
  */
-@OptIn(ExperimentalMaterial3Api::class)//TODO: esto no ba
+@OptIn(ExperimentalMaterial3Api::class)// TODO : esto no ba
 @Composable
 fun ShareListScreen(
-    selectedUsers: List<User>,
-    suggestedUsers: List<User>,
+    selectedShareUsers: List<ShareUser>,
+    suggestedShareUsers: List<ShareUser>,
     searchQuery: String,
     onSearchQueryChange: (String) -> Unit,
-    onUserToggle: (User) -> Unit,
-    onRemoveSelectedUser: (User) -> Unit,
+    onShareUserToggle: (ShareUser) -> Unit,
+    onRemoveSelectedShareUser: (ShareUser) -> Unit,
     onBackClick: () -> Unit,
     onDoneClick: () -> Unit,
 ) {
@@ -98,18 +105,18 @@ fun ShareListScreen(
                 .padding(horizontal = 16.dp, vertical = 8.dp)
                 .fillMaxSize()
         ) {
-            // Selected user “pill” on top
-            if (selectedUsers.isNotEmpty()) {
+            // Selected ShareUser “pill” on top
+            if (selectedShareUsers.isNotEmpty()) {
                 LazyRow(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(bottom = 16.dp)
                 ) {
-                    items(selectedUsers) { user ->
-                        SelectedUserChip(
-                            user = user,
-                            onRemove = { onRemoveSelectedUser(user) }
+                    items(selectedShareUsers) { ShareUser ->
+                        SelectedShareUserChip(
+                            ShareUser = ShareUser,
+                            onRemove = { onRemoveSelectedShareUser(ShareUser) }
                         )
                     }
                 }
@@ -127,22 +134,22 @@ fun ShareListScreen(
                 shape = RoundedCornerShape(10.dp)
             )
 
-            // Suggested users title
+            // Suggested ShareUsers title
             Text(
                 text = "Usuarios sugeridos",
                 fontWeight = FontWeight.SemiBold,
                 modifier = Modifier.padding(bottom = 12.dp)
             )
 
-            // Suggested users list
+            // Suggested ShareUsers list
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(12.dp),
                 modifier = Modifier.fillMaxSize()
             ) {
-                items(suggestedUsers) { user ->
-                    SuggestedUserRow(
-                        user = user,
-                        onClick = { onUserToggle(user) }
+                items(suggestedShareUsers) { ShareUser ->
+                    SuggestedShareUserRow(
+                        ShareUser = ShareUser,
+                        onClick = { onShareUserToggle(ShareUser) }
                     )
                 }
             }
@@ -154,8 +161,8 @@ fun ShareListScreen(
  * Pill with avatar, name, handle and close icon.
  */
 @Composable
-private fun SelectedUserChip(
-    user: User,
+private fun SelectedShareUserChip(
+    ShareUser: ShareUser,
     onRemove: () -> Unit
 ) {
     Surface(
@@ -166,18 +173,18 @@ private fun SelectedUserChip(
             modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Avatar(user, size = 32.dp)
+            Avatar(ShareUser, size = 32.dp)
 
             Spacer(Modifier.width(8.dp))
 
             Column {
                 Text(
-                    text = user.fullName,
+                    text = ShareUser.fullName,
                     fontSize = 13.sp,
                     fontWeight = FontWeight.SemiBold
                 )
                 Text(
-                    text = "@${user.handle}",
+                    text = ShareUser.email, // Changed from @${ShareUser.handle}
                     fontSize = 11.sp,
                     color = Color.Gray
                 )
@@ -203,8 +210,8 @@ private fun SelectedUserChip(
  * Row in "Usuarios sugeridos".
  */
 @Composable
-private fun SuggestedUserRow(
-    user: User,
+private fun SuggestedShareUserRow(
+    ShareUser: ShareUser,
     onClick: () -> Unit
 ) {
     Row(
@@ -213,18 +220,18 @@ private fun SuggestedUserRow(
             .clickable(onClick = onClick),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Avatar(user, size = 44.dp)
+        Avatar(ShareUser, size = 44.dp)
 
         Spacer(Modifier.width(12.dp))
 
         Column {
             Text(
-                text = user.fullName,
+                text = ShareUser.fullName,
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 15.sp
             )
             Text(
-                text = "@${user.handle}",
+                text = ShareUser.email, // Changed from @${ShareUser.handle}
                 fontSize = 13.sp,
                 color = Color.Gray
             )
@@ -238,32 +245,21 @@ private fun SuggestedUserRow(
  */
 @Composable
 private fun Avatar(
-    user: User,
+    ShareUser: ShareUser,
     size: Dp
 ) {
-    if (user.avatarRes != null) {
-        Image(
-            painter = painterResource(id = user.avatarRes),
-            contentDescription = user.fullName,
-            modifier = Modifier
-                .size(size)
-                .clip(CircleShape),
-            contentScale = ContentScale.Crop
+    Box(
+        modifier = Modifier
+            .size(size)
+            .clip(CircleShape)
+            .background(MaterialTheme.colorScheme.primary),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = ShareUser.fullName.firstOrNull()?.uppercase() ?: "",
+            color = MaterialTheme.colorScheme.onPrimary,
+            fontWeight = FontWeight.Bold
         )
-    } else {
-        Box(
-            modifier = Modifier
-                .size(size)
-                .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.primary),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = user.fullName.firstOrNull()?.uppercase() ?: "",
-                color = MaterialTheme.colorScheme.onPrimary,
-                fontWeight = FontWeight.Bold
-            )
-        }
     }
 }
 
@@ -276,38 +272,50 @@ private fun ShareListScreenPreview() {
     val selected = remember {
         mutableStateOf(
             listOf(
-                User(
-                    id = "1",
-                    fullName = "Sophia Richards",
-                    handle = "sophia.richards"
+                ShareUser(
+                    id = 1,
+                    name = "Sophia",
+                    surname = "Richards",
+                    email = "sophia.richards@example.com",
+                    metadata = Unit,
+                    createdAt = "2025-01-01",
+                    updatedAt = "2025-01-01"
                 )
             )
         )
     }
 
     val suggested = listOf(
-        User("2", "Henry Clark", "henry.clark"),
-        User("3", "Olivia Smith", "olivia.smith")
+        ShareUser(
+            id = 2, name = "Henry", surname = "Clark",
+            email = "henry.clark@example.com", metadata = Unit,
+            createdAt = "2025-01-01", updatedAt = "2025-01-01"
+        ),
+        ShareUser(
+            id = 3, name = "Olivia", surname = "Smith",
+            email = "olivia.smith@example.com", metadata = Unit,
+            createdAt = "2025-01-01", updatedAt = "2025-01-01"
+        )
     )
 
     val search = remember { mutableStateOf("") }
 
     TPHCITheme {
         ShareListScreen(
-            selectedUsers = selected.value,
-            suggestedUsers = suggested,
+            selectedShareUsers = selected.value,
+            suggestedShareUsers = suggested,
             searchQuery = search.value,
             onSearchQueryChange = { search.value = it },
-            onUserToggle = { user ->
+            onShareUserToggle = { ShareUser ->
                 selected.value =
-                    if (selected.value.any { it.id == user.id }) {
-                        selected.value.filterNot { it.id == user.id }
+                    if (selected.value.any { it.id == ShareUser.id }) {
+                        selected.value.filterNot { it.id == ShareUser.id }
                     } else {
-                        selected.value + user
+                        selected.value + ShareUser
                     }
             },
-            onRemoveSelectedUser = { user ->
-                selected.value = selected.value.filterNot { it.id == user.id }
+            onRemoveSelectedShareUser = { ShareUser ->
+                selected.value = selected.value.filterNot { it.id == ShareUser.id }
             },
             onBackClick = {},
             onDoneClick = {}
