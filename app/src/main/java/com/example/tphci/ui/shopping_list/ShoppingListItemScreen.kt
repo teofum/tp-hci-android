@@ -31,21 +31,21 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.tphci.MyApplication
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ShoppingListItemScreen(
-    onOpenShareScreen: () -> Unit,
-    listId: Long,
-    onClose: () -> Unit,
-//    viewModel: HomeViewModel = viewModel(
-//        factory = HomeViewModel.provideFactory(
-//            (LocalContext.current.applicationContext as MyApplication).sessionManager,
-//            (LocalContext.current.applicationContext as MyApplication).userRepository,
-//            (LocalContext.current.applicationContext as MyApplication).shoppingRepository
-//        )
-//    )
+    onOpenShareScreen: (Long) -> Unit,
+    viewModel: ShoppingListItemViewModel = viewModel(
+        factory = ShoppingListItemViewModel.provideFactory(
+            LocalContext.current.applicationContext as MyApplication,
+            )
+
+    )
 ) {
 //    val uiState = viewModel.uiState
 //    val items = uiState.shoppingListItems[listId] ?: emptyList()
