@@ -25,6 +25,7 @@ import com.example.tphci.MyApplication
 import com.example.tphci.ui.home.rememberWindowInfo
 import com.example.tphci.ui.SettingsBox
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(
     viewModel: ProfileViewModel = viewModel(
@@ -51,39 +52,38 @@ fun ProfileScreen(
     }
 
 
-    Scaffold {
-        innerPadding ->
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        stringResource(R.string.profile),
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Center
+                    )
+                },
+                actions = {
+                    IconButton(onClick = { showSettingsBox = true }) {
+                        Icon(
+                            Icons.Default.Settings,
+                            contentDescription = stringResource(R.string.settings)
+                        )
+                    }
+                }
+            )
+        }
+    ) { innerPadding ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding),
+                .padding(innerPadding)
+                .padding(16.dp),
             contentAlignment = Alignment.TopCenter
         ) {
             Column(
                 modifier = Modifier
                     .widthIn(max = maxWidth)
-                    .padding(16.dp)
             ) {
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Spacer(modifier = Modifier.width(48.dp))
-            Text(
-                stringResource(R.string.profile),
-                style = MaterialTheme.typography.headlineMedium
-            )
-            IconButton(onClick = { showSettingsBox = true }) {
-                Icon(
-                    Icons.Default.Settings,
-                    contentDescription = stringResource(R.string.settings)
-                )
-            }
-        }
-
-        Spacer(modifier = Modifier.height(8.dp))
 
         if (!uiState.isAuthenticated) {
             Text(stringResource(R.string.not_logged_in), style = MaterialTheme.typography.bodyLarge)

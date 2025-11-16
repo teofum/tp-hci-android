@@ -36,6 +36,7 @@ import com.example.tphci.ui.home.rememberWindowInfo
 import com.example.tphci.ui.shopping_list.components.ManageListBox
 import com.example.tphci.ui.SettingsBox
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ShoppingListScreen(
     onOpenShareScreen: () -> Unit,
@@ -66,6 +67,25 @@ fun ShoppingListScreen(
     }
 
     Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        stringResource(R.string.shopping_lists),
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Center
+                    )
+                },
+                actions = {
+                    IconButton(onClick = { showSettingsBox = true }) {
+                        Icon(
+                            Icons.Default.Settings,
+                            contentDescription = stringResource(R.string.settings)
+                        )
+                    }
+                }
+            )
+        },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { showAddListBox = true },
@@ -90,26 +110,6 @@ fun ShoppingListScreen(
                     .padding(16.dp)
 
             ) {
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Spacer(modifier = Modifier.width(48.dp))
-                    Text(
-                        stringResource(R.string.shopping_lists),
-                        style = MaterialTheme.typography.headlineMedium
-                    )
-                    IconButton(onClick = { showSettingsBox = true }) {
-                        Icon(
-                            Icons.Default.Settings,
-                            contentDescription = stringResource(R.string.settings)
-                        )
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(8.dp))
 
 
                     uiState.shoppingLists.forEach { list ->
@@ -214,85 +214,43 @@ fun ShoppingListScreen(
                 }
             }
 
-        if (showAddListBox) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color.Black.copy(alpha = 0.5f)),
-                contentAlignment = Alignment.Center
-            ) {
-                Box(
-                    modifier = if (isTablet) {
-                        Modifier
-                            .widthIn(max = 600.dp)
-                            .heightIn(max = 400.dp)
-                            .background(MaterialTheme.colorScheme.background, RoundedCornerShape(16.dp))
-                            .padding(16.dp)
-                    } else {
-                        Modifier
-                            .fillMaxSize()
-                            .background(MaterialTheme.colorScheme.background)
-                            .padding(16.dp)
-                    }
-                ) {
-                    ManageListBox(
-                        title = stringResource(R.string.add_list),
-                        confirmButtonText = stringResource(R.string.add),
-                        onClose = { showAddListBox = false },
-                        onConfirm = { name, description, recurring ->
-                            viewModel.addShoppingList(name, description, recurring) // TODO API
-                            showAddListBox = false
-                        }
-                    )
-                }
-            }
-        }
 
-        if (showEditListBox && editingList != null) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color.Black.copy(alpha = 0.5f)),
-                contentAlignment = Alignment.Center
-            ) {
-                Box(
-                    modifier = if (isTablet) {
-                        Modifier
-                            .widthIn(max = 600.dp)
-                            .heightIn(max = 400.dp)
-                            .background(MaterialTheme.colorScheme.background, RoundedCornerShape(16.dp))
-                            .padding(16.dp)
-                    } else {
-                        Modifier
-                            .fillMaxSize()
-                            .background(MaterialTheme.colorScheme.background)
-                            .padding(16.dp)
-                    }
-                ) {
-                    ManageListBox(
-                        title = stringResource(R.string.edit_lists),
-                        initialName = editingList!!.name,
-                        initialDescription = editingList!!.description,
-                        initialRecurring = editingList!!.recurring,
-                        confirmButtonText = stringResource(R.string.save_changes),
-                        onClose = {
-                            showEditListBox = false
-                            editingList = null
-                        },
-                        onConfirm = { name, description, recurring ->
-                            viewModel.addShoppingList(name, description, recurring) // TODO API
-                            showEditListBox = false
-                            editingList = null
-                        }
-                    )
-                }
+    }
+    
+    if (showAddListBox) {
+        ManageListBox(
+            title = stringResource(R.string.add_list),
+            confirmButtonText = stringResource(R.string.add),
+            onClose = { showAddListBox = false },
+            onConfirm = { name, description, recurring ->
+                viewModel.addShoppingList(name, description, recurring)
+                showAddListBox = false
             }
-        }
+        )
+    }
 
-        if (showSettingsBox) {
-            SettingsBox(
-                onClose = { showSettingsBox = false }
-            )
-        }
+    if (showEditListBox && editingList != null) {
+        ManageListBox(
+            title = stringResource(R.string.edit_lists),
+            initialName = editingList!!.name,
+            initialDescription = editingList!!.description,
+            initialRecurring = editingList!!.recurring,
+            confirmButtonText = stringResource(R.string.save_changes),
+            onClose = {
+                showEditListBox = false
+                editingList = null
+            },
+            onConfirm = { name, description, recurring ->
+                viewModel.addShoppingList(name, description, recurring)
+                showEditListBox = false
+                editingList = null
+            }
+        )
+    }
+    
+    if (showSettingsBox) {
+        SettingsBox(
+            onClose = { showSettingsBox = false }
+        )
     }
 }

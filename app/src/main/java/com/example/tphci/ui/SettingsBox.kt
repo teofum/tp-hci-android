@@ -10,8 +10,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Icon
@@ -21,6 +23,8 @@ import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -74,11 +78,11 @@ fun SettingsBox(
     val maxWidth = windowInfo.maxWidth
     val isTablet = maxWidth > 600.dp
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.Black.copy(alpha = 0.5f)),
-        contentAlignment = Alignment.Center
+    Dialog(
+        onDismissRequest = onClose,
+        properties = DialogProperties(
+            usePlatformDefaultWidth = false
+        )
     ) {
         Column(
             modifier = if (isTablet) {
@@ -87,11 +91,13 @@ fun SettingsBox(
                     .heightIn(max = 400.dp)
                     .background(MaterialTheme.colorScheme.background, RoundedCornerShape(16.dp))
                     .padding(16.dp)
+                    .verticalScroll(rememberScrollState())
             } else {
                 Modifier
                     .fillMaxSize()
                     .background(MaterialTheme.colorScheme.background)
                     .padding(16.dp)
+                    .verticalScroll(rememberScrollState())
             },
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
@@ -175,17 +181,6 @@ fun SettingsBox(
                             text = label,
                             modifier = Modifier.padding(start = 8.dp)
                         )
-                    }
-                }
-
-                if (isTablet) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.End
-                    ) {
-                        TextButton(onClick = onClose) { 
-                            Text(stringResource(R.string.close)) 
-                        }
                     }
                 }
         }

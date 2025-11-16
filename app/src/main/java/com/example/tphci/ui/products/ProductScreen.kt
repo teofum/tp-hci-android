@@ -40,6 +40,7 @@ import com.example.tphci.ui.shopping_list.components.AddItemBox
 import com.example.tphci.ui.SettingsBox
 import kotlinx.serialization.json.JsonNull
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProductScreen(
 //    TODO API view model
@@ -80,6 +81,25 @@ fun ProductScreen(
     val isTablet = windowInfo.maxWidth > 600.dp
 
     Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        stringResource(R.string.products),
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Center
+                    )
+                },
+                actions = {
+                    IconButton(onClick = { showSettingsBox = true }) {
+                        Icon(
+                            Icons.Default.Settings,
+                            contentDescription = stringResource(R.string.settings)
+                        )
+                    }
+                }
+            )
+        },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { showAddProductScreen = true },
@@ -103,26 +123,6 @@ fun ProductScreen(
                     .padding(16.dp)
 
         ) {
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Spacer(modifier = Modifier.width(48.dp))
-                    Text(
-                        stringResource(R.string.products),
-                        style = MaterialTheme.typography.headlineMedium
-                    )
-                    IconButton(onClick = { showSettingsBox = true }) {
-                        Icon(
-                            Icons.Default.Settings,
-                            contentDescription = stringResource(R.string.settings)
-                        )
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(8.dp))
 
                 OutlinedTextField(
                     value = productSearch.value, // TODO api, buscador de prods
@@ -269,35 +269,13 @@ fun ProductScreen(
     }
 
     if (showAddProductScreen) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.Black.copy(alpha = 0.5f)),
-            contentAlignment = Alignment.Center
-        ) {
-            Box(
-                modifier = if (isTablet) {
-                    Modifier
-                        .widthIn(max = 600.dp)
-                        .heightIn(max = 500.dp)
-                        .background(MaterialTheme.colorScheme.background, RoundedCornerShape(16.dp))
-                        .padding(16.dp)
-                } else {
-                    Modifier
-                        .fillMaxSize()
-                        .background(MaterialTheme.colorScheme.background)
-                        .padding(16.dp)
-                }
-            ) {
-                AddProductBox(
-                    onClose = { showAddProductScreen = false },
-                    onAdd = { name, categoryId ->
-                        viewModel.addProduct(name, categoryId) // TODO API, check contrato
-                        showAddProductScreen = false
-                    }
-                )
+        AddProductBox(
+            onClose = { showAddProductScreen = false },
+            onAdd = { name, categoryId ->
+                viewModel.addProduct(name, categoryId)
+                showAddProductScreen = false
             }
-        }
+        )
     }
 
 
