@@ -2,11 +2,26 @@ package com.example.tphci.ui.products
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -19,27 +34,23 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tphci.MyApplication
-import com.example.tphci.ui.home.HomeViewModel
+import com.example.tphci.data.model.Product
 import com.example.tphci.ui.products.components.AddProductBox
 import com.example.tphci.ui.products.components.ManageCategoriesBox
-import com.example.tphci.ui.shopping_list.components.AddItemBox
 
 @Composable
 fun ProductScreen(
-    viewModel: HomeViewModel = viewModel(
-        factory = HomeViewModel.provideFactory(
-            (LocalContext.current.applicationContext as MyApplication).sessionManager,
-            (LocalContext.current.applicationContext as MyApplication).userRepository,
-            (LocalContext.current.applicationContext as MyApplication).shoppingRepository
+    viewModel: ProductViewModel = viewModel(
+        factory = ProductViewModel.provideFactory(
+            LocalContext.current.applicationContext as MyApplication,
         )
     )
 ) {
-
     LaunchedEffect(Unit) {
-        viewModel.getProducts()
+        viewModel.startPolling()
     }
 
-    val uiState = viewModel.uiState
+    val uiState = viewModel.uiState.collectAsState().value
 
     var groupByCategory by remember { mutableStateOf(false) }
 
@@ -59,12 +70,12 @@ fun ProductScreen(
             }
         }
     ) { innerPadding ->
-        Column(Modifier.fillMaxSize().padding(16.dp)) {
-            Text("Productos", style = MaterialTheme.typography.headlineMedium)
-
-
-
-
+        Column(
+            Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+        ) {
+            Text("Productos aa", style = MaterialTheme.typography.headlineMedium)
 
             OutlinedTextField(
                 value = productSearch.value,
@@ -97,9 +108,12 @@ fun ProductScreen(
                 Spacer(modifier = Modifier.width(12.dp))
 
                 Row(
-                    verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Text("Agrupar por categoría ", fontSize = MaterialTheme.typography.bodyMedium.fontSize)
+                    Text(
+                        "Agrupar por categoría ",
+                        fontSize = MaterialTheme.typography.bodyMedium.fontSize
+                    )
                     Switch(
                         checked = groupByCategory,
                         onCheckedChange = { groupByCategory = it },
@@ -144,7 +158,7 @@ fun ProductScreen(
         AddProductBox(
             onClose = { showAddProductScreen = false },
             onAdd = { name, categoryId ->
-                viewModel.addProduct(name, categoryId)
+                viewModel.createProduct(Product(name = name, categoryId = categoryId))
                 showAddProductScreen = false
             }
         )
@@ -159,5 +173,4 @@ fun ProductScreen(
             }
         )
     }
-
 }

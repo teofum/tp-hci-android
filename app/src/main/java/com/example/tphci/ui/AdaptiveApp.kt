@@ -12,18 +12,14 @@ import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffo
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.navigation.NavDestination.Companion.hasRoute
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.dialog
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import androidx.window.core.layout.WindowSizeClass
 import com.example.tphci.R
 import com.example.tphci.ui.products.ProductScreen
@@ -144,24 +140,13 @@ fun AdaptiveApp() {
                 }
                 composable<Products> { ProductScreen() }
                 composable<Profile> { ProfileScreen() }
-
-
                 composable<ShoppingListItem> { entry ->
                     val args = entry.arguments!!
                     val listId = args.getLong("listId")
                     ShoppingListItemScreen(
-                        listId = listId,
-                        onClose = { navController.popBackStack() },
-                        onOpenShareScreen = {
-                            navController.navigate(
-                                Share
-                            )
-                        }
+                        onOpenShareScreen = { navController.navigate(Share) }
                     )
                 }
-
-
-
                 composable<Share> { // TODO make the dialog fullscreen (TODO connect to /shareList)
                     ShareListScreen(
                         selectedUsers = emptyList(),

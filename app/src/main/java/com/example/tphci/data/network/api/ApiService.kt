@@ -1,10 +1,5 @@
-package com.example.tphci.data.network
+package com.example.tphci.data.network.api
 
-import com.example.tphci.data.model.Category
-import com.example.tphci.data.model.*
-import com.example.tphci.data.model.Product
-import com.example.tphci.data.model.ShoppingList
-import com.example.tphci.data.model.User
 import kotlinx.serialization.json.JsonElement
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -12,11 +7,8 @@ import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.PUT
-import retrofit2.http.Path
 import retrofit2.http.Url
 
-
-// TODO solo el url de login está bien, resto revisar
 interface ApiService {
 
     // wrappers genéricos como hicimos en web (usar en RemoteDataSource)
