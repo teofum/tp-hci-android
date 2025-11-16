@@ -8,8 +8,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -25,6 +27,8 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,8 +36,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.tphci.R
 import com.example.tphci.ui.EmojiPicker
+import com.example.tphci.ui.home.rememberWindowInfo
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -41,19 +48,28 @@ fun AddProductBox(
     onClose: () -> Unit,
     onAdd: (name: String, categoryId: Int?) -> Unit // TODO API, check contrato
 ) {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.Black.copy(alpha = 0.5f)),
-        contentAlignment = Alignment.Center
+    val windowInfo = rememberWindowInfo()
+    val isTablet = windowInfo.maxWidth > 600.dp
+
+    Dialog(
+        onDismissRequest = onClose,
+        properties = DialogProperties(
+            usePlatformDefaultWidth = false
+        )
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(
-                    MaterialTheme.colorScheme.background
-                )
-                .padding(16.dp),
+            modifier = if (isTablet) {
+                Modifier
+                    .widthIn(max = 600.dp)
+                    .heightIn(max = 500.dp)
+                    .background(MaterialTheme.colorScheme.background, RoundedCornerShape(16.dp))
+                    .padding(16.dp)
+            } else {
+                Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.background)
+                    .padding(16.dp)
+            },
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Row(
@@ -61,11 +77,11 @@ fun AddProductBox(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "Agregar item",
+                    text = stringResource(R.string.add_product),
                     style = MaterialTheme.typography.titleLarge
                 )
                 IconButton(onClick = onClose) {
-                    Icon(Icons.Default.Close, contentDescription = "Cerrar")
+                    Icon(Icons.Default.Close, contentDescription = stringResource(R.string.close))
                 }
             }
 
@@ -115,7 +131,7 @@ fun AddProductBox(
                 OutlinedTextField(
                     value = producto,
                     onValueChange = { producto = it },
-                    label = { Text("Producto") },
+                    label = { Text(stringResource(R.string.product)) },
                     modifier = Modifier.weight(1f)
                 )
             }
@@ -133,7 +149,7 @@ fun AddProductBox(
                         value = selectedCategory,
                         onValueChange = {},
                         readOnly = true,
-                        label = { Text("Categoría") },
+                        label = { Text(stringResource(R.string.category)) },
                         trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = categoryExpanded) },
                         modifier = Modifier
                             .menuAnchor()
@@ -162,12 +178,12 @@ fun AddProductBox(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                TextButton(onClick = onClose) { Text("Cancelar") }
+                TextButton(onClick = onClose) { Text(stringResource(R.string.cancel)) }
 
                 Button(onClick = {
                     onAdd(producto, null) // TODO api // TODO emoji
                 }) {
-                    Text("Agregar")
+                    Text(stringResource(R.string.add))
                 }
             }
         }

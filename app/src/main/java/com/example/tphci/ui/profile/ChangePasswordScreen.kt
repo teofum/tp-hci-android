@@ -13,7 +13,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.tphci.R
 import androidx.window.core.layout.WindowSizeClass
 import com.example.tphci.MyApplication
 import com.example.tphci.ui.home.rememberWindowInfo
@@ -54,7 +56,7 @@ fun ChangePasswordScreen(
         Spacer(modifier = Modifier.height(40.dp))
 
         Text(
-            "Cambiar contraseña",
+            stringResource(R.string.change_password),
             style = MaterialTheme.typography.headlineMedium,
             modifier = Modifier.fillMaxWidth(),
             textAlign = TextAlign.Center
@@ -64,7 +66,7 @@ fun ChangePasswordScreen(
         OutlinedTextField(
             value = uiState.currentPassword,
             onValueChange = viewModel::updateCurrentPassword,
-            label = { Text("Contraseña actual") },
+            label = { Text(stringResource(R.string.current_password)) },
             visualTransformation = PasswordVisualTransformation(),
             modifier = Modifier.fillMaxWidth(),
             enabled = !uiState.isLoading
@@ -75,7 +77,7 @@ fun ChangePasswordScreen(
         OutlinedTextField(
             value = uiState.newPassword,
             onValueChange = viewModel::updateNewPassword,
-            label = { Text("Nueva contraseña") },
+            label = { Text(stringResource(R.string.new_password)) },
             visualTransformation = PasswordVisualTransformation(),
             modifier = Modifier.fillMaxWidth(),
             enabled = !uiState.isLoading
@@ -86,7 +88,7 @@ fun ChangePasswordScreen(
         OutlinedTextField(
             value = uiState.confirmPassword,
             onValueChange = viewModel::updateConfirmPassword,
-            label = { Text("Confirmar nueva contraseña") },
+            label = { Text(stringResource(R.string.confirm_password)) },
             visualTransformation = PasswordVisualTransformation(),
             modifier = Modifier.fillMaxWidth(),
             enabled = !uiState.isLoading
@@ -102,7 +104,7 @@ fun ChangePasswordScreen(
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
             ) {
                 Text(
-                    text = "Contraseña cambiada correctamente",
+                    text = stringResource(R.string.password_changed_success),
                     modifier = Modifier.padding(16.dp),
                     color = MaterialTheme.colorScheme.onPrimaryContainer
                 )
@@ -117,7 +119,7 @@ fun ChangePasswordScreen(
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer)
             ) {
                 Text(
-                    text = "Error al cambiar contraseña",
+                    text = stringResource(R.string.password_change_error),
                     modifier = Modifier.padding(16.dp),
                     color = MaterialTheme.colorScheme.onErrorContainer
                 )
@@ -137,14 +139,14 @@ fun ChangePasswordScreen(
             if (uiState.isLoading) {
                 CircularProgressIndicator(modifier = Modifier.size(16.dp))
             } else {
-                Text("Cambiar contraseña")
+                Text(stringResource(R.string.change_password))
             }
         }
 
         if (!passwordsMatch && uiState.confirmPassword.isNotBlank()) {
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "Las contraseñas no coinciden",
+                text = stringResource(R.string.passwords_dont_match),
                 color = MaterialTheme.colorScheme.error,
                 style = MaterialTheme.typography.bodySmall
             )
@@ -156,7 +158,7 @@ fun ChangePasswordScreen(
             onClick = onNavigateBack,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Volver al perfil")
+            Text(stringResource(R.string.back_to_profile))
         }
     }
 }

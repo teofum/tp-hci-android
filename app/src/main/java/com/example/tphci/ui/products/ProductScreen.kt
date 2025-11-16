@@ -16,12 +16,18 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -34,16 +40,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.tphci.R
 import com.example.tphci.MyApplication
 import com.example.tphci.data.model.Product
 import com.example.tphci.ui.home.rememberWindowInfo
 import com.example.tphci.ui.products.components.AddProductBox
+import com.example.tphci.ui.SettingsBox
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProductScreen(
     viewModel: ProductViewModel = viewModel(
@@ -61,6 +71,7 @@ fun ProductScreen(
     var groupByCategory by remember { mutableStateOf(false) }
 
     var showAddProductScreen by remember { mutableStateOf(false) }
+    var showSettingsBox by remember { mutableStateOf(false) }
 
     val productSearch = remember { mutableStateOf("") }
 
@@ -79,6 +90,25 @@ fun ProductScreen(
     val isTablet = windowInfo.maxWidth > 600.dp
 
     Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        stringResource(R.string.products),
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Center
+                    )
+                },
+                actions = {
+                    IconButton(onClick = { showSettingsBox = true }) {
+                        Icon(
+                            Icons.Default.Settings,
+                            contentDescription = stringResource(R.string.settings)
+                        )
+                    }
+                }
+            )
+        },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { showAddProductScreen = true },
@@ -86,7 +116,7 @@ fun ProductScreen(
                 contentColor = MaterialTheme.colorScheme.onPrimary,
                 modifier = Modifier.width(150.dp)
             ) {
-                Text("+ Agregar Producto")
+                Text(stringResource(R.string.add_product))
             }
         }
     ) { innerPadding ->
@@ -103,19 +133,10 @@ fun ProductScreen(
 
             ) {
 
-                Text(
-                    "Productos",
-                    style = MaterialTheme.typography.headlineMedium,
-                    modifier = Modifier.fillMaxWidth(),
-                    textAlign = TextAlign.Center
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
                 OutlinedTextField(
                     value = productSearch.value, // TODO api, buscador de prods
                     onValueChange = { productSearch.value = it },
-                    label = { Text("Nombre de la lista") },
+                    label = { Text(stringResource(R.string.search_product)) },
                     modifier = Modifier.fillMaxWidth()
                 )
 
@@ -133,7 +154,7 @@ fun ProductScreen(
                         modifier = Modifier.clickable { showCategoryScreen = true }
                     ) {
                         Text(
-                            "Administrar categorías",
+                            stringResource(R.string.manage_categories),
                             fontSize = MaterialTheme.typography.bodyMedium.fontSize,
                             color = MaterialTheme.colorScheme.primary
                         )
@@ -146,7 +167,7 @@ fun ProductScreen(
                         verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
                     ) {
                         Text(
-                            "Agrupar por categoría ",
+                            stringResource(R.string.group_by_category) + " ",
                             fontSize = MaterialTheme.typography.bodyMedium.fontSize
                         )
                         Switch(
@@ -256,35 +277,13 @@ fun ProductScreen(
     }
 
     if (showAddProductScreen) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.Black.copy(alpha = 0.5f)),
-            contentAlignment = Alignment.Center
-        ) {
-            Box(
-                modifier = if (isTablet) {
-                    Modifier
-                        .widthIn(max = 600.dp)
-                        .heightIn(max = 500.dp)
-                        .background(MaterialTheme.colorScheme.background, RoundedCornerShape(16.dp))
-                        .padding(16.dp)
-                } else {
-                    Modifier
-                        .fillMaxSize()
-                        .background(MaterialTheme.colorScheme.background)
-                        .padding(16.dp)
-                }
-            ) {
-                AddProductBox(
-                    onClose = { showAddProductScreen = false },
-                    onAdd = { name, categoryId ->
-                        viewModel.createProduct(Product(name = name, categoryId = categoryId))
-                        showAddProductScreen = false
-                    }
-                )
+        AddProductBox(
+            onClose = { showAddProductScreen = false },
+            onAdd = { name, categoryId ->
+                viewModel.createProduct(Product(name = name, categoryId = categoryId))
+                showAddProductScreen = false
             }
-        }
+        )
     }
 
     if (showCategoryScreen) {
@@ -320,4 +319,9 @@ fun ProductScreen(
         }
     }
 
+    if (showSettingsBox) {
+        SettingsBox(
+            onClose = { showSettingsBox = false }
+        )
+    }
 }

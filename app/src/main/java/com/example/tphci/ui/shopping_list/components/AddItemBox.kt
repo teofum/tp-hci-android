@@ -36,9 +36,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
+import com.example.tphci.R
 import com.example.tphci.data.model.Item
 import com.example.tphci.data.model.Product
 import com.example.tphci.ui.EmojiPicker
@@ -69,11 +71,11 @@ fun AddItemBox(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "Agregar item",
+                    text = stringResource(R.string.add_product),
                     style = MaterialTheme.typography.titleLarge
                 )
                 IconButton(onClick = onClose) {
-                    Icon(Icons.Default.Close, contentDescription = "Cerrar")
+                    Icon(Icons.Default.Close, contentDescription = stringResource(R.string.cancel))
                 }
             }
 
@@ -95,7 +97,7 @@ fun AddItemBox(
                     onValueChange = {
                         quantity = it.filter { char -> char.isDigit() }.toIntOrNull() ?: 0
                     },
-                    label = { Text("Cantidad") },
+                    label = { Text(stringResource(R.string.quantity)) },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     singleLine = true,
                     modifier = Modifier.weight(1f)
@@ -103,7 +105,7 @@ fun AddItemBox(
                 OutlinedTextField(
                     value = unit,
                     onValueChange = { unit = it },
-                    label = { Text("Unidad") },
+                    label = { Text(stringResource(R.string.unit)) },
                     modifier = Modifier.weight(1f)
                 )
             }
@@ -117,7 +119,7 @@ fun AddItemBox(
                         value = product?.name ?: "",
                         onValueChange = { },
                         readOnly = true,
-                        label = { Text("Producto") },
+                        label = { Text(stringResource(R.string.product)) },
                         modifier = Modifier
                             .fillMaxWidth()
                             .onSizeChanged {
@@ -125,7 +127,7 @@ fun AddItemBox(
                             },
                         trailingIcon = {
                             IconButton(onClick = { expanded = !expanded }) {
-                                Icon(icon, "contentDescription")
+                                Icon(icon, stringResource(R.string.select_product))
                             }
                         }
                     )
@@ -150,12 +152,12 @@ fun AddItemBox(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                TextButton(onClick = onClose) { Text("Cancelar") }
+                TextButton(onClick = onClose) { Text(stringResource(R.string.cancel)) }
 
                 Button(onClick = {
                     product?.let { onAdd(Item(quantity, unit, it)) }
                 }) {
-                    Text("Agregar")
+                    Text(stringResource(R.string.add))
                 }
             }
         }

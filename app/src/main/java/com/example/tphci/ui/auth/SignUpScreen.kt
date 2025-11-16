@@ -9,7 +9,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.tphci.R
 import com.example.tphci.MyApplication
 
 @Composable
@@ -36,7 +38,7 @@ fun SignUpScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "Creá tu cuenta",
+                text = stringResource(R.string.signup_title),
                 style = MaterialTheme.typography.headlineMedium,
                 modifier = Modifier.padding(bottom = 32.dp)
             )
@@ -44,7 +46,7 @@ fun SignUpScreen(
             OutlinedTextField(
                 value = uiState.name,
                 onValueChange = viewModel::updateName,
-                label = { Text("Nombre") },
+                label = { Text(stringResource(R.string.first_name)) },
                 modifier = Modifier.fillMaxWidth(),
                 enabled = !uiState.isLoading
             )
@@ -54,7 +56,7 @@ fun SignUpScreen(
             OutlinedTextField(
                 value = uiState.surname,
                 onValueChange = viewModel::updateSurname,
-                label = { Text("Apellido") },
+                label = { Text(stringResource(R.string.last_name)) },
                 modifier = Modifier.fillMaxWidth(),
                 enabled = !uiState.isLoading
             )
@@ -64,7 +66,7 @@ fun SignUpScreen(
             OutlinedTextField(
                 value = uiState.email,
                 onValueChange = viewModel::updateEmail,
-                label = { Text("Correo electrónico") },
+                label = { Text(stringResource(R.string.email)) },
                 modifier = Modifier.fillMaxWidth(),
                 enabled = !uiState.isLoading
             )
@@ -74,7 +76,7 @@ fun SignUpScreen(
             OutlinedTextField(
                 value = uiState.password,
                 onValueChange = viewModel::updatePassword,
-                label = { Text("Contraseña") },
+                label = { Text(stringResource(R.string.password)) },
                 visualTransformation = PasswordVisualTransformation(),
                 modifier = Modifier.fillMaxWidth(),
                 enabled = !uiState.isLoading
@@ -87,7 +89,7 @@ fun SignUpScreen(
                     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer)
                 ) {
                     Text(
-                        text = "Error al crear la cuenta",
+                        text = stringResource(R.string.create_account_error),
                         modifier = Modifier.padding(16.dp),
                         color = MaterialTheme.colorScheme.onErrorContainer
                     )
@@ -105,14 +107,14 @@ fun SignUpScreen(
                 if (uiState.isLoading) {
                     CircularProgressIndicator(modifier = Modifier.size(16.dp))
                 } else {
-                    Text("Crear Cuenta")
+                    Text(stringResource(R.string.create_account))
                 }
             }
 
             Spacer(modifier = Modifier.height(16.dp))
 
             TextButton(onClick = onNavigateToLogin) {
-                Text("¿Ya tenés una cuenta? Iniciar sesión")
+                Text(stringResource(R.string.already_have_account))
             }
         }
     }

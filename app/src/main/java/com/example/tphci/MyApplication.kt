@@ -10,6 +10,7 @@ import com.example.tphci.data.network.api.RetrofitClient
 import com.example.tphci.data.repository.CategoryRepository
 import com.example.tphci.data.repository.ItemRepository
 import com.example.tphci.data.repository.ProductRepository
+import com.example.tphci.data.repository.SettingsRepository
 import com.example.tphci.data.repository.ShoppingListRepository
 import com.example.tphci.data.repository.UserRepository
 
@@ -20,6 +21,7 @@ class MyApplication : Application() {
     lateinit var productRepository: ProductRepository
     lateinit var shoppingListRepository: ShoppingListRepository
     lateinit var itemRepository: ItemRepository
+    lateinit var settingsRepository: SettingsRepository
 
     override fun onCreate() {
         super.onCreate()
@@ -46,5 +48,6 @@ class MyApplication : Application() {
         productRepository = ProductRepository(productRemoteDataSource)
         shoppingListRepository = ShoppingListRepository(shoppingListRemoteDataSource)
         itemRepository = ItemRepository(itemRemoteDataSource)
+        settingsRepository = SettingsRepository(this)
     }
 }

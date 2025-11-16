@@ -41,6 +41,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.stringResource
+import com.example.tphci.R
 import com.example.tphci.ui.home.rememberWindowInfo
 
 /**
@@ -84,7 +86,7 @@ fun ShareListScreen(
             TopAppBar(
                 title = {
                     Text(
-                        text = "Compartir lista",
+                        text = stringResource(R.string.share_list),
                         fontWeight = FontWeight.SemiBold,
                     )
                 },
@@ -92,7 +94,7 @@ fun ShareListScreen(
                     IconButton(onClick = onBackClick) {
                         Icon(
                             imageVector = Icons.Default.Close,
-                            contentDescription = "Cerrar"
+                            contentDescription = stringResource(R.string.close)
                         )
                     }
                 }
@@ -112,7 +114,7 @@ fun ShareListScreen(
                         .height(52.dp),
                     shape = RoundedCornerShape(24.dp),
                 ) {
-                    Text("Listo", fontSize = 18.sp)
+                    Text(stringResource(R.string.done), fontSize = 18.sp)
                 }
             }
         }
@@ -139,11 +141,11 @@ fun ShareListScreen(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     IconButton(onClick = onBackClick) {
-                        Icon(Icons.Default.Close, contentDescription = "Cerrar")
+                        Icon(Icons.Default.Close, contentDescription = stringResource(R.string.close))
                     }
 
                     Text(
-                        text = "Compartir lista",
+                        text = stringResource(R.string.share_list),
                         fontWeight = FontWeight.SemiBold,
                         style = MaterialTheme.typography.headlineSmall
                     )
@@ -176,14 +178,14 @@ fun ShareListScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(bottom = 24.dp),
-                    placeholder = { Text("Buscar usuarios") },
+                    placeholder = { Text(stringResource(R.string.search_users)) },
                     singleLine = true,
                     shape = RoundedCornerShape(10.dp)
                 )
 
                 // Suggested ShareUsers title
                 Text(
-                    text = "Usuarios sugeridos",
+                    text = stringResource(R.string.suggested_users),
                     fontWeight = FontWeight.SemiBold,
                     modifier = Modifier.padding(bottom = 12.dp)
                 )
@@ -232,9 +234,8 @@ fun SelectedShareUserChip(
                     fontWeight = FontWeight.SemiBold
                 )
                 Text(
-                    text = ShareUser.email, // Changed from @${ShareUser.handle}
+                    text = ShareUser.email,
                     fontSize = 11.sp,
-                    color = Color.Gray
                 )
             }
 
@@ -246,7 +247,7 @@ fun SelectedShareUserChip(
             ) {
                 Icon(
                     imageVector = Icons.Default.Close,
-                    contentDescription = "Quitar usuario",
+                    contentDescription = stringResource(R.string.close),
                     modifier = Modifier.size(16.dp)
                 )
             }
@@ -279,7 +280,7 @@ private fun SuggestedShareUserRow(
                 fontSize = 15.sp
             )
             Text(
-                text = ShareUser.email, // Changed from @${ShareUser.handle}
+                text = ShareUser.email,
                 fontSize = 13.sp,
                 color = Color.Gray
             )
