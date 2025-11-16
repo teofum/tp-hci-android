@@ -1,13 +1,16 @@
 package com.example.tphci.ui.shopping_list.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -27,12 +30,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.example.tphci.R
 import com.example.tphci.data.model.ShoppingList
+import com.example.tphci.ui.EmojiPicker
 import com.example.tphci.ui.home.rememberWindowInfo
 
 @Composable
@@ -46,6 +51,8 @@ fun ManageListBox(
     var name by remember { mutableStateOf(initial?.name ?: "") }
     var description by remember { mutableStateOf(initial?.description ?: "") }
     var recurring by remember { mutableStateOf(initial?.recurring ?: false) }
+    var selectedEmoji by remember { mutableStateOf(initial?.emoji ?: "🛒") }
+    var showEmojiPicker by remember { mutableStateOf(false) }
 
     val windowInfo = rememberWindowInfo()
     val isTablet = windowInfo.maxWidth > 600.dp
@@ -80,6 +87,38 @@ fun ManageListBox(
                 Text(title, style = MaterialTheme.typography.titleLarge)
                 IconButton(onClick = onClose) {
                     Icon(Icons.Default.Close, contentDescription = stringResource(R.string.cancel))
+                }
+            }
+
+            if (showEmojiPicker) {
+                Dialog(
+                    onDismissRequest = { showEmojiPicker = false }
+                ) {
+                    EmojiPicker(
+                        onSelect = {
+                            selectedEmoji = it
+                            showEmojiPicker = false
+                        },
+                        onDismiss = { showEmojiPicker = false }
+                    )
+                }
+            }
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(70.dp)
+                        .background(Color.LightGray, RoundedCornerShape(20.dp))
+                        .clickable { showEmojiPicker = true },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = selectedEmoji,
+                        style = MaterialTheme.typography.headlineLarge
+                    )
                 }
             }
 
@@ -123,7 +162,7 @@ fun ManageListBox(
                                 name,
                                 description,
                                 recurring,
-                                "\uD83D\uDED2", // TODO emoji
+                                selectedEmoji,
                                 null,
                                 null,
                                 null,

@@ -155,7 +155,7 @@ fun ShoppingListScreen(
                                     contentAlignment = Alignment.Center
                                 ) {
                                     Text(
-                                        text = "📦", // TODO api
+                                        text = list.emoji,
                                         fontSize = 24.sp,
                                         fontWeight = FontWeight.Normal
                                     )
