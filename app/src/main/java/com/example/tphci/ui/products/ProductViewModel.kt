@@ -75,6 +75,17 @@ class ProductViewModel(
         }
     }
 
+    fun deleteProduct(product: Product) {
+        if (product.id == null) return
+
+        viewModelScope.launch {
+            try {
+                productRepository.deleteProduct(product.id)
+            } catch (e: Exception) {
+            }
+            manualRefresh()
+        }
+    }
     fun stopPolling() {
         pollingJob?.cancel()
         pollingJob = null

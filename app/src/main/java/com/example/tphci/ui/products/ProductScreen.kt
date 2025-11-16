@@ -258,7 +258,7 @@ fun ProductScreen(
                                             leadingIcon = { Icon(Icons.Default.Delete, null) },
                                             onClick = {
                                                 expanded = false
-                                                // TODO : eliminarlo
+                                                viewModel.deleteProduct(product)// TODO : eliminarlo
                                             }
                                         )
                                     }
@@ -332,7 +332,7 @@ fun ProductScreen(
                                         leadingIcon = { Icon(Icons.Default.Delete, null) },
                                         onClick = {
                                             expanded = false
-                                            // TODO : eliminarlo
+                                            viewModel.deleteProduct(product)// TODO : eliminarlo
                                         }
                                     )
                                 }
