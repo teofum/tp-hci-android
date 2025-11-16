@@ -33,7 +33,6 @@ fun ListItem(
             .padding(vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-
         Box(
             modifier = Modifier
                 .size(48.dp)
@@ -41,7 +40,7 @@ fun ListItem(
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = "📦", // TODO api
+                text = item.product.emoji ?: "\uD83D\uDCE6",
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Normal
             )

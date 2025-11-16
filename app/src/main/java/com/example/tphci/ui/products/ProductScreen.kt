@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -46,12 +45,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.tphci.R
 import com.example.tphci.MyApplication
+import com.example.tphci.R
 import com.example.tphci.data.model.Product
+import com.example.tphci.ui.SettingsBox
 import com.example.tphci.ui.home.rememberWindowInfo
 import com.example.tphci.ui.products.components.AddProductBox
-import com.example.tphci.ui.SettingsBox
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -203,7 +202,7 @@ fun ProductScreen(
                                     contentAlignment = Alignment.Center
                                 ) {
                                     Text(
-                                        text = "📦", // TODO api
+                                        text = product.emoji ?: "\uD83D\uDCE6",
                                         fontSize = 24.sp,
                                         fontWeight = FontWeight.Normal
                                     )
@@ -220,7 +219,7 @@ fun ProductScreen(
                                     }
 
                                     Text(
-                                        "${product.category}", // TODO API, check si se accede bien
+                                        product.category?.name ?: "",
                                         style = MaterialTheme.typography.bodySmall,
                                         color = Color.Gray
                                     )
@@ -245,7 +244,7 @@ fun ProductScreen(
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(
-                                    text = "📦", // TODO api
+                                    text = product.emoji ?: "\uD83D\uDCE6",
                                     fontSize = 24.sp,
                                     fontWeight = FontWeight.Normal
                                 )
@@ -262,7 +261,7 @@ fun ProductScreen(
                                 }
 
                                 Text(
-                                    "${product.category}", // TODO API, check si se accede bien
+                                    product.category?.name ?: "",
                                     style = MaterialTheme.typography.bodySmall,
                                     color = Color.Gray
                                 )
@@ -279,10 +278,11 @@ fun ProductScreen(
     if (showAddProductScreen) {
         AddProductBox(
             onClose = { showAddProductScreen = false },
-            onAdd = { name, categoryId ->
-                viewModel.createProduct(Product(name = name, categoryId = categoryId))
+            onAdd = { product ->
+                viewModel.createProduct(product)
                 showAddProductScreen = false
-            }
+            },
+            categories = uiState.categories
         )
     }
 
