@@ -12,6 +12,9 @@ class SettingsRepository(context: Context) {
     private val _language = MutableStateFlow(getLanguage())
     val language: StateFlow<String> = _language.asStateFlow()
     
+    private val _theme = MutableStateFlow(getTheme())
+    val theme: StateFlow<String> = _theme.asStateFlow()
+    
     fun getLanguage(): String {
         return prefs.getString("language", "automatic") ?: "automatic"
     }
@@ -19,5 +22,14 @@ class SettingsRepository(context: Context) {
     fun setLanguage(language: String) {
         prefs.edit().putString("language", language).apply()
         _language.value = language
+    }
+    
+    fun getTheme(): String {
+        return prefs.getString("theme", "system") ?: "system"
+    }
+    
+    fun setTheme(theme: String) {
+        prefs.edit().putString("theme", theme).apply()
+        _theme.value = theme
     }
 }

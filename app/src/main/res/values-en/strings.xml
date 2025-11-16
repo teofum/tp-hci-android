@@ -101,4 +101,8 @@
     <string name="spanish">Español</string>
     <string name="english">English</string>
     <string name="automatic">Automatic</string>
+    <string name="theme">Theme</string>
+    <string name="system">System</string>
+    <string name="light">Light</string>
+    <string name="dark">Dark</string>
 </resources>

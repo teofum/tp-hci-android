@@ -46,16 +46,28 @@ fun SettingsBox(
     val context = LocalContext.current
     val settingsRepository = (context.applicationContext as MyApplication).settingsRepository
     val currentLanguage by settingsRepository.language.collectAsState()
+    val currentTheme by settingsRepository.theme.collectAsState()
     var selectedLanguage by remember { mutableStateOf(currentLanguage) }
+    var selectedTheme by remember { mutableStateOf(currentTheme) }
     
     LaunchedEffect(currentLanguage) {
         selectedLanguage = currentLanguage
+    }
+    
+    LaunchedEffect(currentTheme) {
+        selectedTheme = currentTheme
     }
     
     val languageOptions = listOf(
         "automatic" to stringResource(R.string.automatic),
         "es" to stringResource(R.string.spanish),
         "en" to stringResource(R.string.english)
+    )
+    
+    val themeOptions = listOf(
+        "system" to stringResource(R.string.system),
+        "light" to stringResource(R.string.light),
+        "dark" to stringResource(R.string.dark)
     )
 
     val windowInfo = rememberWindowInfo()
@@ -124,6 +136,39 @@ fun SettingsBox(
                                 selectedLanguage = value
                                 settingsRepository.setLanguage(value)
                                 (context as? ComponentActivity)?.recreate()
+                            }
+                        )
+                        Text(
+                            text = label,
+                            modifier = Modifier.padding(start = 8.dp)
+                        )
+                    }
+                }
+
+                Text(
+                    text = stringResource(R.string.theme),
+                    style = MaterialTheme.typography.titleMedium
+                )
+                
+                themeOptions.forEach { (value, label) ->
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .selectable(
+                                selected = selectedTheme == value,
+                                onClick = { 
+                                    selectedTheme = value
+                                    settingsRepository.setTheme(value)
+                                }
+                            )
+                            .padding(vertical = 4.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        RadioButton(
+                            selected = selectedTheme == value,
+                            onClick = { 
+                                selectedTheme = value
+                                settingsRepository.setTheme(value)
                             }
                         )
                         Text(
