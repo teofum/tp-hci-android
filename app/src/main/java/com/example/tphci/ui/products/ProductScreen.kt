@@ -16,7 +16,16 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Share
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -204,6 +213,39 @@ fun ProductScreen(
                                         color = Color.Gray
                                     )
                                 }
+
+                                Box {
+                                    var expanded by remember { mutableStateOf(false) }
+
+                                    IconButton(onClick = { expanded = true }) {
+                                        Icon(
+                                            Icons.Default.MoreVert,
+                                            contentDescription = "Opciones"
+                                        )
+                                    }
+
+                                    DropdownMenu(
+                                        expanded = expanded,
+                                        onDismissRequest = { expanded = false }
+                                    ) {
+                                        DropdownMenuItem(
+                                            text = { Text("Modificar") },
+                                            leadingIcon = { Icon(Icons.Default.Edit, null) },
+                                            onClick = {
+                                                expanded = false
+                                                // TODO : editarlo
+                                            }
+                                        )
+                                        DropdownMenuItem(
+                                            text = { Text("Eliminar") },
+                                            leadingIcon = { Icon(Icons.Default.Delete, null) },
+                                            onClick = {
+                                                expanded = false
+                                                // TODO : eliminarlo
+                                            }
+                                        )
+                                    }
+                                }
                             }
                         }
                     }
@@ -245,6 +287,38 @@ fun ProductScreen(
                                     style = MaterialTheme.typography.bodySmall,
                                     color = Color.Gray
                                 )
+                            }
+                            Box {
+                                var expanded by remember { mutableStateOf(false) }
+
+                                IconButton(onClick = { expanded = true }) {
+                                    Icon(
+                                        Icons.Default.MoreVert,
+                                        contentDescription = "Opciones"
+                                    )
+                                }
+
+                                DropdownMenu(
+                                    expanded = expanded,
+                                    onDismissRequest = { expanded = false }
+                                ) {
+                                    DropdownMenuItem(
+                                        text = { Text("Modificar") },
+                                        leadingIcon = { Icon(Icons.Default.Edit, null) },
+                                        onClick = {
+                                            expanded = false
+                                            // TODO : editarlo
+                                        }
+                                    )
+                                    DropdownMenuItem(
+                                        text = { Text("Eliminar") },
+                                        leadingIcon = { Icon(Icons.Default.Delete, null) },
+                                        onClick = {
+                                            expanded = false
+                                            // TODO : eliminarlo
+                                        }
+                                    )
+                                }
                             }
                         }
                     }
