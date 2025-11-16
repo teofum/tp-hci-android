@@ -35,18 +35,22 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tphci.MyApplication
+import com.example.tphci.ui.shopping_list.ShoppingListItemsViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ShoppingListItemScreen(
-    onOpenShareScreen: (Long) -> Unit,
-    viewModel: ShoppingListItemViewModel = viewModel(
-        factory = ShoppingListItemViewModel.provideFactory(
-            LocalContext.current.applicationContext as MyApplication,
-            )
-
-    )
+    listId: Int,
+    onClose: () -> Unit
 ) {
+    val application = LocalContext.current.applicationContext as MyApplication
+
+    val viewModel: ShoppingListItemsViewModel = viewModel(
+        factory = ShoppingListItemsViewModel.provideFactory(
+            listId = listId,
+            application = application,
+        )
+    )
 //    val uiState = viewModel.uiState
 //    val items = uiState.shoppingListItems[listId] ?: emptyList()
 //

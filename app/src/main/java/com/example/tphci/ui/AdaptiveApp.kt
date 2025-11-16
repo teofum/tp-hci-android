@@ -144,8 +144,6 @@ fun AdaptiveApp() {
                     val args = entry.arguments!!
                     val listId = args.getLong("listId")
                     ShoppingListItemScreen(
-                        listId = listId,
-                        onClose = { navController.popBackStack() },
                         onOpenShareScreen = { navController.navigate(Share) }
                     )
                 }
