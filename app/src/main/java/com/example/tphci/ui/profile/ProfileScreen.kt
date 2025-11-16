@@ -3,6 +3,8 @@ package com.example.tphci.ui.profile
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
@@ -21,6 +23,7 @@ import com.example.tphci.R
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tphci.MyApplication
 import com.example.tphci.ui.home.rememberWindowInfo
+import com.example.tphci.ui.SettingsBox
 
 @Composable
 fun ProfileScreen(
@@ -33,6 +36,7 @@ fun ProfileScreen(
 ) {
     val uiState = viewModel.uiState
     var showChangePassword by remember { mutableStateOf(false) }
+    var showSettingsBox by remember { mutableStateOf(false) }
 
 
     val windowInfo = rememberWindowInfo()
@@ -47,26 +51,37 @@ fun ProfileScreen(
     }
 
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        contentAlignment = Alignment.TopCenter
-    ) {
+    Scaffold {
+        innerPadding ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding),
+            contentAlignment = Alignment.TopCenter
+        ) {
+            Column(
+                modifier = Modifier
+                    .widthIn(max = maxWidth)
+                    .padding(16.dp)
+            ) {
 
-    Column(
-        modifier = Modifier
-            .widthIn(max = maxWidth)
-    ) {
-
-        Spacer(modifier = Modifier.height(40.dp))
-
-        Text(
-            stringResource(R.string.profile),
-            style = MaterialTheme.typography.headlineMedium,
+        Row(
             modifier = Modifier.fillMaxWidth(),
-            textAlign = TextAlign.Center
-        )
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Spacer(modifier = Modifier.width(48.dp))
+            Text(
+                stringResource(R.string.profile),
+                style = MaterialTheme.typography.headlineMedium
+            )
+            IconButton(onClick = { showSettingsBox = true }) {
+                Icon(
+                    Icons.Default.Settings,
+                    contentDescription = stringResource(R.string.settings)
+                )
+            }
+        }
 
         Spacer(modifier = Modifier.height(8.dp))
 
@@ -160,6 +175,13 @@ fun ProfileScreen(
             ) {
                 Text(stringResource(R.string.logout))
             }
+            }
         }
+    }
+
+    if (showSettingsBox) {
+        SettingsBox(
+            onClose = { showSettingsBox = false }
+        )
     }
 }}

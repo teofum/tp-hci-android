@@ -9,6 +9,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -33,6 +34,7 @@ import com.example.tphci.data.model.ShoppingList
 import com.example.tphci.ui.home.HomeViewModel
 import com.example.tphci.ui.home.rememberWindowInfo
 import com.example.tphci.ui.shopping_list.components.ManageListBox
+import com.example.tphci.ui.SettingsBox
 
 @Composable
 fun ShoppingListScreen(
@@ -51,6 +53,7 @@ fun ShoppingListScreen(
 
     var showAddListBox by remember { mutableStateOf(false) }
     var showEditListBox by remember { mutableStateOf(false) }
+    var showSettingsBox by remember { mutableStateOf(false) }
 
     var editingList by remember { mutableStateOf<ShoppingList?>(null) }
 
@@ -88,14 +91,25 @@ fun ShoppingListScreen(
 
             ) {
 
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Spacer(modifier = Modifier.width(48.dp))
                     Text(
                         stringResource(R.string.shopping_lists),
-                        style = MaterialTheme.typography.headlineMedium,
-                        modifier = Modifier.fillMaxWidth(),
-                        textAlign = TextAlign.Center
+                        style = MaterialTheme.typography.headlineMedium
                     )
+                    IconButton(onClick = { showSettingsBox = true }) {
+                        Icon(
+                            Icons.Default.Settings,
+                            contentDescription = stringResource(R.string.settings)
+                        )
+                    }
+                }
 
-                    Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(8.dp))
 
 
                     uiState.shoppingLists.forEach { list ->
@@ -273,6 +287,12 @@ fun ShoppingListScreen(
                     )
                 }
             }
+        }
+
+        if (showSettingsBox) {
+            SettingsBox(
+                onClose = { showSettingsBox = false }
+            )
         }
     }
 }

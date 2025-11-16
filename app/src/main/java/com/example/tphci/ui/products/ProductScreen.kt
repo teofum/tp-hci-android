@@ -6,6 +6,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
@@ -35,6 +37,7 @@ import com.example.tphci.ui.home.rememberWindowInfo
 import com.example.tphci.ui.products.components.AddProductBox
 import com.example.tphci.ui.products.components.ManageCategoryBox
 import com.example.tphci.ui.shopping_list.components.AddItemBox
+import com.example.tphci.ui.SettingsBox
 import kotlinx.serialization.json.JsonNull
 
 @Composable
@@ -58,6 +61,7 @@ fun ProductScreen(
     var groupByCategory by remember { mutableStateOf(false) }
 
     var showAddProductScreen by remember { mutableStateOf(false) }
+    var showSettingsBox by remember { mutableStateOf(false) }
 
     val productSearch = remember { mutableStateOf("") }
 
@@ -100,12 +104,23 @@ fun ProductScreen(
 
         ) {
 
-                Text(
-                    stringResource(R.string.products),
-                    style = MaterialTheme.typography.headlineMedium,
+                Row(
                     modifier = Modifier.fillMaxWidth(),
-                    textAlign = TextAlign.Center
-                )
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Spacer(modifier = Modifier.width(48.dp))
+                    Text(
+                        stringResource(R.string.products),
+                        style = MaterialTheme.typography.headlineMedium
+                    )
+                    IconButton(onClick = { showSettingsBox = true }) {
+                        Icon(
+                            Icons.Default.Settings,
+                            contentDescription = stringResource(R.string.settings)
+                        )
+                    }
+                }
 
                 Spacer(modifier = Modifier.height(8.dp))
 
@@ -339,4 +354,9 @@ fun ProductScreen(
         }
     }
 
+    if (showSettingsBox) {
+        SettingsBox(
+            onClose = { showSettingsBox = false }
+        )
+    }
 }

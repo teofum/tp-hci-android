@@ -94,4 +94,11 @@
     <string name="share_list">Compartir lista</string>
     <string name="suggested_users">Usuarios sugeridos</string>
     <string name="share">Compartir</string>
+    
+    <!-- Settings -->
+    <string name="settings">Configuración</string>
+    <string name="language">Idioma</string>
+    <string name="spanish">Español</string>
+    <string name="english">English</string>
+    <string name="automatic">Automático</string>
 </resources>
