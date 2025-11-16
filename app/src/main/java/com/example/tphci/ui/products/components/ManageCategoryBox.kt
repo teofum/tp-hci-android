@@ -120,7 +120,7 @@ fun ManageCategoryBox(
                 Button(
                     onClick = {
                         if (name.isNotBlank()) {
-                            onConfirm(name)
+                            onConfirm(name) // TODO api // TODO emoji
                         }
                     }
                 ) {

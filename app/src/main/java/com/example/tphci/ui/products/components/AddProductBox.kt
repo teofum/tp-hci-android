@@ -165,7 +165,7 @@ fun AddProductBox(
                 TextButton(onClick = onClose) { Text("Cancelar") }
 
                 Button(onClick = {
-                    onAdd(producto, null)
+                    onAdd(producto, null) // TODO api // TODO emoji
                 }) {
                     Text("Agregar")
                 }
