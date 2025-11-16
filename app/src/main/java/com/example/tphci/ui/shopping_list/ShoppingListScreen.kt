@@ -1,10 +1,15 @@
 package com.example.tphci.ui.shopping_list
 
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -17,15 +22,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tphci.R
 import com.example.tphci.MyApplication
+import com.example.tphci.data.model.ShoppingList
 import com.example.tphci.ui.home.HomeViewModel
-import com.example.tphci.ui.shopping_list.components.AddListBox
+import com.example.tphci.ui.home.rememberWindowInfo
+import com.example.tphci.ui.shopping_list.components.ManageListBox
 
 @Composable
 fun ShoppingListScreen(
+    onOpenShareScreen: () -> Unit,
     onOpenListDetails: (Long) -> Unit,
     viewModel: HomeViewModel = viewModel(
         factory = HomeViewModel.provideFactory(
@@ -39,7 +50,13 @@ fun ShoppingListScreen(
     val uiState = viewModel.uiState
 
     var showAddListBox by remember { mutableStateOf(false) }
+    var showEditListBox by remember { mutableStateOf(false) }
 
+    var editingList by remember { mutableStateOf<ShoppingList?>(null) }
+
+    val windowInfo = rememberWindowInfo()
+    val maxWidth = windowInfo.maxWidth
+    val isTablet = maxWidth > 600.dp
 
     LaunchedEffect(Unit) {
         viewModel.getShoppingLists()
@@ -48,70 +65,218 @@ fun ShoppingListScreen(
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { showAddListBox = true }
+                onClick = { showAddListBox = true },
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary,
+                modifier = Modifier.width(150.dp)
             ) {
+<<<<<<< HEAD
                 Text(stringResource(R.string.add_list))
+=======
+                Text("+ Agregar Lista")
+>>>>>>> master
             }
         }
     ) { innerPadding ->
 
-
-
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp)
+                .padding(innerPadding),
+            contentAlignment = Alignment.TopCenter
         ) {
-            Row(
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 8.dp),
-                verticalAlignment = Alignment.CenterVertically
+                    .widthIn(max = maxWidth)
+                    .padding(16.dp)
+
             ) {
-                Spacer(modifier = Modifier.weight(1f))
 
-                Text(
-                    stringResource(R.string.shopping_lists),
-                    style = MaterialTheme.typography.headlineMedium
-                )
-
-                Spacer(modifier = Modifier.weight(1f))
-
-                IconButton(onClick = { /* TODO */ }) {
-                    Icon(
-                        imageVector = Icons.Default.Edit,
-                        contentDescription = stringResource(R.string.edit_lists)
+                    Text(
+                        stringResource(R.string.shopping_lists),
+                        style = MaterialTheme.typography.headlineMedium,
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Center
                     )
-                }
-            }
 
-            Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
 
 
-            uiState.shoppingLists.forEach { list ->
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 4.dp)
-                        .clickable { onOpenListDetails(list.id.toLong()) }
-                ) {
-                    Column(modifier = Modifier.padding(12.dp)) {
-                        Text(list.name, style = MaterialTheme.typography.titleMedium)
-                        Text(list.description, style = MaterialTheme.typography.bodyMedium)
+                    uiState.shoppingLists.forEach { list ->
+
+                        var expanded by remember { mutableStateOf(false) }
+
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 10.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween
+
+                        ) {
+
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    modifier = Modifier.weight(1f)
+                                ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .size(48.dp)
+                                            .background(
+                                                Color(0xFFF1F1F1),
+                                                RoundedCornerShape(12.dp)
+                                            ),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Text(
+                                            text = "📦", // TODO api
+                                            fontSize = 24.sp,
+                                            fontWeight = FontWeight.Normal
+                                        )
+                                    }
+
+                                    Card(
+                                        colors = CardDefaults.cardColors(
+                                            containerColor = MaterialTheme.colorScheme.background
+                                        ),
+                                        modifier = Modifier
+                                            .weight(1f)
+                                            .padding(start = 10.dp)
+                                            .clickable { onOpenListDetails(list.id.toLong()) }
+                                    ) {
+                                        Column(modifier = Modifier.padding(12.dp)) {
+                                            Text(
+                                                list.name,
+                                                style = MaterialTheme.typography.titleMedium
+                                            )
+                                            Text(
+                                                list.description,
+                                                style = MaterialTheme.typography.bodyMedium
+                                            )
+                                        }
+                                    }
+                                }
+
+                                Box {
+                                    IconButton(onClick = { expanded = true }) {
+                                        Icon(
+                                            Icons.Default.MoreVert,
+                                            contentDescription = stringResource(R.string.edit_lists)
+                                        )
+                                    }
+
+                                    DropdownMenu(
+                                        expanded = expanded,
+                                        onDismissRequest = { expanded = false }
+                                    ) {
+                                        DropdownMenuItem(
+                                            text = { Text(stringResource(R.string.edit_lists)) },
+                                            leadingIcon = { Icon(Icons.Default.Edit, null) },
+                                            onClick = {
+                                                expanded = false
+                                                showEditListBox = true
+                                                editingList = list
+                                            }
+                                        )
+                                        DropdownMenuItem(
+                                            text = { Text(stringResource(R.string.share)) },
+                                            leadingIcon = { Icon(Icons.Default.Share, null) },
+                                            onClick = {
+                                                expanded = false
+                                                onOpenShareScreen()
+                                            }
+                                        )
+                                        DropdownMenuItem(
+                                            text = { Text("Eliminar") },
+                                            leadingIcon = { Icon(Icons.Default.Delete, null) },
+                                            onClick = { expanded = false } // TODO api
+                                        )
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
-        }
 
         if (showAddListBox) {
-            AddListBox(
-                onClose = { showAddListBox = false },
-                onAdd = { name, description, recurring ->
-                    viewModel.addShoppingList(name, description, recurring)
-                    showAddListBox = false
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.5f)),
+                contentAlignment = Alignment.Center
+            ) {
+                Box(
+                    modifier = if (isTablet) {
+                        Modifier
+                            .widthIn(max = 600.dp)
+                            .heightIn(max = 400.dp)
+                            .background(MaterialTheme.colorScheme.background, RoundedCornerShape(16.dp))
+                            .padding(16.dp)
+                    } else {
+                        Modifier
+                            .fillMaxSize()
+                            .background(MaterialTheme.colorScheme.background)
+                            .padding(16.dp)
+                    }
+                ) {
+                    ManageListBox(
+                        title = stringResource(R.string.add_list),
+                        confirmButtonText = stringResource(R.string.add),
+                        onClose = { showAddListBox = false },
+                        onConfirm = { name, description, recurring ->
+                            viewModel.addShoppingList(name, description, recurring) // TODO API
+                            showAddListBox = false
+                        }
+                    )
                 }
-            )
+            }
         }
 
+        if (showEditListBox && editingList != null) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.5f)),
+                contentAlignment = Alignment.Center
+            ) {
+                Box(
+                    modifier = if (isTablet) {
+                        Modifier
+                            .widthIn(max = 600.dp)
+                            .heightIn(max = 400.dp)
+                            .background(MaterialTheme.colorScheme.background, RoundedCornerShape(16.dp))
+                            .padding(16.dp)
+                    } else {
+                        Modifier
+                            .fillMaxSize()
+                            .background(MaterialTheme.colorScheme.background)
+                            .padding(16.dp)
+                    }
+                ) {
+                    ManageListBox(
+                        title = stringResource(R.string.edit_lists),
+                        initialName = editingList!!.name,
+                        initialDescription = editingList!!.description,
+                        initialRecurring = editingList!!.recurring,
+                        confirmButtonText = stringResource(R.string.save_changes),
+                        onClose = {
+                            showEditListBox = false
+                            editingList = null
+                        },
+                        onConfirm = { name, description, recurring ->
+                            viewModel.addShoppingList(name, description, recurring) // TODO API
+                            showEditListBox = false
+                            editingList = null
+                        }
+                    )
+                }
+            }
+        }
     }
-    }
+}

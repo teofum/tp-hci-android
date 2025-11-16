@@ -29,8 +29,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.res.stringResource
 import com.example.tphci.R
+import com.example.tphci.ui.home.rememberWindowInfo
 import com.example.tphci.ui.theme.TPHCITheme
 import com.example.tphci.data.model.User
+
+// TODO uhh esto check en general
+// está conectado con el menú de 3 puntitos o el icon de Share al acceder a los detalles de una lista
 
 /**
  * Main screen. Stateless: only UI + callbacks.
@@ -47,25 +51,11 @@ fun ShareListScreen(
     onBackClick: () -> Unit,
     onDoneClick: () -> Unit,
 ) {
+
+    val windowInfo = rememberWindowInfo()
+    val maxWidth = windowInfo.maxWidth
+
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = stringResource(R.string.share_list),
-                        fontWeight = FontWeight.SemiBold,
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = onBackClick) {
-                        Icon(
-                            imageVector = Icons.Default.Close,
-                            contentDescription = stringResource(R.string.close)
-                        )
-                    }
-                }
-            )
-        },
         bottomBar = {
             Box(
                 modifier = Modifier
@@ -85,12 +75,41 @@ fun ShareListScreen(
             }
         }
     ) { innerPadding ->
-        Column(
+
+        Box(
             modifier = Modifier
-                .padding(innerPadding)
-                .padding(horizontal = 16.dp, vertical = 8.dp)
                 .fillMaxSize()
+                .padding(innerPadding),
+            contentAlignment = Alignment.TopCenter
         ) {
+            Column(
+                modifier = Modifier
+                    .widthIn(max = maxWidth)
+                    .padding(16.dp)
+
+            ) {
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp, bottom = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    IconButton(onClick = onBackClick) {
+                        Icon(Icons.Default.Close, contentDescription = stringResource(R.string.close))
+                    }
+
+                    Text(
+                        text = stringResource(R.string.share_list),
+                        fontWeight = FontWeight.SemiBold,
+                        style = MaterialTheme.typography.headlineSmall
+                    )
+
+                    Spacer(modifier = Modifier.width(48.dp))
+                }
+
+
             // Selected user “pill” on top
             if (selectedUsers.isNotEmpty()) {
                 LazyRow(
@@ -140,6 +159,7 @@ fun ShareListScreen(
                 }
             }
         }
+            }
     }
 }
 

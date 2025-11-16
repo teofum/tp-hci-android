@@ -1,6 +1,7 @@
 package com.example.tphci.ui.products.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -33,12 +35,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.tphci.R
+import com.example.tphci.ui.EmojiPicker
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddProductBox(
     onClose: () -> Unit,
-    onAdd: (name: String, categoryId: Int?) -> Unit
+    onAdd: (name: String, categoryId: Int?) -> Unit // TODO API, check contrato
 ) {
     Box(
         modifier = Modifier
@@ -48,11 +51,9 @@ fun AddProductBox(
     ) {
         Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(24.dp)
+                .fillMaxSize()
                 .background(
-                    Color.White,
-                    shape = RoundedCornerShape(20.dp)
+                    MaterialTheme.colorScheme.background
                 )
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
@@ -74,6 +75,40 @@ fun AddProductBox(
             var categoryExpanded by remember { mutableStateOf(false) }
             var selectedCategory by remember { mutableStateOf("") }
             val categoryOptions = listOf("Categ0", "Categ1") // TODO hardcoded fetch API
+            var selectedEmoji by remember { mutableStateOf("📦") }
+            var showEmojiPicker by remember { mutableStateOf(false) }
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(70.dp)
+                        .background(Color.LightGray, RoundedCornerShape(20.dp))
+                        .clickable { showEmojiPicker = true },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = selectedEmoji,
+                        style = MaterialTheme.typography.headlineLarge
+                    )
+                }
+            }
+
+            if (showEmojiPicker) {
+                androidx.compose.ui.window.Dialog(
+                    onDismissRequest = { showEmojiPicker = false }
+                ) {
+                    EmojiPicker(
+                        onSelect = {
+                            selectedEmoji = it
+                            showEmojiPicker = false
+                        },
+                        onDismiss = { showEmojiPicker = false }
+                    )
+                }
+            }
 
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -132,7 +167,7 @@ fun AddProductBox(
                 TextButton(onClick = onClose) { Text(stringResource(R.string.cancel)) }
 
                 Button(onClick = {
-                    onAdd(producto, null)
+                    onAdd(producto, null) // TODO api // TODO emoji
                 }) {
                     Text(stringResource(R.string.add))
                 }

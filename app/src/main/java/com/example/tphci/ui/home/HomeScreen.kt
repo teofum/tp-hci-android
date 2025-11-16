@@ -31,6 +31,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.tphci.ui.Share
 import com.example.tphci.ui.products.ProductScreen
 import com.example.tphci.ui.profile.ProfileScreen
 import com.example.tphci.ui.shareList.ShareListScreen
@@ -44,6 +45,8 @@ fun HomeScreen() {
     var selectedListId by remember { mutableStateOf<Long?>(null) }
     var showListDetails by remember { mutableStateOf(false) }
 
+    // TODO API
+
     Scaffold(
         bottomBar = {
             BottomBar(
@@ -55,6 +58,9 @@ fun HomeScreen() {
         Box(Modifier.padding(innerPadding)) {
             when (currentRoute) {
                 "shopping_list" -> ShoppingListScreen(
+                    onOpenShareScreen = {
+
+                    },
                     onOpenListDetails = { id ->
                         selectedListId = id
                         showListDetails = true

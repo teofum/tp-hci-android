@@ -104,4 +104,9 @@ dependencies {
     // Coroutines (for suspend fun)
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1")
 
+    // Material3 Window
+    implementation("androidx.compose.material3:material3:1.2.0")
+    implementation("androidx.compose.material3:material3-window-size-class:1.2.0")
+
+
 }
