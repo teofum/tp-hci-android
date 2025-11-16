@@ -1,15 +1,22 @@
 package com.example.tphci.ui.profile
 
+import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.window.core.layout.WindowSizeClass
 import com.example.tphci.MyApplication
+import com.example.tphci.ui.home.rememberWindowInfo
 
 @Composable
 fun ChangePasswordScreen(
@@ -24,18 +31,34 @@ fun ChangePasswordScreen(
 ) {
     val uiState = viewModel.uiState
 
+    val windowInfo = rememberWindowInfo()
+    val maxWidth = windowInfo.maxWidth
+
     LaunchedEffect(uiState.changeSuccess) {
         if (uiState.changeSuccess) {
             onPasswordChanged()
         }
     }
 
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp),
+        contentAlignment = Alignment.TopCenter
     ) {
-        Text("Cambiar contraseña", style = MaterialTheme.typography.headlineMedium)
+
+    Column(
+        modifier = Modifier
+            .widthIn(max = maxWidth)
+    ) {
+        Spacer(modifier = Modifier.height(40.dp))
+
+        Text(
+            "Cambiar contraseña",
+            style = MaterialTheme.typography.headlineMedium,
+            modifier = Modifier.fillMaxWidth(),
+            textAlign = TextAlign.Center
+        )
         Spacer(modifier = Modifier.height(16.dp))
 
         OutlinedTextField(
@@ -136,4 +159,5 @@ fun ChangePasswordScreen(
             Text("Volver al perfil")
         }
     }
+}
 }

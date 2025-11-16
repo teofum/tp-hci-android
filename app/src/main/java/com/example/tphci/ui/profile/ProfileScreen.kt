@@ -1,18 +1,24 @@
 package com.example.tphci.ui.profile
 
+import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tphci.MyApplication
+import com.example.tphci.ui.home.rememberWindowInfo
 
 @Composable
 fun ProfileScreen(
@@ -26,6 +32,10 @@ fun ProfileScreen(
     val uiState = viewModel.uiState
     var showChangePassword by remember { mutableStateOf(false) }
 
+
+    val windowInfo = rememberWindowInfo()
+    val maxWidth = windowInfo.maxWidth
+
     if (showChangePassword) {
         ChangePasswordScreen(
             onPasswordChanged = { showChangePassword = false },
@@ -34,13 +44,30 @@ fun ProfileScreen(
         return
     }
 
-    Column(
+
+    Box(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp),
+        contentAlignment = Alignment.TopCenter
     ) {
-        Text("Perfil", style = MaterialTheme.typography.headlineMedium)
-        Spacer(modifier = Modifier.height(16.dp))
+
+
+    Column(
+        modifier = Modifier
+            .widthIn(max = maxWidth)
+    ) {
+
+        Spacer(modifier = Modifier.height(40.dp))
+
+        Text(
+            "Perfil",
+            style = MaterialTheme.typography.headlineMedium,
+            modifier = Modifier.fillMaxWidth(),
+            textAlign = TextAlign.Center
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
 
         if (!uiState.isAuthenticated) {
             Text("No has iniciado sesión", style = MaterialTheme.typography.bodyLarge)
@@ -134,4 +161,4 @@ fun ProfileScreen(
             }
         }
     }
-}
+}}

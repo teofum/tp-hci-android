@@ -27,6 +27,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.tphci.ui.home.rememberWindowInfo
 import com.example.tphci.ui.theme.TPHCITheme
 
 /**
@@ -61,6 +62,10 @@ fun ShareListScreen(
     onBackClick: () -> Unit,
     onDoneClick: () -> Unit,
 ) {
+
+    val windowInfo = rememberWindowInfo()
+    val maxWidth = windowInfo.maxWidth
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -99,12 +104,43 @@ fun ShareListScreen(
             }
         }
     ) { innerPadding ->
-        Column(
+
+        Box(
             modifier = Modifier
-                .padding(innerPadding)
-                .padding(horizontal = 16.dp, vertical = 8.dp)
                 .fillMaxSize()
+                .padding(innerPadding),
+            contentAlignment = Alignment.TopCenter
         ) {
+            Column(
+                modifier = Modifier
+                    .widthIn(max = maxWidth)
+                    .padding(16.dp)
+
+            ) {
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp, bottom = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    IconButton(onClick = onBackClick) {
+                        Icon(Icons.Default.Close, contentDescription = "Cerrar")
+                    }
+
+                    Text(
+                        text = "Compartir lista",
+                        fontWeight = FontWeight.SemiBold,
+                        style = MaterialTheme.typography.headlineSmall
+                    )
+
+                    Spacer(modifier = Modifier.width(48.dp))
+                }
+
+
+            // Selected user “pill” on top
+            if (selectedUsers.isNotEmpty()) {
             // Selected ShareUser “pill” on top
             if (selectedShareUsers.isNotEmpty()) {
                 LazyRow(

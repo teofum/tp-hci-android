@@ -17,7 +17,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.tphci.data.model.Item
 
 @Composable
@@ -35,9 +37,14 @@ fun ListItem(
         Box(
             modifier = Modifier
                 .size(48.dp)
-                .background(Color(0xFFF1F1F1), RoundedCornerShape(12.dp))
+                .background(Color(0xFFF1F1F1), RoundedCornerShape(12.dp)),
+            contentAlignment = Alignment.Center
         ) {
-            // TODO emoji
+            Text(
+                text = "📦", // TODO api
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Normal
+            )
         }
 
         Spacer(Modifier.width(12.dp))
@@ -54,7 +61,7 @@ fun ListItem(
 
         Checkbox(
             checked = item.purchased,
-            onCheckedChange = { onToggle() }
+            onCheckedChange = { onToggle() } // TODO API, marcar item como comprado
         )
     }
 }

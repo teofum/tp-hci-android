@@ -1,6 +1,7 @@
 package com.example.tphci.ui.shopping_list.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -39,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import com.example.tphci.data.model.Item
 import com.example.tphci.data.model.Product
+import com.example.tphci.ui.EmojiPicker
 
 @Composable
 fun AddItemBox(
@@ -54,11 +57,9 @@ fun AddItemBox(
     ) {
         Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(24.dp)
+                .fillMaxSize()
                 .background(
-                    Color.White,
-                    shape = RoundedCornerShape(20.dp)
+                    MaterialTheme.colorScheme.background
                 )
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
