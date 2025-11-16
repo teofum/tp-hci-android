@@ -236,12 +236,18 @@ fun ShoppingListItemScreen(
                             items(itemsInCategory, key = { it.id!! }) { item ->
                                 ListItem(
                                     item = item,
-                                    onToggle = { viewModel.toggleCheckStatus(item) })
+                                    onToggle = { viewModel.toggleCheckStatus(item) },
+                                    onDelete = { viewModel.deleteListItem(item.id!!.toInt()) }
+                                )
                             }
                         }
                     } else {
                         items(items, key = { it.id!! }) { item ->
-                            ListItem(item = item, onToggle = { viewModel.toggleCheckStatus(item) })
+                            ListItem(
+                                item = item,
+                                onToggle = { viewModel.toggleCheckStatus(item) },
+                                onDelete = { viewModel.deleteListItem(item.id!!.toInt()) }
+                            )
                         }
                     }
                 }
