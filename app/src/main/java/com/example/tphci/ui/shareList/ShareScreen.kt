@@ -29,6 +29,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.tphci.ui.theme.TPHCITheme
 
+
+
+// TODO uhh esto check en general
+// está conectado con el menú de 3 puntitos o el icon de Share al acceder a los detalles de una lista
+
+
+
 /**
  * Basic user model – adapt it to your backend DTO.
  */

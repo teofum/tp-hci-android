@@ -61,7 +61,7 @@ fun ListItem(
 
         Checkbox(
             checked = item.purchased,
-            onCheckedChange = { onToggle() }
+            onCheckedChange = { onToggle() } // TODO API, marcar item como comprado
         )
     }
 }

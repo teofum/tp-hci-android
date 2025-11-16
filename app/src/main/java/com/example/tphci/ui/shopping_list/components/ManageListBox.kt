@@ -103,7 +103,7 @@ fun ManageListBox(
                 Button(
                     onClick = {
                         if (name.isNotBlank()) {
-                            onConfirm(name, description, recurring)
+                            onConfirm(name, description, recurring) // TODO API
                         }
                     }
                 ) {

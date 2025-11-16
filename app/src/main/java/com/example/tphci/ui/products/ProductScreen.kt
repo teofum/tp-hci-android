@@ -33,6 +33,7 @@ import kotlinx.serialization.json.JsonNull
 
 @Composable
 fun ProductScreen(
+//    TODO API view model
     viewModel: HomeViewModel = viewModel(
         factory = HomeViewModel.provideFactory(
             (LocalContext.current.applicationContext as MyApplication).sessionManager,
@@ -43,7 +44,7 @@ fun ProductScreen(
 ) {
 
     LaunchedEffect(Unit) {
-        viewModel.getProducts()
+        viewModel.getProducts() // TODO api, verif contrato
     }
 
     val uiState = viewModel.uiState
@@ -60,7 +61,7 @@ fun ProductScreen(
         product.category?.name ?: "Sin categoría"
 
     val groupedProducts = if (groupByCategory) {
-        uiState.products.groupBy { categoryNameOf(it) }
+        uiState.products.groupBy { categoryNameOf(it) } // TODO API, categorización de prods
     } else null
 
 
@@ -89,7 +90,7 @@ fun ProductScreen(
             Spacer(modifier = Modifier.height(8.dp))
 
             OutlinedTextField(
-                value = productSearch.value,
+                value = productSearch.value, // TODO api, buscador de prods
                 onValueChange = { productSearch.value = it },
                 label = { Text("Nombre de la lista") },
                 modifier = Modifier.fillMaxWidth()
@@ -167,7 +168,7 @@ fun ProductScreen(
                                 product.name?.let { Text(it, style = MaterialTheme.typography.bodyLarge) }
 
                                 Text(
-                                    "${product.category}",
+                                    "${product.category}", // TODO API, check si se accede bien
                                     style = MaterialTheme.typography.bodySmall,
                                     color = Color.Gray
                                 )
@@ -204,7 +205,7 @@ fun ProductScreen(
                             product.name?.let { Text(it, style = MaterialTheme.typography.bodyLarge) }
 
                             Text(
-                                "${product.category}",
+                                "${product.category}", // TODO API, check si se accede bien
                                 style = MaterialTheme.typography.bodySmall,
                                 color = Color.Gray
                             )
@@ -223,14 +224,15 @@ fun ProductScreen(
         AddProductBox(
             onClose = { showAddProductScreen = false },
             onAdd = { name, categoryId ->
-                viewModel.addProduct(name, categoryId)
+                viewModel.addProduct(name, categoryId) // TODO API, check contrato
                 showAddProductScreen = false
             }
         )
     }
 
 
-    // TODO api, hardcoded
+    // TODO API, hardcoded for debug !!
+    // TODO eliminar, desde acá
     val hardcodedCategories = listOf(
         Category(
             id = 1,
@@ -247,6 +249,7 @@ fun ProductScreen(
             updatedAt = "2025-01-11T15:30:00Z"
         )
     )
+    // TODO eliminar, hasta acá
 
     if (showCategoryScreen) {
         CategoryScreen(

@@ -39,7 +39,7 @@ import com.example.tphci.ui.EmojiPicker
 @Composable
 fun AddProductBox(
     onClose: () -> Unit,
-    onAdd: (name: String, categoryId: Int?) -> Unit
+    onAdd: (name: String, categoryId: Int?) -> Unit // TODO API, check contrato
 ) {
     Box(
         modifier = Modifier

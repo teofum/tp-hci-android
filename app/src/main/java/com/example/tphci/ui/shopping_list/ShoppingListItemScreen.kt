@@ -64,7 +64,7 @@ fun ShoppingListItemScreen(
     val items = uiState.shoppingListItems[listId] ?: emptyList()
     val currentList = uiState.shoppingLists.firstOrNull { it.id.toLong() == listId }
 
-    // TODO
+    // TODO API, buscador de items en lista
     var searchQuery by remember { mutableStateOf("") }
     var selectedFilter by remember { mutableStateOf("Todos") }
     val filterOptions = listOf("Todos", "Comprados", "Pendientes")
@@ -161,7 +161,7 @@ fun ShoppingListItemScreen(
                 ) {
                     OutlinedTextField(
                         value = selectedFilter,
-                        onValueChange = {},
+                        onValueChange = {}, // TODO API filtros (igual creo que esto era de front :p sry y thx!)
                         readOnly = true,
                         label = { Text("Filtrar") },
                         trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = filterExpanded) },
@@ -238,7 +238,7 @@ fun ShoppingListItemScreen(
             AddItemBox(
                 onClose = { showAddItemScreen = false },
                 onAdd = { name, categoryId ->
-                    viewModel.addProduct(name, categoryId)
+                    viewModel.addProduct(name, categoryId) // TODO API, check contrato
                     showAddItemScreen = false
                 }
             )

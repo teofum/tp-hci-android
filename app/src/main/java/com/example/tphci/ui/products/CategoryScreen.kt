@@ -130,7 +130,7 @@ fun CategoryScreen(
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(
-                                    text = "📦", // TODO api
+                                    text = "📦", // TODO API
                                     fontSize = 24.sp,
                                     fontWeight = FontWeight.Normal
                                 )
@@ -178,7 +178,7 @@ fun CategoryScreen(
                                 DropdownMenuItem(
                                     text = { Text("Eliminar") },
                                     leadingIcon = { Icon(Icons.Default.Delete, null) },
-                                    onClick = { expanded = false } // TODO api
+                                    onClick = { expanded = false } // TODO API
                                 )
                             }
                         }
@@ -207,7 +207,7 @@ fun CategoryScreen(
                 confirmButtonText = "Guardar",
                 onClose = { showEditCategoryBox = false },
                 onConfirm = { newName ->
-                    // TODO API updateCategory(editingCategory!!.id, newName)
+                    // updateCategory(editingCategory!!.id, newName) // TODO API (están las variables "useState" ya creadas al principio)
                     showEditCategoryBox = false
                 }
             )
