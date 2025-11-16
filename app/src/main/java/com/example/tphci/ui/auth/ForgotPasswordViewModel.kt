@@ -13,7 +13,6 @@ import com.example.tphci.data.model.Error
 import com.example.tphci.data.repository.UserRepository
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import kotlinx.serialization.json.JsonObject
 
 data class ForgotPasswordUIState(
     val email: String = "",
@@ -26,7 +25,6 @@ class ForgotPasswordViewModel(
     private val sessionManager: SessionManager,
     private val userRepository: UserRepository
 ) : ViewModel() {
-
     var uiState by mutableStateOf(ForgotPasswordUIState())
         private set
 
@@ -34,18 +32,9 @@ class ForgotPasswordViewModel(
         uiState = uiState.copy(email = email)
     }
 
-    fun sendResetEmail() = runOnViewModelScope<Result<JsonObject>>(
+    fun sendResetEmail() = runOnViewModelScope(
         { userRepository.forgotPassword(uiState.email) },
-        { state, result ->
-            result.fold(
-                onSuccess = { _ ->
-                    state.copy(emailSent = true)
-                },
-                onFailure = { e ->
-                    state.copy(error = handleError(e))
-                }
-            )
-        }
+        { state, result -> state.copy(emailSent = true) }
     )
 
     private fun <R> runOnViewModelScope(

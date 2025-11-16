@@ -13,7 +13,6 @@ import com.example.tphci.data.model.Error
 import com.example.tphci.data.repository.UserRepository
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import kotlinx.serialization.json.JsonObject
 
 data class VerifyAccountUIState(
     val code: String = "",
@@ -39,32 +38,14 @@ class VerifyAccountViewModel(
         uiState = uiState.copy(code = code)
     }
 
-    fun verifyAccount() = runOnViewModelScope<Result<JsonObject>>(
+    fun verifyAccount() = runOnViewModelScope(
         { userRepository.verifyAccount(uiState.code) },
-        { state, result ->
-            result.fold(
-                onSuccess = { _ ->
-                    state.copy(isVerified = true)
-                },
-                onFailure = { e ->
-                    state.copy(error = handleError(e))
-                }
-            )
-        }
+        { state, result -> state.copy(isVerified = true) }
     )
 
-    fun resendCode() = runOnViewModelScope<Result<JsonObject>>(
+    fun resendCode() = runOnViewModelScope(
         { userRepository.sendVerification(uiState.email) },
-        { state, result ->
-            result.fold(
-                onSuccess = { _ ->
-                    state.copy(error = null)
-                },
-                onFailure = { e ->
-                    state.copy(error = handleError(e))
-                }
-            )
-        }
+        { state, result -> state.copy(error = null) }
     )
 
     private fun <R> runOnViewModelScope(

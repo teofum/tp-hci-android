@@ -1,34 +1,62 @@
 package com.example.tphci.data.network
 
-import com.example.tphci.data.model.Category
-import com.example.tphci.data.model.*
-import com.example.tphci.data.model.Product
-import com.example.tphci.data.model.ShoppingList
-import com.example.tphci.data.model.User
+import android.util.Log
+import com.example.tphci.data.DataSourceException
+import com.example.tphci.data.network.model.NetworkError
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonElement
-import kotlinx.serialization.json.decodeFromJsonElement
-import kotlinx.serialization.json.encodeToJsonElement
+import retrofit2.Response
+import java.io.IOException
 
-class RemoteDataSource(val apiService: ApiService) {
-    val json = Json { ignoreUnknownKeys = true }
+abstract class RemoteDataSource {
+    private val json = Json { ignoreUnknownKeys = true }
 
-    // TODO hardcode (debería empezar en null)
-    var token: String? = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjIsImlhdCI6MTc2MzAwNTgwNDg4MCwiZXhwIjoxNzYzMDA4Mzk2ODgwfQ.WNdjIMjLUNBDyfK7zObO4O7pIpAl-lFK1ludR2ncxNQ"
-
-    suspend fun post(endpoint: String, body: JsonElement): JsonElement {
-        return apiService.post(endpoint, body, "Bearer ${token.orEmpty()}")
+    suspend fun <T : Any> handleApiResponse(
+        execute: suspend () -> Response<T>
+    ): T {
+        try {
+            val response = execute()
+            val body = response.body()
+            if (response.isSuccessful && body != null) {
+                return body
+            }
+            response.errorBody()?.let {
+                val error = json.decodeFromString<NetworkError>(it.string())
+                throwDataSourceException(response.code(), error.message)
+            }
+            throw DataSourceException(UNEXPECTED_ERROR_CODE, "Missing error")
+        } catch (e: DataSourceException) {
+            throw e
+        } catch (e: IOException) {
+            throw DataSourceException(
+                CONNECTION_ERROR_CODE,
+                "Connection error"
+            )
+        } catch (e: Exception) {
+            Log.e(TAG, "Unexpected error handling API response", e)
+            throw DataSourceException(
+                UNEXPECTED_ERROR_CODE,
+                "Unexpected error"
+            )
+        }
     }
 
-    suspend fun put(endpoint: String, body: JsonElement): JsonElement {
-        return apiService.put(endpoint, body, "Bearer ${token.orEmpty()}")
+    private fun throwDataSourceException(statusCode: Int, message: String): DataSourceException {
+        when (statusCode) {
+            400 -> throw DataSourceException(DATA_ERROR, message)
+            401 -> throw DataSourceException(UNAUTHORIZED_ERROR_CODE, message)
+            else -> throw DataSourceException(UNEXPECTED_ERROR_CODE, message)
+        }
     }
 
-    suspend fun get(endpoint: String): JsonElement {
-        return apiService.get(endpoint, "Bearer ${token.orEmpty()}")
-    }
+    companion object {
+        const val TAG = "Data Layer"
 
-    suspend fun delete(endpoint: String) {
-        apiService.delete(endpoint, "Bearer ${token.orEmpty()}")
+        const val UNAUTHORIZED_ERROR_CODE = 1
+        const val DATA_ERROR = 2
+
+        // TODO
+        const val CONNECTION_ERROR_CODE = 98
+        const val UNEXPECTED_ERROR_CODE = 99
     }
 }
+

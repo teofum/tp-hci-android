@@ -13,7 +13,6 @@ import com.example.tphci.data.model.Error
 import com.example.tphci.data.repository.UserRepository
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import kotlinx.serialization.json.JsonObject
 
 data class ChangePasswordUIState(
     val currentPassword: String = "",
@@ -44,18 +43,9 @@ class ChangePasswordViewModel(
         uiState = uiState.copy(confirmPassword = password)
     }
 
-    fun changePassword() = runOnViewModelScope<Result<JsonObject>>(
+    fun changePassword() = runOnViewModelScope(
         { userRepository.changePassword(uiState.currentPassword, uiState.newPassword) },
-        { state, result ->
-            result.fold(
-                onSuccess = { _ ->
-                    state.copy(changeSuccess = true)
-                },
-                onFailure = { e ->
-                    state.copy(error = handleError(e))
-                }
-            )
-        }
+        { state, result -> state.copy(changeSuccess = true) }
     )
 
     fun clearChangeSuccess() {

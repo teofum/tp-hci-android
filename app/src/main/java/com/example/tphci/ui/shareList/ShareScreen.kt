@@ -1,10 +1,20 @@
 package com.example.tphci.ui.shareList
 
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -12,53 +22,56 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.tphci.ui.home.rememberWindowInfo
-import com.example.tphci.ui.theme.TPHCITheme
-
-
-
-// TODO uhh esto check en general
-// está conectado con el menú de 3 puntitos o el icon de Share al acceder a los detalles de una lista
-
-
 
 /**
- * Basic user model – adapt it to your backend DTO.
+ * Basic ShareUser model – adapt it to your backend DTO.
  */
-data class User(
-    val id: String,
-    val fullName: String,
-    val handle: String,
-    val avatarRes: Int? = null, // local drawable, or null if you load from URL
+data class ShareUser(
+    val id: Int,
+    val name: String,
+    val surname: String,
+    val email: String,
+    val metadata: Unit,
+    val createdAt: String,
+    val updatedAt: String
 )
+
+// Helper property to minimize changes in composables
+private val ShareUser.fullName: String
+    get() = "$name $surname"
 
 /**
  * Main screen. Stateless: only UI + callbacks.
  */
-@OptIn(ExperimentalMaterial3Api::class)//TODO: esto no ba
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ShareListScreen(
-    selectedUsers: List<User>,
-    suggestedUsers: List<User>,
+    selectedShareUsers: List<ShareUser>,
+    suggestedShareUsers: List<ShareUser>,
     searchQuery: String,
     onSearchQueryChange: (String) -> Unit,
-    onUserToggle: (User) -> Unit,
-    onRemoveSelectedUser: (User) -> Unit,
+    onShareUserToggle: (ShareUser) -> Unit,
+    onRemoveSelectedShareUser: (ShareUser) -> Unit,
     onBackClick: () -> Unit,
     onDoneClick: () -> Unit,
 ) {
@@ -67,6 +80,24 @@ fun ShareListScreen(
     val maxWidth = windowInfo.maxWidth
 
     Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        text = "Compartir lista",
+                        fontWeight = FontWeight.SemiBold,
+                    )
+                },
+                navigationIcon = {
+                    IconButton(onClick = onBackClick) {
+                        Icon(
+                            imageVector = Icons.Default.Close,
+                            contentDescription = "Cerrar"
+                        )
+                    }
+                }
+            )
+        },
         bottomBar = {
             Box(
                 modifier = Modifier
@@ -121,56 +152,56 @@ fun ShareListScreen(
                 }
 
 
-            // Selected user “pill” on top
-            if (selectedUsers.isNotEmpty()) {
-                LazyRow(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                // Selected ShareUser “pill” on top
+                if (selectedShareUsers.isNotEmpty()) {
+                    LazyRow(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 16.dp)
+                    ) {
+                        items(selectedShareUsers) { ShareUser ->
+                            SelectedShareUserChip(
+                                ShareUser = ShareUser,
+                                onRemove = { onRemoveSelectedShareUser(ShareUser) }
+                            )
+                        }
+                    }
+                }
+
+                // Search bar
+                OutlinedTextField(
+                    value = searchQuery,
+                    onValueChange = onSearchQueryChange,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(bottom = 16.dp)
+                        .padding(bottom = 24.dp),
+                    placeholder = { Text("Buscar usuarios") },
+                    singleLine = true,
+                    shape = RoundedCornerShape(10.dp)
+                )
+
+                // Suggested ShareUsers title
+                Text(
+                    text = "Usuarios sugeridos",
+                    fontWeight = FontWeight.SemiBold,
+                    modifier = Modifier.padding(bottom = 12.dp)
+                )
+
+                // Suggested ShareUsers list
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                    modifier = Modifier.fillMaxSize()
                 ) {
-                    items(selectedUsers) { user ->
-                        SelectedUserChip(
-                            user = user,
-                            onRemove = { onRemoveSelectedUser(user) }
+                    items(suggestedShareUsers) { ShareUser ->
+                        SuggestedShareUserRow(
+                            ShareUser = ShareUser,
+                            onClick = { onShareUserToggle(ShareUser) }
                         )
                     }
                 }
             }
-
-            // Search bar
-            OutlinedTextField(
-                value = searchQuery,
-                onValueChange = onSearchQueryChange,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 24.dp),
-                placeholder = { Text("Buscar usuarios") },
-                singleLine = true,
-                shape = RoundedCornerShape(10.dp)
-            )
-
-            // Suggested users title
-            Text(
-                text = "Usuarios sugeridos",
-                fontWeight = FontWeight.SemiBold,
-                modifier = Modifier.padding(bottom = 12.dp)
-            )
-
-            // Suggested users list
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-                modifier = Modifier.fillMaxSize()
-            ) {
-                items(suggestedUsers) { user ->
-                    SuggestedUserRow(
-                        user = user,
-                        onClick = { onUserToggle(user) }
-                    )
-                }
-            }
         }
-            }
     }
 }
 
@@ -178,8 +209,8 @@ fun ShareListScreen(
  * Pill with avatar, name, handle and close icon.
  */
 @Composable
-private fun SelectedUserChip(
-    user: User,
+fun SelectedShareUserChip(
+    ShareUser: ShareUser,
     onRemove: () -> Unit
 ) {
     Surface(
@@ -190,18 +221,18 @@ private fun SelectedUserChip(
             modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Avatar(user, size = 32.dp)
+            Avatar(ShareUser, size = 32.dp)
 
             Spacer(Modifier.width(8.dp))
 
             Column {
                 Text(
-                    text = user.fullName,
+                    text = ShareUser.fullName,
                     fontSize = 13.sp,
                     fontWeight = FontWeight.SemiBold
                 )
                 Text(
-                    text = "@${user.handle}",
+                    text = ShareUser.email, // Changed from @${ShareUser.handle}
                     fontSize = 11.sp,
                     color = Color.Gray
                 )
@@ -227,8 +258,8 @@ private fun SelectedUserChip(
  * Row in "Usuarios sugeridos".
  */
 @Composable
-private fun SuggestedUserRow(
-    user: User,
+private fun SuggestedShareUserRow(
+    ShareUser: ShareUser,
     onClick: () -> Unit
 ) {
     Row(
@@ -237,18 +268,18 @@ private fun SuggestedUserRow(
             .clickable(onClick = onClick),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Avatar(user, size = 44.dp)
+        Avatar(ShareUser, size = 44.dp)
 
         Spacer(Modifier.width(12.dp))
 
         Column {
             Text(
-                text = user.fullName,
+                text = ShareUser.fullName,
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 15.sp
             )
             Text(
-                text = "@${user.handle}",
+                text = ShareUser.email, // Changed from @${ShareUser.handle}
                 fontSize = 13.sp,
                 color = Color.Gray
             )
@@ -261,80 +292,21 @@ private fun SuggestedUserRow(
  * Swap this to Coil/Glide if you load from URL.
  */
 @Composable
-private fun Avatar(
-    user: User,
+fun Avatar(
+    ShareUser: ShareUser,
     size: Dp
 ) {
-    if (user.avatarRes != null) {
-        Image(
-            painter = painterResource(id = user.avatarRes),
-            contentDescription = user.fullName,
-            modifier = Modifier
-                .size(size)
-                .clip(CircleShape),
-            contentScale = ContentScale.Crop
-        )
-    } else {
-        Box(
-            modifier = Modifier
-                .size(size)
-                .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.primary),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = user.fullName.firstOrNull()?.uppercase() ?: "",
-                color = MaterialTheme.colorScheme.onPrimary,
-                fontWeight = FontWeight.Bold
-            )
-        }
-    }
-}
-
-/**
- * Simple preview with fake state, just to see the UI quickly.
- */
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-private fun ShareListScreenPreview() {
-    val selected = remember {
-        mutableStateOf(
-            listOf(
-                User(
-                    id = "1",
-                    fullName = "Sophia Richards",
-                    handle = "sophia.richards"
-                )
-            )
-        )
-    }
-
-    val suggested = listOf(
-        User("2", "Henry Clark", "henry.clark"),
-        User("3", "Olivia Smith", "olivia.smith")
-    )
-
-    val search = remember { mutableStateOf("") }
-
-    TPHCITheme {
-        ShareListScreen(
-            selectedUsers = selected.value,
-            suggestedUsers = suggested,
-            searchQuery = search.value,
-            onSearchQueryChange = { search.value = it },
-            onUserToggle = { user ->
-                selected.value =
-                    if (selected.value.any { it.id == user.id }) {
-                        selected.value.filterNot { it.id == user.id }
-                    } else {
-                        selected.value + user
-                    }
-            },
-            onRemoveSelectedUser = { user ->
-                selected.value = selected.value.filterNot { it.id == user.id }
-            },
-            onBackClick = {},
-            onDoneClick = {}
+    Box(
+        modifier = Modifier
+            .size(size)
+            .clip(CircleShape)
+            .background(MaterialTheme.colorScheme.primary),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = ShareUser.fullName.firstOrNull()?.uppercase() ?: "",
+            color = MaterialTheme.colorScheme.onPrimary,
+            fontWeight = FontWeight.Bold
         )
     }
 }

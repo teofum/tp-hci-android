@@ -14,8 +14,6 @@ import com.example.tphci.data.model.Error
 import com.example.tphci.data.repository.UserRepository
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.jsonPrimitive
 
 data class ProfileUIState(
     val name: String = "",
@@ -50,46 +48,25 @@ class ProfileViewModel(
     }
 
 
-
-    fun saveProfile() = runOnViewModelScope<Result<JsonObject>>(
+    fun saveProfile() = runOnViewModelScope(
         { userRepository.updateProfile(uiState.name, uiState.surname) },
         { state, result ->
-            result.fold(
-                onSuccess = { response ->
-                    val name = response["name"]?.jsonPrimitive?.content ?: ""
-                    val surname = response["surname"]?.jsonPrimitive?.content ?: ""
-                    val email = response["email"]?.jsonPrimitive?.content ?: ""
-                    state.copy(
-                        name = name,
-                        surname = surname,
-                        email = email,
-                        updateSuccess = true
-                    )
-                },
-                onFailure = { e ->
-                    state.copy(error = handleError(e))
-                }
+            state.copy(
+                name = result.name,
+                surname = result.surname,
+                email = result.email,
+                updateSuccess = true
             )
         }
     )
 
-    fun getCurrentUser() = runOnViewModelScope<Result<JsonObject>>(
+    fun getCurrentUser() = runOnViewModelScope(
         { userRepository.getCurrentUser() },
         { state, result ->
-            result.fold(
-                onSuccess = { response ->
-                    val name = response["name"]?.jsonPrimitive?.content ?: ""
-                    val surname = response["surname"]?.jsonPrimitive?.content ?: ""
-                    val email = response["email"]?.jsonPrimitive?.content ?: ""
-                    state.copy(
-                        name = name,
-                        surname = surname,
-                        email = email
-                    )
-                },
-                onFailure = { e ->
-                    state.copy(error = handleError(e))
-                }
+            state.copy(
+                name = result.name,
+                surname = result.surname,
+                email = result.email,
             )
         }
     )
