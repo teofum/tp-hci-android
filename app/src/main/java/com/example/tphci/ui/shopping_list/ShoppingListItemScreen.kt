@@ -16,6 +16,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -38,6 +39,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tphci.MyApplication
+import com.example.tphci.data.model.Item
+import com.example.tphci.ui.shopping_list.components.AddItemBox
 import com.example.tphci.ui.shopping_list.components.ListItem
 
 
@@ -79,7 +82,7 @@ fun ShoppingListItemScreen(
 
     Scaffold(
         floatingActionButton = {
-            androidx.compose.material3.FloatingActionButton(
+            FloatingActionButton(
                 onClick = { showAddItemScreen = true },
                 containerColor = MaterialTheme.colorScheme.primary,
                 contentColor = MaterialTheme.colorScheme.onPrimary,
@@ -199,7 +202,7 @@ fun ShoppingListItemScreen(
                     groupedItems.forEach { (categoryName, itemsInCategory) ->
                         item {
                             Text(
-                                text = categoryName.toString(), // TODO
+                                text = categoryName, // TODO
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold,
                                 modifier = Modifier.padding(top = 16.dp, bottom = 4.dp)
@@ -220,14 +223,13 @@ fun ShoppingListItemScreen(
         }
 
         if (showAddItemScreen) {
-            // TODO
-//            AddItemBox(
-//                onClose = { showAddItemScreen = false },
-//                onAdd = { name, categoryId ->
-//                    viewModel.addListItem(ShoppingListItem(name = name, categoryId = categoryId))
-//                    showAddItemScreen = false
-//                }
-//            )
+            AddItemBox(
+                onClose = { showAddItemScreen = false },
+                onAdd = { name, categoryId ->
+                    viewModel.addListItem(ShoppingListItem(name = name, categoryId = categoryId))
+                    showAddItemScreen = false
+                }
+            )
         }
     }
 }

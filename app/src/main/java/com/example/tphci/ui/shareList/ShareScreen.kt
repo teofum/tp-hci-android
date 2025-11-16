@@ -49,7 +49,7 @@ private val ShareUser.fullName: String
 /**
  * Main screen. Stateless: only UI + callbacks.
  */
-@OptIn(ExperimentalMaterial3Api::class)// TODO : esto no ba
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ShareListScreen(
     selectedShareUsers: List<ShareUser>,
@@ -266,7 +266,7 @@ private fun Avatar(
 /**
  * Simple preview with fake state, just to see the UI quickly.
  */
-@Preview(showBackground = true, showSystemUi = true)
+@Preview(showBackground = true, showSystemUi = true) // TODO : borrar el preview (testing)
 @Composable
 private fun ShareListScreenPreview() {
     val selected = remember {

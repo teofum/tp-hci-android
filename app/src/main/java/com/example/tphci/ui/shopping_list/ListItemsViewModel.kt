@@ -6,8 +6,10 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.tphci.MyApplication
 import com.example.tphci.data.DataSourceException
+import com.example.tphci.data.model.Category
 import com.example.tphci.data.model.Error
 import com.example.tphci.data.model.Item
+import com.example.tphci.data.model.Product
 import com.example.tphci.data.repository.ItemRepository
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -40,10 +42,30 @@ class ListItemsViewModel(
         updateState = { state, items -> state.copy(items = items) }
     )
 
-    fun addListItem(item: Item) = runOnViewModelScope(
+    private fun executeAddListItem(item: Item) = runOnViewModelScope(
         block = { repository.addListItem(listId, item) },
         updateState = { state, newItem -> state.copy(items = state.items + newItem) }
     )
+
+    fun addListItem(item: ShoppingListItem) {
+        val itemForRepo = Item(
+            id = 0L,
+            quantity = 1,
+            unit = "unidades",
+            purchased = false,
+            emoji = "🛒",
+            createdAt = null,
+            updatedAt = null,
+            lastPurchasedAt = null,
+            product = Product(
+                name = item.name,
+                categoryId = item.categoryId,
+                emoji = "🛒"
+            )
+        )
+        executeAddListItem(itemForRepo)
+    }
+
 
     fun updateListItem(item: Item) = runOnViewModelScope(
         block = { repository.updateListItem(listId, item) },
