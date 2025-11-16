@@ -21,6 +21,12 @@ class ShoppingListRemoteDataSource(
         return response.data
     }
 
+    suspend fun getList(id: Int): NetworkShoppingList {
+        return handleApiResponse {
+            shoppingListApiService.getList(id)
+        }
+    }
+
     suspend fun updateList(id: Int, listData: NetworkNewShoppingList): NetworkShoppingList {
         return handleApiResponse {
             shoppingListApiService.updateList(id, listData)

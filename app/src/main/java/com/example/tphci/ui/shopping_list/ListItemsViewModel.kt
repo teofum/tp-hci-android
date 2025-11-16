@@ -9,8 +9,10 @@ import com.example.tphci.data.DataSourceException
 import com.example.tphci.data.model.Error
 import com.example.tphci.data.model.Item
 import com.example.tphci.data.model.Product
+import com.example.tphci.data.model.ShoppingList
 import com.example.tphci.data.repository.ItemRepository
 import com.example.tphci.data.repository.ProductRepository
+import com.example.tphci.data.repository.ShoppingListRepository
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -23,22 +25,30 @@ data class ItemUiState(
     val isFetching: Boolean = false,
     val error: Error? = null,
     val items: List<Item> = emptyList(),
-    val products: List<Product> = emptyList()
+    val products: List<Product> = emptyList(),
+    val list: ShoppingList? = null,
 )
 
 class ListItemsViewModel(
     private val listId: Int,
     private val repository: ItemRepository,
-    private val productRepository: ProductRepository
+    private val productRepository: ProductRepository,
+    private val shoppingListRepository: ShoppingListRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ItemUiState(listId = listId))
     val uiState: StateFlow<ItemUiState> = _uiState.asStateFlow()
 
     init {
+        loadList()
         loadListItems()
         loadProducts()
     }
+
+    fun loadList() = runOnViewModelScope(
+        block = { shoppingListRepository.getList(listId) },
+        updateState = { state, list -> state.copy(list = list) }
+    )
 
     fun loadListItems() = runOnViewModelScope(
         block = { repository.getListItems(listId) },
@@ -121,8 +131,12 @@ class ListItemsViewModel(
         ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                val repository = application.itemRepository
-                return ListItemsViewModel(listId, repository, application.productRepository) as T
+                return ListItemsViewModel(
+                    listId,
+                    application.itemRepository,
+                    application.productRepository,
+                    application.shoppingListRepository
+                ) as T
             }
         }
     }

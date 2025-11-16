@@ -29,7 +29,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -55,12 +54,12 @@ import com.example.tphci.ui.shopping_list.components.ListItem
 @Composable
 fun ShoppingListItemScreen(
     onOpenShareScreen: () -> Unit,
-    listId: Long,
+    listId: Int,
     onClose: () -> Unit,
     viewModel: ListItemsViewModel = viewModel(
         factory = ListItemsViewModel.provideFactory(
             LocalContext.current.applicationContext as MyApplication,
-            listId.toInt()
+            listId
         )
     )
 ) {
@@ -117,134 +116,134 @@ fun ShoppingListItemScreen(
             ) {
 
 
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 8.dp, bottom = 16.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp, bottom = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
 
-                        IconButton(onClick = onClose) {
-                            Icon(
-                                imageVector = Icons.Default.Close,
-                                contentDescription = "Cerrar"
-                            )
-                        }
-
-                        Text(
-                            text = currentList?.name ?: "",
-                            fontWeight = FontWeight.SemiBold,
-                            style = MaterialTheme.typography.headlineSmall
+                    IconButton(onClick = onClose) {
+                        Icon(
+                            imageVector = Icons.Default.Close,
+                            contentDescription = "Cerrar"
                         )
-
-                        IconButton(onClick = onOpenShareScreen) {
-                            Icon(
-                                imageVector = Icons.Default.Share,
-                                contentDescription = "Compartir"
-                            )
-                        }
                     }
 
-
-                    OutlinedTextField(
-                        value = searchQuery,
-                        onValueChange = { searchQuery = it },
-                        label = { Text("Buscar producto") },
-                        modifier = Modifier.fillMaxWidth()
+                    Text(
+                        text = uiState.list?.name ?: "",
+                        fontWeight = FontWeight.SemiBold,
+                        style = MaterialTheme.typography.headlineSmall
                     )
 
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 8.dp, bottom = 8.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
+                    IconButton(onClick = onOpenShareScreen) {
+                        Icon(
+                            imageVector = Icons.Default.Share,
+                            contentDescription = "Compartir"
+                        )
+                    }
+                }
+
+
+                OutlinedTextField(
+                    value = searchQuery,
+                    onValueChange = { searchQuery = it },
+                    label = { Text("Buscar producto") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp, bottom = 8.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+
+                    ExposedDropdownMenuBox(
+                        expanded = filterExpanded,
+                        onExpandedChange = { filterExpanded = !filterExpanded },
+                        modifier = Modifier.weight(0.8f),
                     ) {
+                        OutlinedTextField(
+                            value = selectedFilter,
+                            onValueChange = {}, // TODO API filtros (igual creo que esto era de front :p sry y thx!)
+                            readOnly = true,
+                            label = { Text("Filtrar") },
+                            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = filterExpanded) },
+                            modifier = Modifier
+                                .menuAnchor()
+                                .fillMaxWidth()
+                        )
 
-                        ExposedDropdownMenuBox(
+                        ExposedDropdownMenu(
                             expanded = filterExpanded,
-                            onExpandedChange = { filterExpanded = !filterExpanded },
-                            modifier = Modifier.weight(0.8f),
+                            onDismissRequest = { filterExpanded = false }
                         ) {
-                            OutlinedTextField(
-                                value = selectedFilter,
-                                onValueChange = {}, // TODO API filtros (igual creo que esto era de front :p sry y thx!)
-                                readOnly = true,
-                                label = { Text("Filtrar") },
-                                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = filterExpanded) },
-                                modifier = Modifier
-                                    .menuAnchor()
-                                    .fillMaxWidth()
-                            )
-
-                            ExposedDropdownMenu(
-                                expanded = filterExpanded,
-                                onDismissRequest = { filterExpanded = false }
-                            ) {
-                                filterOptions.forEach { option ->
-                                    DropdownMenuItem(
-                                        text = { Text(option) },
-                                        onClick = {
-                                            selectedFilter = option
-                                            filterExpanded = false
-                                        }
-                                    )
-                                }
+                            filterOptions.forEach { option ->
+                                DropdownMenuItem(
+                                    text = { Text(option) },
+                                    onClick = {
+                                        selectedFilter = option
+                                        filterExpanded = false
+                                    }
+                                )
                             }
-                        }
-
-                        Spacer(modifier = Modifier.width(12.dp))
-
-                        Row(
-                            verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
-                        ) {
-                            Text(
-                                "Agrupar por categoría ",
-                                fontSize = MaterialTheme.typography.bodyMedium.fontSize
-                            )
-                            Switch(
-                                checked = groupByCategory,
-                                onCheckedChange = { groupByCategory = it },
-                                modifier = Modifier.scale(0.8f)
-                            )
                         }
                     }
 
-                    LazyColumn(
-                        modifier = Modifier
-                            .fillMaxSize(),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    Spacer(modifier = Modifier.width(12.dp))
+
+                    Row(
+                        verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
                     ) {
+                        Text(
+                            "Agrupar por categoría ",
+                            fontSize = MaterialTheme.typography.bodyMedium.fontSize
+                        )
+                        Switch(
+                            checked = groupByCategory,
+                            onCheckedChange = { groupByCategory = it },
+                            modifier = Modifier.scale(0.8f)
+                        )
+                    }
+                }
 
-                        if (groupByCategory && groupedItems != null && groupedItems.isNotEmpty()) {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
 
-                            groupedItems.forEach { (categoryName, itemsInCategory) ->
+                    if (groupByCategory && groupedItems != null && groupedItems.isNotEmpty()) {
 
-                                item {
-                                    Text(
-                                        text = categoryName,
-                                        style = MaterialTheme.typography.titleMedium,
-                                        fontWeight = FontWeight.Bold,
-                                        modifier = Modifier.padding(top = 16.dp, bottom = 4.dp)
-                                    )
-                                }
+                        groupedItems.forEach { (categoryName, itemsInCategory) ->
 
-                                items(itemsInCategory, key = { it.id }) { item ->
-                                    ListItem(item = item, onToggle = {})
-                                }
+                            item {
+                                Text(
+                                    text = categoryName,
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.Bold,
+                                    modifier = Modifier.padding(top = 16.dp, bottom = 4.dp)
+                                )
                             }
 
-                        } else {
-
-                            items(items, key = { it.id }) { item ->
+                            items(itemsInCategory, key = { it.id!! }) { item ->
                                 ListItem(item = item, onToggle = {})
                             }
                         }
 
+                    } else {
+
+                        items(items, key = { it.id!! }) { item ->
+                            ListItem(item = item, onToggle = {})
+                        }
                     }
+
                 }
             }
+        }
 
         if (showAddItemScreen) {
             Box(
@@ -258,7 +257,10 @@ fun ShoppingListItemScreen(
                         Modifier
                             .widthIn(max = 600.dp)
                             .heightIn(max = 400.dp)
-                            .background(MaterialTheme.colorScheme.background, RoundedCornerShape(16.dp))
+                            .background(
+                                MaterialTheme.colorScheme.background,
+                                RoundedCornerShape(16.dp)
+                            )
                             .padding(16.dp)
                     } else {
                         Modifier

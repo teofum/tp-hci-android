@@ -13,6 +13,10 @@ class ShoppingListRepository(private val remoteDataSource: ShoppingListRemoteDat
         return remoteDataSource.getLists().map { it.asModel() }
     }
 
+    suspend fun getList(listId: Int): ShoppingList {
+        return remoteDataSource.getList(listId).asModel()
+    }
+
     suspend fun updateList(list: ShoppingList): ShoppingList {
         return remoteDataSource.updateList(list.id!!, list.asNetworkNewModel()).asModel()
     }

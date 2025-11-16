@@ -21,6 +21,9 @@ interface ShoppingListApiService {
     @GET("shopping-lists")
     suspend fun getLists(): Response<NetworkPagedShopingLists>
 
+    @GET("shopping-lists/{id}")
+    suspend fun getList(@Path("id") id: Int): Response<NetworkShoppingList>
+
     @PUT("shopping-lists/{id}")
     suspend fun updateList(
         @Path("id") id: Int,

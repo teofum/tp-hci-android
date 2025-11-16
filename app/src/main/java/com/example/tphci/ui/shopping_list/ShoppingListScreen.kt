@@ -2,30 +2,36 @@ package com.example.tphci.ui.shopping_list
 
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.Share
-import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -44,16 +50,13 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tphci.MyApplication
 import com.example.tphci.data.model.ShoppingList
-import com.example.tphci.ui.shopping_list.components.AddListBox
-import com.example.tphci.data.model.ShoppingList
-import com.example.tphci.ui.home.HomeViewModel
 import com.example.tphci.ui.home.rememberWindowInfo
 import com.example.tphci.ui.shopping_list.components.ManageListBox
 
 @Composable
 fun ShoppingListScreen(
     onOpenShareScreen: () -> Unit,
-    onOpenListDetails: (Long) -> Unit,
+    onOpenListDetails: (Int) -> Unit,
     viewModel: ShoppingListViewModel = viewModel(
         factory = ShoppingListViewModel.provideFactory(
             LocalContext.current.applicationContext as MyApplication,
@@ -98,120 +101,115 @@ fun ShoppingListScreen(
                 modifier = Modifier
                     .widthIn(max = maxWidth)
                     .padding(16.dp)
-
             ) {
+                Text(
+                    "Listas",
+                    style = MaterialTheme.typography.headlineMedium,
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center
+                )
 
-                    Text(
-                        "Listas",
-                        style = MaterialTheme.typography.headlineMedium,
-                        modifier = Modifier.fillMaxWidth(),
-                        textAlign = TextAlign.Center
-                    )
+                Spacer(modifier = Modifier.height(8.dp))
 
-                    Spacer(modifier = Modifier.height(8.dp))
+                uiState.shoppingLists.forEach { list ->
+                    var expanded by remember { mutableStateOf(false) }
 
-
-                    uiState.shoppingLists.forEach { list ->
-
-                        var expanded by remember { mutableStateOf(false) }
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 10.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
 
                         Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 10.dp),
                             verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween
-
+                            modifier = Modifier.fillMaxWidth()
                         ) {
 
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier.fillMaxWidth()
+                                modifier = Modifier.weight(1f)
                             ) {
-
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    modifier = Modifier.weight(1f)
-                                ) {
-                                    Box(
-                                        modifier = Modifier
-                                            .size(48.dp)
-                                            .background(
-                                                Color(0xFFF1F1F1),
-                                                RoundedCornerShape(12.dp)
-                                            ),
-                                        contentAlignment = Alignment.Center
-                                    ) {
-                                        Text(
-                                            text = "📦", // TODO api
-                                            fontSize = 24.sp,
-                                            fontWeight = FontWeight.Normal
-                                        )
-                                    }
-
-                                    Card(
-                                        colors = CardDefaults.cardColors(
-                                            containerColor = MaterialTheme.colorScheme.background
+                                Box(
+                                    modifier = Modifier
+                                        .size(48.dp)
+                                        .background(
+                                            Color(0xFFF1F1F1),
+                                            RoundedCornerShape(12.dp)
                                         ),
-                                        modifier = Modifier
-                                            .weight(1f)
-                                            .padding(start = 10.dp)
-                                            .clickable { onOpenListDetails(list.id!!.toLong()) }
-                                    ) {
-                                        Column(modifier = Modifier.padding(12.dp)) {
-                                            Text(
-                                                list.name,
-                                                style = MaterialTheme.typography.titleMedium
-                                            )
-                                            Text(
-                                                list.description,
-                                                style = MaterialTheme.typography.bodyMedium
-                                            )
-                                        }
-                                    }
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        text = "📦", // TODO api
+                                        fontSize = 24.sp,
+                                        fontWeight = FontWeight.Normal
+                                    )
                                 }
 
-                                Box {
-                                    IconButton(onClick = { expanded = true }) {
-                                        Icon(
-                                            Icons.Default.MoreVert,
-                                            contentDescription = "Opciones"
+                                Card(
+                                    colors = CardDefaults.cardColors(
+                                        containerColor = MaterialTheme.colorScheme.background
+                                    ),
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .padding(start = 10.dp)
+                                        .clickable { onOpenListDetails(list.id!!) }
+                                ) {
+                                    Column(modifier = Modifier.padding(12.dp)) {
+                                        Text(
+                                            list.name,
+                                            style = MaterialTheme.typography.titleMedium
+                                        )
+                                        Text(
+                                            list.description,
+                                            style = MaterialTheme.typography.bodyMedium
                                         )
                                     }
+                                }
+                            }
 
-                                    DropdownMenu(
-                                        expanded = expanded,
-                                        onDismissRequest = { expanded = false }
-                                    ) {
-                                        DropdownMenuItem(
-                                            text = { Text("Modificar") },
-                                            leadingIcon = { Icon(Icons.Default.Edit, null) },
-                                            onClick = {
-                                                expanded = false
-                                                showEditListBox = true
-                                                editingList = list
-                                            }
-                                        )
-                                        DropdownMenuItem(
-                                            text = { Text("Compartir") },
-                                            leadingIcon = { Icon(Icons.Default.Share, null) },
-                                            onClick = {
-                                                expanded = false
-                                                onOpenShareScreen()
-                                            }
-                                        )
-                                        DropdownMenuItem(
-                                            text = { Text("Eliminar") },
-                                            leadingIcon = { Icon(Icons.Default.Delete, null) },
-                                            onClick = { expanded = false } // TODO api
-                                        )
-                                    }
+                            Box {
+                                IconButton(onClick = { expanded = true }) {
+                                    Icon(
+                                        Icons.Default.MoreVert,
+                                        contentDescription = "Opciones"
+                                    )
+                                }
+
+                                DropdownMenu(
+                                    expanded = expanded,
+                                    onDismissRequest = { expanded = false }
+                                ) {
+                                    DropdownMenuItem(
+                                        text = { Text("Modificar") },
+                                        leadingIcon = { Icon(Icons.Default.Edit, null) },
+                                        onClick = {
+                                            expanded = false
+                                            showEditListBox = true
+                                            editingList = list
+                                        }
+                                    )
+                                    DropdownMenuItem(
+                                        text = { Text("Compartir") },
+                                        leadingIcon = { Icon(Icons.Default.Share, null) },
+                                        onClick = {
+                                            expanded = false
+                                            onOpenShareScreen()
+                                        }
+                                    )
+                                    DropdownMenuItem(
+                                        text = { Text("Eliminar") },
+                                        leadingIcon = { Icon(Icons.Default.Delete, null) },
+                                        onClick = { expanded = false } // TODO api
+                                    )
                                 }
                             }
                         }
                     }
                 }
             }
+        }
 
         if (showAddListBox) {
             Box(
@@ -225,7 +223,10 @@ fun ShoppingListScreen(
                         Modifier
                             .widthIn(max = 600.dp)
                             .heightIn(max = 400.dp)
-                            .background(MaterialTheme.colorScheme.background, RoundedCornerShape(16.dp))
+                            .background(
+                                MaterialTheme.colorScheme.background,
+                                RoundedCornerShape(16.dp)
+                            )
                             .padding(16.dp)
                     } else {
                         Modifier
@@ -266,7 +267,10 @@ fun ShoppingListScreen(
                         Modifier
                             .widthIn(max = 600.dp)
                             .heightIn(max = 400.dp)
-                            .background(MaterialTheme.colorScheme.background, RoundedCornerShape(16.dp))
+                            .background(
+                                MaterialTheme.colorScheme.background,
+                                RoundedCornerShape(16.dp)
+                            )
                             .padding(16.dp)
                     } else {
                         Modifier
@@ -286,7 +290,7 @@ fun ShoppingListScreen(
                             editingList = null
                         },
                         onConfirm = { name, description, recurring ->
-                            viewModel.(name, description, recurring) // TODO API
+//                            viewModel.(name, description, recurring) // TODO API
                             showEditListBox = false
                             editingList = null
                         }

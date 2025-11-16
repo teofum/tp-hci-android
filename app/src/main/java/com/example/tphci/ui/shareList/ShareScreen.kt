@@ -1,10 +1,20 @@
 package com.example.tphci.ui.shareList
 
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -12,23 +22,26 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.tphci.ui.home.rememberWindowInfo
-import com.example.tphci.ui.theme.TPHCITheme
 
 /**
  * Basic ShareUser model – adapt it to your backend DTO.
@@ -139,54 +152,53 @@ fun ShareListScreen(
                 }
 
 
-            // Selected user “pill” on top
-            if (selectedUsers.isNotEmpty()) {
-            // Selected ShareUser “pill” on top
-            if (selectedShareUsers.isNotEmpty()) {
-                LazyRow(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 16.dp)
-                ) {
-                    items(selectedShareUsers) { ShareUser ->
-                        SelectedShareUserChip(
-                            ShareUser = ShareUser,
-                            onRemove = { onRemoveSelectedShareUser(ShareUser) }
-                        )
+                // Selected ShareUser “pill” on top
+                if (selectedShareUsers.isNotEmpty()) {
+                    LazyRow(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 16.dp)
+                    ) {
+                        items(selectedShareUsers) { ShareUser ->
+                            SelectedShareUserChip(
+                                ShareUser = ShareUser,
+                                onRemove = { onRemoveSelectedShareUser(ShareUser) }
+                            )
+                        }
                     }
                 }
-            }
 
-            // Search bar
-            OutlinedTextField(
-                value = searchQuery,
-                onValueChange = onSearchQueryChange,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 24.dp),
-                placeholder = { Text("Buscar usuarios") },
-                singleLine = true,
-                shape = RoundedCornerShape(10.dp)
-            )
+                // Search bar
+                OutlinedTextField(
+                    value = searchQuery,
+                    onValueChange = onSearchQueryChange,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 24.dp),
+                    placeholder = { Text("Buscar usuarios") },
+                    singleLine = true,
+                    shape = RoundedCornerShape(10.dp)
+                )
 
-            // Suggested ShareUsers title
-            Text(
-                text = "Usuarios sugeridos",
-                fontWeight = FontWeight.SemiBold,
-                modifier = Modifier.padding(bottom = 12.dp)
-            )
+                // Suggested ShareUsers title
+                Text(
+                    text = "Usuarios sugeridos",
+                    fontWeight = FontWeight.SemiBold,
+                    modifier = Modifier.padding(bottom = 12.dp)
+                )
 
-            // Suggested ShareUsers list
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-                modifier = Modifier.fillMaxSize()
-            ) {
-                items(suggestedShareUsers) { ShareUser ->
-                    SuggestedShareUserRow(
-                        ShareUser = ShareUser,
-                        onClick = { onShareUserToggle(ShareUser) }
-                    )
+                // Suggested ShareUsers list
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    items(suggestedShareUsers) { ShareUser ->
+                        SuggestedShareUserRow(
+                            ShareUser = ShareUser,
+                            onClick = { onShareUserToggle(ShareUser) }
+                        )
+                    }
                 }
             }
         }
@@ -197,7 +209,7 @@ fun ShareListScreen(
  * Pill with avatar, name, handle and close icon.
  */
 @Composable
-private fun SelectedShareUserChip(
+fun SelectedShareUserChip(
     ShareUser: ShareUser,
     onRemove: () -> Unit
 ) {
@@ -280,7 +292,7 @@ private fun SuggestedShareUserRow(
  * Swap this to Coil/Glide if you load from URL.
  */
 @Composable
-private fun Avatar(
+fun Avatar(
     ShareUser: ShareUser,
     size: Dp
 ) {
@@ -295,66 +307,6 @@ private fun Avatar(
             text = ShareUser.fullName.firstOrNull()?.uppercase() ?: "",
             color = MaterialTheme.colorScheme.onPrimary,
             fontWeight = FontWeight.Bold
-        )
-    }
-}
-
-/**
- * Simple preview with fake state, just to see the UI quickly.
- */
-@Preview(showBackground = true, showSystemUi = true) // TODO : borrar el preview (testing)
-@Composable
-private fun ShareListScreenPreview() {
-    val selected = remember {
-        mutableStateOf(
-            listOf(
-                ShareUser(
-                    id = 1,
-                    name = "Sophia",
-                    surname = "Richards",
-                    email = "sophia.richards@example.com",
-                    metadata = Unit,
-                    createdAt = "2025-01-01",
-                    updatedAt = "2025-01-01"
-                )
-            )
-        )
-    }
-
-    val suggested = listOf(
-        ShareUser(
-            id = 2, name = "Henry", surname = "Clark",
-            email = "henry.clark@example.com", metadata = Unit,
-            createdAt = "2025-01-01", updatedAt = "2025-01-01"
-        ),
-        ShareUser(
-            id = 3, name = "Olivia", surname = "Smith",
-            email = "olivia.smith@example.com", metadata = Unit,
-            createdAt = "2025-01-01", updatedAt = "2025-01-01"
-        )
-    )
-
-    val search = remember { mutableStateOf("") }
-
-    TPHCITheme {
-        ShareListScreen(
-            selectedShareUsers = selected.value,
-            suggestedShareUsers = suggested,
-            searchQuery = search.value,
-            onSearchQueryChange = { search.value = it },
-            onShareUserToggle = { ShareUser ->
-                selected.value =
-                    if (selected.value.any { it.id == ShareUser.id }) {
-                        selected.value.filterNot { it.id == ShareUser.id }
-                    } else {
-                        selected.value + ShareUser
-                    }
-            },
-            onRemoveSelectedShareUser = { ShareUser ->
-                selected.value = selected.value.filterNot { it.id == ShareUser.id }
-            },
-            onBackClick = {},
-            onDoneClick = {}
         )
     }
 }

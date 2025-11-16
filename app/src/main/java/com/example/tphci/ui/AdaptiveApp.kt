@@ -43,14 +43,13 @@ object Profile
 object Share
 
 @Serializable
-data class Item(val listId: Long)
+data class Item(val listId: Int)
 
 
 @Composable
 fun AdaptiveApp() {
     TPHCITheme {
-
-        fun item(listId: Long) = "item/$listId"
+        fun item(listId: Int) = "item/$listId"
 
         val adaptiveInfo = currentWindowAdaptiveInfo()
         val customNavSuiteType = with(adaptiveInfo) {
@@ -146,7 +145,7 @@ fun AdaptiveApp() {
                 composable<Profile> { ProfileScreen() }
                 composable<Item> { entry ->
                     val args = entry.arguments!!
-                    val listId = args.getLong("listId")
+                    val listId = args.getInt("listId")
                     ShoppingListItemScreen(
                         onOpenShareScreen = { navController.navigate(Share) },
                         listId = listId,
