@@ -31,6 +31,11 @@ class ShoppingListViewModel(
         { state, createdList -> state.copy(shoppingLists = state.shoppingLists + createdList) }
     )
 
+    fun updateShoppingList(shoppingList: ShoppingList) = runOnViewModelScope(
+        { repository.updateList(shoppingList) },
+        { state, createdList -> state.copy(shoppingLists = state.shoppingLists.map { if (it.id == createdList.id) createdList else it }) }
+    )
+
     fun startPolling() {
         if (pollingJob?.isActive == true) return
 
