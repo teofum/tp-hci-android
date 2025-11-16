@@ -215,8 +215,8 @@ fun ShoppingListScreen(
                     } else {
                         Modifier
                             .fillMaxSize()
-                            .padding(16.dp)
                             .background(MaterialTheme.colorScheme.background)
+                            .padding(16.dp)
                     }
                 ) {
                     ManageListBox(
@@ -249,8 +249,8 @@ fun ShoppingListScreen(
                     } else {
                         Modifier
                             .fillMaxSize()
-                            .padding(16.dp)
                             .background(MaterialTheme.colorScheme.background)
+                            .padding(16.dp)
                     }
                 ) {
                     ManageListBox(
