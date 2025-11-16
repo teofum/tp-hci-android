@@ -41,12 +41,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.tphci.R
 import com.example.tphci.MyApplication
+import com.example.tphci.R
 import com.example.tphci.ui.home.rememberWindowInfo
 import com.example.tphci.ui.shopping_list.components.AddItemBox
 import com.example.tphci.ui.shopping_list.components.ListItem
@@ -75,7 +75,7 @@ fun ShoppingListItemScreen(
     val filterAllText = stringResource(R.string.filter_all)
     val filterPurchasedText = stringResource(R.string.filter_purchased)
     val filterPendingText = stringResource(R.string.filter_pending)
-    
+
     var selectedFilter by remember { mutableStateOf(filterAllText) }
     val filterOptions = listOf(filterAllText, filterPurchasedText, filterPendingText)
 
@@ -220,11 +220,8 @@ fun ShoppingListItemScreen(
                         .fillMaxSize(),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-
                     if (groupByCategory && groupedItems != null && groupedItems.isNotEmpty()) {
-
                         groupedItems.forEach { (categoryName, itemsInCategory) ->
-
                             item {
                                 Text(
                                     text = categoryName,
@@ -235,14 +232,14 @@ fun ShoppingListItemScreen(
                             }
 
                             items(itemsInCategory, key = { it.id!! }) { item ->
-                                ListItem(item = item, onToggle = {})
+                                ListItem(
+                                    item = item,
+                                    onToggle = { viewModel.toggleCheckStatus(item) })
                             }
                         }
-
                     } else {
-
                         items(items, key = { it.id!! }) { item ->
-                            ListItem(item = item, onToggle = {})
+                            ListItem(item = item, onToggle = { viewModel.toggleCheckStatus(item) })
                         }
                     }
 

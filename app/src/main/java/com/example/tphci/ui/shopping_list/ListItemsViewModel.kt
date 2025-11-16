@@ -79,16 +79,9 @@ class ListItemsViewModel(
         updateState = { state, _ -> state.copy(items = state.items.filter { it.id!!.toInt() != itemId }) }
     )
 
-
     fun toggleCheckStatus(item: Item) {
-        val block: suspend () -> Item = if (item.purchased) {
-            { repository.uncheckListItem(listId, item.id!!.toInt()) }
-        } else {
-            { repository.checkListItem(listId, item.id!!.toInt()) }
-        }
-
         runOnViewModelScope(
-            block = block,
+            block = { repository.setListItemPurchased(listId, item.id!!.toInt(), !item.purchased) },
             updateState = { state, updatedItem ->
                 state.copy(items = state.items.map {
                     if (it.id == updatedItem.id) updatedItem else it

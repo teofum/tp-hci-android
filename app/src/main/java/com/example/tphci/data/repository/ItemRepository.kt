@@ -21,11 +21,7 @@ class ItemRepository(private val remoteDataSource: ItemRemoteDataSource) {
         remoteDataSource.deleteListItem(listId, itemId)
     }
 
-    suspend fun checkListItem(listId: Int, itemId: Int): Item {
-        return remoteDataSource.checkListItem(listId, itemId).asModel()
-    }
-
-    suspend fun uncheckListItem(listId: Int, itemId: Int): Item {
-        return remoteDataSource.uncheckListItem(listId, itemId).asModel()
+    suspend fun setListItemPurchased(listId: Int, itemId: Int, purchased: Boolean): Item {
+        return remoteDataSource.setListItemPurchased(listId, itemId, purchased).asModel()
     }
 }
