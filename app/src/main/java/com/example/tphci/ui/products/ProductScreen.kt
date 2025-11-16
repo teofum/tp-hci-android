@@ -16,13 +16,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tphci.MyApplication
+import com.example.tphci.data.model.Category
+import com.example.tphci.data.model.Item
+import com.example.tphci.data.model.Product
 import com.example.tphci.ui.home.HomeViewModel
 import com.example.tphci.ui.products.components.AddProductBox
-import com.example.tphci.ui.products.components.ManageCategoriesBox
+import com.example.tphci.ui.products.components.ManageCategoryBox
 import com.example.tphci.ui.shopping_list.components.AddItemBox
+import kotlinx.serialization.json.JsonNull
 
 @Composable
 fun ProductScreen(
@@ -47,24 +52,39 @@ fun ProductScreen(
 
     val productSearch = remember { mutableStateOf("") }
 
-    var showManageCategoriesBox by remember { mutableStateOf(false) }
+    var showCategoryScreen by remember { mutableStateOf(false) }
+
+    fun categoryNameOf(product: Product): String =
+        product.category?.name ?: "Sin categoría"
+
+    val groupedProducts = if (groupByCategory) {
+        uiState.products.groupBy { categoryNameOf(it) }
+    } else null
+
 
 
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { showAddProductScreen = true }
+                onClick = { showAddProductScreen = true },
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary,
+                modifier = Modifier.width(150.dp)
             ) {
-                Text("Agregar Producto")
+                Text("+ Agregar Producto")
             }
         }
     ) { innerPadding ->
         Column(Modifier.fillMaxSize().padding(16.dp)) {
-            Text("Productos", style = MaterialTheme.typography.headlineMedium)
 
+            Text(
+                "Productos",
+                style = MaterialTheme.typography.headlineMedium,
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center
+            )
 
-
-
+            Spacer(modifier = Modifier.height(8.dp))
 
             OutlinedTextField(
                 value = productSearch.value,
@@ -84,7 +104,7 @@ fun ProductScreen(
 
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.clickable { showManageCategoriesBox = true }
+                    modifier = Modifier.clickable { showCategoryScreen = true }
                 ) {
                     Text(
                         "Administrar categorías",
@@ -108,35 +128,82 @@ fun ProductScreen(
                 }
             }
 
-            uiState.products.forEach { product ->
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 10.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
+            if (groupByCategory && groupedProducts != null && groupedProducts.isNotEmpty()) {
 
-                    Box(
-                        modifier = Modifier
-                            .size(48.dp)
-                            .background(Color(0xFFF1F1F1), RoundedCornerShape(12.dp))
-                    ) {
-                        // TODO emoji
+                groupedProducts.forEach { (categoryName, productsInCategory) ->
+
+                    Text(
+                        text = categoryName,
+                        style = MaterialTheme.typography.titleMedium,
+                        modifier = Modifier.padding(top = 16.dp, bottom = 4.dp)
+                    )
+
+                    productsInCategory.forEach { product ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 10.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+
+                            Box(
+                                modifier = Modifier
+                                    .size(48.dp)
+                                    .background(Color(0xFFF1F1F1), RoundedCornerShape(12.dp))
+                            ) {
+                                // TODO emoji
+                            }
+
+                            Spacer(Modifier.width(12.dp))
+
+                            Column(modifier = Modifier.weight(1f)) {
+                                product.name?.let { Text(it, style = MaterialTheme.typography.bodyLarge) }
+
+                                Text(
+                                    "${product.category}",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = Color.Gray
+                                )
+                            }
+                        }
                     }
+                }
 
-                    Spacer(Modifier.width(12.dp))
+            } else {
+                uiState.products.forEach { product ->
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 10.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
 
-                    Column(modifier = Modifier.weight(1f)) {
-                        product.name?.let { Text(it, style = MaterialTheme.typography.bodyLarge) }
+                        Box(
+                            modifier = Modifier
+                                .size(48.dp)
+                                .background(Color(0xFFF1F1F1), RoundedCornerShape(12.dp))
+                        ) {
+                            // TODO emoji
+                        }
 
-                        Text(
-                            "${product.category}",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = Color.Gray
-                        )
+                        Spacer(Modifier.width(12.dp))
+
+                        Column(modifier = Modifier.weight(1f)) {
+                            product.name?.let { Text(it, style = MaterialTheme.typography.bodyLarge) }
+
+                            Text(
+                                "${product.category}",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = Color.Gray
+                            )
+                        }
                     }
                 }
             }
+
+
+
+
         }
     }
 
@@ -150,12 +217,32 @@ fun ProductScreen(
         )
     }
 
-    if (showManageCategoriesBox) {
-        ManageCategoriesBox(
-            onClose = { showManageCategoriesBox = false },
+
+    // TODO api, hardcoded
+    val hardcodedCategories = listOf(
+        Category(
+            id = 1,
+            name = "Alimentos",
+            metadata = JsonNull,
+            createdAt = "2025-01-10T12:00:00Z",
+            updatedAt = "2025-01-10T12:00:00Z"
+        ),
+        Category(
+            id = 2,
+            name = "Limpieza",
+            metadata = JsonNull,
+            createdAt = "2025-01-11T15:30:00Z",
+            updatedAt = "2025-01-11T15:30:00Z"
+        )
+    )
+
+    if (showCategoryScreen) {
+        CategoryScreen(
+            categories = hardcodedCategories, // TODO api, hardcoded
+            onClose = { showCategoryScreen = false },
             onAddCategory = { name ->
                 //viewModel.addCategory(name) // TODO api
-                showManageCategoriesBox = false
+                showCategoryScreen = false
             }
         )
     }

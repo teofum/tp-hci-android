@@ -8,15 +8,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -35,11 +30,14 @@ import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ManageCategoriesBox(
+fun ManageCategoryBox(
+    title: String,
+    initialName: String = "",
+    confirmButtonText: String,
     onClose: () -> Unit,
-    onAddCategory: (String) -> Unit
+    onConfirm: (String) -> Unit
 ) {
-    var categoryName by remember { mutableStateOf("") }
+    var name by remember { mutableStateOf(initialName) }
 
     Box(
         modifier = Modifier
@@ -47,36 +45,47 @@ fun ManageCategoriesBox(
             .background(Color.Black.copy(alpha = 0.5f)),
         contentAlignment = Alignment.Center
     ) {
-        Card(
+        Column(
             modifier = Modifier
-                .fillMaxWidth(0.85f)
-                .padding(16.dp)
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            Column(
-                modifier = Modifier.padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
+                Text(title, style = MaterialTheme.typography.titleLarge)
 
-                Text("Administrar categorías", style = MaterialTheme.typography.titleMedium)
+                IconButton(onClick = onClose) {
+                    Icon(Icons.Default.Close, contentDescription = "Cerrar")
+                }
+            }
 
-                OutlinedTextField(
-                    value = categoryName,
-                    onValueChange = { categoryName = it },
-                    label = { Text("Nueva categoría") },
-                    modifier = Modifier.fillMaxWidth()
-                )
+            OutlinedTextField(
+                value = name,
+                onValueChange = { name = it },
+                label = { Text("Nombre") },
+                modifier = Modifier.fillMaxWidth()
+            )
 
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.End
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                TextButton(onClick = onClose) { Text("Cancelar") }
+
+                Button(
+                    onClick = {
+                        if (name.isNotBlank()) {
+                            onConfirm(name)
+                        }
+                    }
                 ) {
-                    TextButton(onClick = onClose) {
-                        Text("Cerrar")
-                    }
-
-                    Button(onClick = { onAddCategory(categoryName) }) {
-                        Text("Agregar")
-                    }
+                    Text(confirmButtonText)
                 }
             }
         }
