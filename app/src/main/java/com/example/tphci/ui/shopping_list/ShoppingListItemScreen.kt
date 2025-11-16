@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Share
@@ -24,6 +26,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,84 +35,70 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tphci.MyApplication
-import com.example.tphci.ui.shopping_list.ShoppingListItemsViewModel
+import com.example.tphci.data.model.Item
+import com.example.tphci.ui.home.HomeViewModel
+import com.example.tphci.ui.shopping_list.components.AddItemBox
+import com.example.tphci.ui.shopping_list.components.ListItem
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ShoppingListItemScreen(
-    listId: Int,
-    onClose: () -> Unit
-) {
-    val application = LocalContext.current.applicationContext as MyApplication
-
-    val viewModel: ShoppingListItemsViewModel = viewModel(
-        factory = ShoppingListItemsViewModel.provideFactory(
-            listId = listId,
-            application = application,
+    onOpenShareScreen: () -> Unit,
+    listId: Long,
+    onClose: () -> Unit,
+    viewModel: HomeViewModel = viewModel(
+        factory = HomeViewModel.provideFactory(
+            (LocalContext.current.applicationContext as MyApplication).sessionManager,
+            (LocalContext.current.applicationContext as MyApplication).userRepository,
+            (LocalContext.current.applicationContext as MyApplication).shoppingRepository
         )
     )
-//    val uiState = viewModel.uiState
-//    val items = uiState.shoppingListItems[listId] ?: emptyList()
-//
-//    val currentList = uiState.shoppingLists.firstOrNull { it.id.toLong() == listId }
+) {
+    val uiState = viewModel.uiState
 
+    val items = uiState.shoppingListItems[listId] ?: emptyList()
+    val currentList = uiState.shoppingLists.firstOrNull { it.id.toLong() == listId }
+
+    // TODO
     var searchQuery by remember { mutableStateOf("") }
-    var filterExpanded by remember { mutableStateOf(false) }
     var selectedFilter by remember { mutableStateOf("Todos") }
     val filterOptions = listOf("Todos", "Comprados", "Pendientes")
+    var filterExpanded by remember { mutableStateOf(false) }
 
     var groupByCategory by remember { mutableStateOf(false) }
 
     var showAddItemScreen by remember { mutableStateOf(false) }
 
-//    LaunchedEffect(Unit) {
-//        viewModel.getShoppingLists()
-//    }
-//
-//    LaunchedEffect(listId) {
-//        viewModel.getShoppingListsItems(listId)
-//    }
+    fun Item.categoryName(): String =
+        this.product.category?.name ?: "Sin categoría"
+
+    val groupedItems = if (groupByCategory) {
+        items.groupBy { it.categoryName() }
+    } else null
+
+
+    LaunchedEffect(Unit) {
+        viewModel.getShoppingLists()
+    }
+
+    LaunchedEffect(listId) {
+        viewModel.getShoppingListsItems(listId)
+    }
 
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-//                        Text(
-//                            text = currentList?.name ?: "",
-//                            fontWeight = FontWeight.SemiBold
-//                        )
-                    }
-                },
-                navigationIcon = {
-                    IconButton(onClick = onClose) {
-                        Icon(
-                            imageVector = Icons.Default.Close,
-                            contentDescription = "Cerrar"
-                        )
-                    }
-                },
-                actions = {
-                    IconButton(onClick = { onOpenShareScreen() }) {
-                        Icon(
-                            imageVector = Icons.Default.Share,
-                            contentDescription = "Compartir"
-                        )
-                    }
-                }
-            )
-        },
         floatingActionButton = {
             androidx.compose.material3.FloatingActionButton(
-                onClick = { showAddItemScreen = true }
+                onClick = { showAddItemScreen = true },
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary,
+                modifier = Modifier.width(150.dp)
             ) {
-                Text("Agregar producto")
+                Text("+ Agregar producto")
             }
         }
     ) { innerPadding ->
@@ -119,6 +108,36 @@ fun ShoppingListItemScreen(
                 .padding(innerPadding)
                 .padding(horizontal = 16.dp, vertical = 8.dp),
         ) {
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp, bottom = 16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+
+                IconButton(onClick = onClose) {
+                    Icon(
+                        imageVector = Icons.Default.Close,
+                        contentDescription = "Cerrar"
+                    )
+                }
+
+                Text(
+                    text = currentList?.name ?: "",
+                    fontWeight = FontWeight.SemiBold,
+                    style = MaterialTheme.typography.headlineSmall
+                )
+
+                IconButton(onClick = onOpenShareScreen) {
+                    Icon(
+                        imageVector = Icons.Default.Share,
+                        contentDescription = "Compartir"
+                    )
+                }
+            }
+
 
             OutlinedTextField(
                 value = searchQuery,
@@ -172,10 +191,7 @@ fun ShoppingListItemScreen(
                 Row(
                     verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
                 ) {
-                    Text(
-                        "Agrupar por categoría ",
-                        fontSize = MaterialTheme.typography.bodyMedium.fontSize
-                    )
+                    Text("Agrupar por categoría ", fontSize = MaterialTheme.typography.bodyMedium.fontSize)
                     Switch(
                         checked = groupByCategory,
                         onCheckedChange = { groupByCategory = it },
@@ -184,31 +200,48 @@ fun ShoppingListItemScreen(
                 }
             }
 
-//            LazyColumn(
-//                modifier = Modifier
-//                    .fillMaxSize(),
-//                verticalArrangement = Arrangement.spacedBy(8.dp)
-//            ) {
-//                items(items) { item ->
-//                    ListItem(
-//                        item = item,
-//                        onToggle = {
-//                            // TODO viewModel.toggleItemPurchased(item.id)
-//                        }
-//                    )
-//                }
-//            }
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize(),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+
+                if (groupByCategory && groupedItems != null && groupedItems.isNotEmpty()) {
+
+                    groupedItems.forEach { (categoryName, itemsInCategory) ->
+
+                        item {
+                            Text(
+                                text = categoryName,
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier.padding(top = 16.dp, bottom = 4.dp)
+                            )
+                        }
+
+                        items(itemsInCategory, key = { it.id }) { item ->
+                            ListItem(item = item, onToggle = {})
+                        }
+                    }
+
+                } else {
+
+                    items(items, key = { it.id }) { item ->
+                        ListItem(item = item, onToggle = {})
+                    }
+                }
+
+            }
         }
 
-//        if (showAddItemScreen) {
-//            AddItemBox(
-//                onClose = { showAddItemScreen = false },
-//                onAdd = { name, categoryId ->
-//                    viewModel.addProduct(name, categoryId)
-//                    showAddItemScreen = false
-//                }
-//            )
-//        }
+        if (showAddItemScreen) {
+            AddItemBox(
+                onClose = { showAddItemScreen = false },
+                onAdd = { name, categoryId ->
+                    viewModel.addProduct(name, categoryId)
+                    showAddItemScreen = false
+                }
+            )
+        }
     }
 }
-
