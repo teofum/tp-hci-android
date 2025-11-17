@@ -74,7 +74,7 @@ fun ShareListRoute(
         if (error != null) {
             snackbarHostState.showSnackbar(
                 message = error,
-                actionLabel = application.getString(R.string.ok)
+                actionLabel = "OK"
             )
         }
     }
@@ -84,8 +84,8 @@ fun ShareListRoute(
     LaunchedEffect(isSharingSuccessful) {
         if (isSharingSuccessful) {
             snackbarHostState.showSnackbar(
-                message = application.getString(R.string.share_success),
-                actionLabel = application.getString(R.string.ok)
+                message = "shared",
+                actionLabel = "OK"
             )
             onBackClick()
         }
