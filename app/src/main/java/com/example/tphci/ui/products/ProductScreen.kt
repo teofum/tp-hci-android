@@ -320,7 +320,7 @@ fun ProductScreen(
                                 IconButton(onClick = { expanded = true }) {
                                     Icon(
                                         Icons.Default.MoreVert,
-                                        contentDescription = "Opciones"
+                                        contentDescription = stringResource(R.string.options)
                                     )
                                 }
 
@@ -436,14 +436,5 @@ fun ProductScreen(
                 showEditProductScreen = false
             }
         )
-
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.Black.copy(alpha = 0.5f)),
-            contentAlignment = Alignment.Center
-        ) {
-            Text("Diálogo de Edición de Producto para: ${editingProduct!!.name}")
-        }
     }
 }

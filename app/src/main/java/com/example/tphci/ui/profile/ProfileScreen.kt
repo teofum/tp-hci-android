@@ -1,14 +1,30 @@
 package com.example.tphci.ui.profile
 
-import androidx.activity.ComponentActivity
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
-import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -19,11 +35,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.example.tphci.R
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tphci.MyApplication
-import com.example.tphci.ui.home.rememberWindowInfo
+import com.example.tphci.R
 import com.example.tphci.ui.SettingsBox
+import com.example.tphci.ui.home.rememberWindowInfo
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -85,103 +101,107 @@ fun ProfileScreen(
                     .widthIn(max = maxWidth)
             ) {
 
-        if (!uiState.isAuthenticated) {
-            Text(stringResource(R.string.not_logged_in), style = MaterialTheme.typography.bodyLarge)
-        } else {
-            OutlinedTextField(
-                value = uiState.name,
-                onValueChange = viewModel::updateName,
-                label = { Text(stringResource(R.string.first_name)) },
-                modifier = Modifier.fillMaxWidth(),
-                enabled = !uiState.isLoading
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            OutlinedTextField(
-                value = uiState.surname,
-                onValueChange = viewModel::updateSurname,
-                label = { Text(stringResource(R.string.last_name)) },
-                modifier = Modifier.fillMaxWidth(),
-                enabled = !uiState.isLoading
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            OutlinedTextField(
-                value = uiState.email,
-                onValueChange = {},
-                label = { Text(stringResource(R.string.email)) },
-                modifier = Modifier.fillMaxWidth(),
-                enabled = false
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            if (uiState.updateSuccess) {
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 16.dp),
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
-                ) {
+                if (!uiState.isAuthenticated) {
                     Text(
-                        text = stringResource(R.string.profile_updated),
-                        modifier = Modifier.padding(16.dp),
-                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                        stringResource(R.string.not_logged_in),
+                        style = MaterialTheme.typography.bodyLarge
                     )
-                }
-            }
-
-            uiState.error?.let {
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 16.dp),
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer)
-                ) {
-                    Text(
-                        text = stringResource(R.string.profile_update_error),
-                        modifier = Modifier.padding(16.dp),
-                        color = MaterialTheme.colorScheme.onErrorContainer
-                    )
-                }
-            }
-
-            Button(
-                onClick = { viewModel.saveProfile() },
-                modifier = Modifier.fillMaxWidth(),
-                enabled = !uiState.isLoading && uiState.name.isNotBlank() && uiState.surname.isNotBlank()
-            ) {
-                if (uiState.isLoading) {
-                    CircularProgressIndicator(modifier = Modifier.size(16.dp))
                 } else {
-                    Text(stringResource(R.string.save_changes))
+                    OutlinedTextField(
+                        value = uiState.name,
+                        onValueChange = viewModel::updateName,
+                        label = { Text(stringResource(R.string.first_name)) },
+                        modifier = Modifier.fillMaxWidth(),
+                        enabled = !uiState.isLoading
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    OutlinedTextField(
+                        value = uiState.surname,
+                        onValueChange = viewModel::updateSurname,
+                        label = { Text(stringResource(R.string.last_name)) },
+                        modifier = Modifier.fillMaxWidth(),
+                        enabled = !uiState.isLoading
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    OutlinedTextField(
+                        value = uiState.email,
+                        onValueChange = {},
+                        label = { Text(stringResource(R.string.email)) },
+                        modifier = Modifier.fillMaxWidth(),
+                        enabled = false
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    if (uiState.updateSuccess) {
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = 16.dp),
+                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
+                        ) {
+                            Text(
+                                text = stringResource(R.string.profile_updated),
+                                modifier = Modifier.padding(16.dp),
+                                color = MaterialTheme.colorScheme.onPrimaryContainer
+                            )
+                        }
+                    }
+
+                    uiState.error?.let {
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = 16.dp),
+                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer)
+                        ) {
+                            Text(
+                                text = stringResource(R.string.profile_update_error),
+                                modifier = Modifier.padding(16.dp),
+                                color = MaterialTheme.colorScheme.onErrorContainer
+                            )
+                        }
+                    }
+
+                    Button(
+                        onClick = { viewModel.saveProfile() },
+                        modifier = Modifier.fillMaxWidth(),
+                        enabled = !uiState.isLoading && uiState.name.isNotBlank() && uiState.surname.isNotBlank()
+                    ) {
+                        if (uiState.isLoading) {
+                            CircularProgressIndicator(modifier = Modifier.size(16.dp))
+                        } else {
+                            Text(stringResource(R.string.save_changes))
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    TextButton(
+                        onClick = { showChangePassword = true },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(stringResource(R.string.change_password))
+                    }
+
+                    TextButton(
+                        onClick = { viewModel.logout() },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(stringResource(R.string.logout))
+                    }
                 }
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            TextButton(
-                onClick = { showChangePassword = true },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(stringResource(R.string.change_password))
-            }
-
-            TextButton(
-                onClick = { viewModel.logout() },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(stringResource(R.string.logout))
-            }
             }
         }
-    }
 
-    if (showSettingsBox) {
-        SettingsBox(
-            onClose = { showSettingsBox = false }
-        )
+        if (showSettingsBox) {
+            SettingsBox(
+                onClose = { showSettingsBox = false }
+            )
+        }
     }
-}}
+}

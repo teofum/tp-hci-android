@@ -91,6 +91,11 @@
     <string name="new_category">Nueva categoría</string>
     <string name="category">Categoría</string>
     <string name="close">Cerrar</string>
+    <string name="add_category">Agregar categoría</string>
+    <string name="categories">Categorías</string>
+    <string name="no_name">Sin nombre</string>
+    <string name="product_count">%1$d productos</string>
+    <string name="edit_category">Editar categoría</string>
 
     <!-- Share Screen -->
     <string name="done">Listo</string>
@@ -110,4 +115,5 @@
     <string name="light">Claro</string>
     <string name="dark">Oscuro</string>
     <string name="no_category">Sin categoría</string>
+    <string name="name">Nombre</string>
 </resources>
