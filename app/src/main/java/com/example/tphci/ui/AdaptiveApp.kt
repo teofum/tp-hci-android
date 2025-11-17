@@ -12,6 +12,7 @@ import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffo
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -22,9 +23,14 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.window.core.layout.WindowSizeClass
 import com.example.tphci.R
+import com.example.tphci.ui.products.AddProductScreen
+import com.example.tphci.ui.products.CategoriesScreen
 import com.example.tphci.ui.products.ProductScreen
 import com.example.tphci.ui.profile.ProfileScreen
 import com.example.tphci.ui.shareList.ShareListScreen
+import com.example.tphci.ui.shopping_list.AddItemScreen
+import com.example.tphci.ui.shopping_list.AddListScreen
+import com.example.tphci.ui.shopping_list.EditListScreen
 import com.example.tphci.ui.shopping_list.ShoppingListItemScreen
 import com.example.tphci.ui.shopping_list.ShoppingListScreen
 import com.example.tphci.ui.theme.TPHCITheme
@@ -44,6 +50,24 @@ object Share
 
 @Serializable
 data class Item(val listId: Int)
+
+@Serializable
+object AddProduct
+
+@Serializable
+object Categories
+
+@Serializable
+object AddList
+
+@Serializable
+data class EditList(val listId: Int)
+
+@Serializable
+data class AddItem(val listId: Int)
+
+@Serializable
+object Settings
 
 
 @Composable
@@ -131,17 +155,20 @@ fun AdaptiveApp() {
             NavHost(navController = navController, startDestination = ShoppingLists) {
                 composable<ShoppingLists> {
                     ShoppingListScreen(
-                        onOpenShareScreen = {
-                            navController.navigate(
-                                Share
-                            )
-                        },
-                        onOpenListDetails = { listId ->
-                            navController.navigate(Item(listId))
-                        }
+                        onOpenShareScreen = { navController.navigate(Share) },
+                        onOpenListDetails = { listId -> navController.navigate(Item(listId)) },
+                        onNavigateToAddList = { navController.navigate(AddList) },
+                        onNavigateToEditList = { listId -> navController.navigate(EditList(listId)) },
+                        onNavigateToSettings = { navController.navigate(Settings) }
                     )
                 }
-                composable<Products> { ProductScreen() }
+                composable<Products> { 
+                    ProductScreen(
+                        onNavigateToAddProduct = { navController.navigate(AddProduct) },
+                        onNavigateToCategories = { navController.navigate(Categories) },
+                        onNavigateToSettings = { navController.navigate(Settings) }
+                    )
+                }
                 composable<Profile> { ProfileScreen() }
                 composable<Item> { entry ->
                     val args = entry.arguments!!
@@ -149,7 +176,8 @@ fun AdaptiveApp() {
                     ShoppingListItemScreen(
                         onOpenShareScreen = { navController.navigate(Share) },
                         listId = listId,
-                        onClose = { navController.popBackStack() }
+                        onClose = { navController.popBackStack() },
+                        onNavigateToAddItem = { navController.navigate(AddItem(listId)) }
                     )
                 }
                 composable<Share> { // TODO make the dialog fullscreen (TODO connect to /shareList)
@@ -162,6 +190,62 @@ fun AdaptiveApp() {
                         onRemoveSelectedShareUser = {},
                         onBackClick = { navController.popBackStack() },
                         onDoneClick = { navController.popBackStack() },
+                    )
+                }
+                composable<AddProduct> { backStackEntry ->
+                    val parentEntry = remember(backStackEntry) {
+                        navController.getBackStackEntry<Products>()
+                    }
+                    AddProductScreen(
+                        onClose = { navController.popBackStack() },
+                        parentEntry = parentEntry
+                    )
+                }
+                composable<Categories> { backStackEntry ->
+                    val parentEntry = remember(backStackEntry) {
+                        navController.getBackStackEntry<Products>()
+                    }
+                    CategoriesScreen(
+                        onClose = { navController.popBackStack() },
+                        parentEntry = parentEntry
+                    )
+                }
+                composable<AddList> { backStackEntry ->
+                    val parentEntry = remember(backStackEntry) {
+                        navController.getBackStackEntry<ShoppingLists>()
+                    }
+                    AddListScreen(
+                        onClose = { navController.popBackStack() },
+                        parentEntry = parentEntry
+                    )
+                }
+                composable<EditList> { backStackEntry ->
+                    val args = backStackEntry.arguments!!
+                    val listId = args.getInt("listId")
+                    val parentEntry = remember(backStackEntry) {
+                        navController.getBackStackEntry<ShoppingLists>()
+                    }
+                    EditListScreen(
+                        listId = listId,
+                        onClose = { navController.popBackStack() },
+                        parentEntry = parentEntry
+                    )
+                }
+                composable<AddItem> { backStackEntry ->
+                    val args = backStackEntry.arguments!!
+                    val listId = args.getInt("listId")
+                    val parentEntry = remember(backStackEntry) {
+                        navController.getBackStackEntry<Item>(Item(listId))
+                    }
+                    AddItemScreen(
+                        listId = listId,
+                        onClose = { navController.popBackStack() },
+                        parentEntry = parentEntry
+                    )
+                }
+                composable<Settings> {
+                    SettingsScreen(
+                        onClose = { navController.popBackStack() }
                     )
                 }
             }
