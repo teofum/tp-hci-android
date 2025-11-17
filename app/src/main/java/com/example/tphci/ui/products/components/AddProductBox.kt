@@ -47,12 +47,19 @@ import com.example.tphci.ui.home.rememberWindowInfo
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddProductBox(
+    categories: List<Category>,
+    initial: Product? = null,
     onClose: () -> Unit,
-    onAdd: (product: Product) -> Unit,
-    categories: List<Category>
+    onConfirm: (product: Product) -> Unit
 ) {
     val windowInfo = rememberWindowInfo()
     val isTablet = windowInfo.maxWidth > 600.dp
+
+    var productName by remember { mutableStateOf(initial?.name ?: "") }
+    var categoryExpanded by remember { mutableStateOf(false) }
+    var selectedCategory by remember { mutableStateOf(initial?.category) }
+    var selectedEmoji by remember { mutableStateOf(initial?.emoji ?: "📦") }
+    var showEmojiPicker by remember { mutableStateOf(false) }
 
     Dialog(
         onDismissRequest = onClose,
@@ -87,12 +94,6 @@ fun AddProductBox(
                     Icon(Icons.Default.Close, contentDescription = stringResource(R.string.close))
                 }
             }
-
-            var productName by remember { mutableStateOf("") }
-            var categoryExpanded by remember { mutableStateOf(false) }
-            var selectedCategory by remember { mutableStateOf<Int?>(null) }
-            var selectedEmoji by remember { mutableStateOf("📦") }
-            var showEmojiPicker by remember { mutableStateOf(false) }
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -148,7 +149,7 @@ fun AddProductBox(
                     modifier = Modifier.weight(0.8f),
                 ) {
                     OutlinedTextField(
-                        value = selectedCategory.toString(),
+                        value = selectedCategory?.name ?: stringResource(R.string.no_category),
                         onValueChange = {},
                         readOnly = true,
                         label = { Text(stringResource(R.string.category)) },
@@ -162,11 +163,18 @@ fun AddProductBox(
                         expanded = categoryExpanded,
                         onDismissRequest = { categoryExpanded = false }
                     ) {
-                        categories.forEach { option ->
+                        DropdownMenuItem(
+                            text = { Text(stringResource(R.string.no_category)) },
+                            onClick = {
+                                selectedCategory = null
+                                categoryExpanded = false
+                            }
+                        )
+                        categories.forEach { cat ->
                             DropdownMenuItem(
-                                text = { Text(option.name ?: "") },
+                                text = { Text(cat.name!!) },
                                 onClick = {
-                                    selectedCategory = option.id
+                                    selectedCategory = cat
                                     categoryExpanded = false
                                 }
                             )
@@ -183,7 +191,18 @@ fun AddProductBox(
                 TextButton(onClick = onClose) { Text(stringResource(R.string.cancel)) }
 
                 Button(onClick = {
-                    onAdd(Product(productName, selectedCategory, selectedEmoji))
+                    if (productName.isNotBlank()) {
+                        onConfirm(
+                            Product(
+                                initial?.id,
+                                productName,
+                                selectedEmoji,
+                                null,
+                                null,
+                                selectedCategory
+                            )
+                        )
+                    }
                 }) {
                     Text(stringResource(R.string.add))
                 }
@@ -191,5 +210,6 @@ fun AddProductBox(
         }
     }
 }
+
 
 

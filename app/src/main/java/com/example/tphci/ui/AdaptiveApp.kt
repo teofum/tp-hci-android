@@ -25,6 +25,7 @@ import androidx.window.core.layout.WindowSizeClass
 import com.example.tphci.R
 import com.example.tphci.ui.products.AddProductScreen
 import com.example.tphci.ui.products.CategoriesScreen
+import com.example.tphci.ui.products.EditProductScreen
 import com.example.tphci.ui.products.ProductScreen
 import com.example.tphci.ui.profile.ProfileScreen
 import com.example.tphci.ui.shareList.ShareListScreen
@@ -53,6 +54,9 @@ data class Item(val listId: Int)
 
 @Serializable
 object AddProduct
+
+@Serializable
+data class EditProduct(val productId: Int)
 
 @Serializable
 object Categories
@@ -165,6 +169,7 @@ fun AdaptiveApp() {
                 composable<Products> { 
                     ProductScreen(
                         onNavigateToAddProduct = { navController.navigate(AddProduct) },
+                        onNavigateToEditProduct = { productId -> navController.navigate(EditProduct(productId)) },
                         onNavigateToCategories = { navController.navigate(Categories) },
                         onNavigateToSettings = { navController.navigate(Settings) }
                     )
@@ -197,6 +202,18 @@ fun AdaptiveApp() {
                         navController.getBackStackEntry<Products>()
                     }
                     AddProductScreen(
+                        onClose = { navController.popBackStack() },
+                        parentEntry = parentEntry
+                    )
+                }
+                composable<EditProduct> { backStackEntry ->
+                    val args = backStackEntry.arguments!!
+                    val productId = args.getInt("productId")
+                    val parentEntry = remember(backStackEntry) {
+                        navController.getBackStackEntry<Products>()
+                    }
+                    EditProductScreen(
+                        productId = productId,
                         onClose = { navController.popBackStack() },
                         parentEntry = parentEntry
                     )

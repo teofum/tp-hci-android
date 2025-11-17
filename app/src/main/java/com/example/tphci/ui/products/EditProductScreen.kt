@@ -17,12 +17,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tphci.MyApplication
-import com.example.tphci.data.model.Product
 import com.example.tphci.ui.home.rememberWindowInfo
 import com.example.tphci.ui.products.components.AddProductBox
 
 @Composable
-fun AddProductScreen(
+fun EditProductScreen(
+    productId: Int,
     onClose: () -> Unit,
     parentEntry: androidx.navigation.NavBackStackEntry,
     viewModel: ProductViewModel = viewModel(
@@ -33,37 +33,41 @@ fun AddProductScreen(
     )
 ) {
     val uiState = viewModel.uiState.collectAsState().value
+    val product = uiState.products.find { it.id == productId }
     val windowInfo = rememberWindowInfo()
     val isTablet = windowInfo.maxWidth > 600.dp
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.Black.copy(alpha = 0.5f)),
-        contentAlignment = Alignment.Center
-    ) {
+    if (product != null) {
         Box(
-            modifier = if (isTablet) {
-                Modifier
-                    .widthIn(max = 600.dp)
-                    .heightIn(max = 500.dp)
-                    .background(MaterialTheme.colorScheme.background, RoundedCornerShape(16.dp))
-                    .padding(16.dp)
-            } else {
-                Modifier
-                    .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.background)
-                    .padding(16.dp)
-            }
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black.copy(alpha = 0.5f)),
+            contentAlignment = Alignment.Center
         ) {
-            AddProductBox(
-                categories = uiState.categories,
-                onClose = onClose,
-                onConfirm = { product ->
-                    viewModel.createProduct(product)
-                    onClose()
+            Box(
+                modifier = if (isTablet) {
+                    Modifier
+                        .widthIn(max = 600.dp)
+                        .heightIn(max = 500.dp)
+                        .background(MaterialTheme.colorScheme.background, RoundedCornerShape(16.dp))
+                        .padding(16.dp)
+                } else {
+                    Modifier
+                        .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.background)
+                        .padding(16.dp)
                 }
-            )
+            ) {
+                AddProductBox(
+                    categories = uiState.categories,
+                    initial = product,
+                    onClose = onClose,
+                    onConfirm = { updatedProduct ->
+                        viewModel.updateProduct(updatedProduct)
+                        onClose()
+                    }
+                )
+            }
         }
     }
 }

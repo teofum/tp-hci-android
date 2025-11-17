@@ -54,6 +54,16 @@ class ProductViewModel(
         { state, product -> state.copy(products = state.products + product) }
     )
 
+    fun updateProduct(product: Product) = runOnViewModelScope(
+        { productRepository.updateProduct(product) },
+        { state, product -> state.copy(products = state.products.map { if (it.id == product.id) product else it }) }
+    )
+
+    fun deleteProduct(product: Product) = runOnViewModelScope(
+        { productRepository.deleteProduct(product.id!!) },
+        { state, _ -> state.copy(products = state.products.filter { it.id != product.id }) }
+    )
+
     fun startPolling() {
         if (pollingJob?.isActive == true) return
 

@@ -16,7 +16,12 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -56,6 +61,7 @@ import com.example.tphci.ui.home.rememberWindowInfo
 @Composable
 fun ProductScreen(
     onNavigateToAddProduct: () -> Unit = {},
+    onNavigateToEditProduct: (Int) -> Unit = {},
     onNavigateToCategories: () -> Unit = {},
     onNavigateToSettings: () -> Unit = {},
     viewModel: ProductViewModel = viewModel(
@@ -74,11 +80,8 @@ fun ProductScreen(
 
     val productSearch = remember { mutableStateOf("") }
 
-    fun categoryNameOf(product: Product): String =
-        product.category?.name ?: "Sin categoría"
-
     val groupedProducts = if (groupByCategory) {
-        uiState.products.groupBy { categoryNameOf(it) } // TODO API, categorización de prods
+        uiState.products.groupBy { it.category?.name ?: stringResource(R.string.no_category) }
     } else null
 
 
@@ -161,7 +164,7 @@ fun ProductScreen(
                     Spacer(modifier = Modifier.width(12.dp))
 
                     Row(
-                        verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
+                        verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Text(
                             stringResource(R.string.group_by_category) + " ",
@@ -176,9 +179,7 @@ fun ProductScreen(
                 }
 
                 if (groupByCategory && groupedProducts != null && groupedProducts.isNotEmpty()) {
-
                     groupedProducts.forEach { (categoryName, productsInCategory) ->
-
                         Text(
                             text = categoryName,
                             style = MaterialTheme.typography.titleMedium,
@@ -222,6 +223,50 @@ fun ProductScreen(
                                         color = Color.Gray
                                     )
                                 }
+
+                                Box {
+                                    var expanded by remember { mutableStateOf(false) }
+
+                                    IconButton(onClick = { expanded = true }) {
+                                        Icon(
+                                            Icons.Default.MoreVert,
+                                            contentDescription = "Opciones"
+                                        )
+                                    }
+
+                                    DropdownMenu(
+                                        expanded = expanded,
+                                        onDismissRequest = { expanded = false }
+                                    ) {
+                                        DropdownMenuItem(
+                                            text = { Text(stringResource(id = R.string.edit)) },
+                                            leadingIcon = { Icon(Icons.Default.Edit, null) },
+                                            onClick = {
+                                                expanded = false
+                                                onNavigateToEditProduct(product.id!!)
+                                            }
+                                        )
+                                        DropdownMenuItem(
+                                            text = {
+                                                Text(
+                                                    stringResource(id = R.string.delete),
+                                                    color = MaterialTheme.colorScheme.error
+                                                )
+                                            },
+                                            leadingIcon = {
+                                                Icon(
+                                                    Icons.Default.Delete,
+                                                    null,
+                                                    tint = MaterialTheme.colorScheme.error
+                                                )
+                                            },
+                                            onClick = {
+                                                expanded = false
+                                                viewModel.deleteProduct(product)
+                                            }
+                                        )
+                                    }
+                                }
                             }
                         }
                     }
@@ -264,6 +309,49 @@ fun ProductScreen(
                                     color = Color.Gray
                                 )
                             }
+                            Box {
+                                var expanded by remember { mutableStateOf(false) }
+
+                                IconButton(onClick = { expanded = true }) {
+                                    Icon(
+                                        Icons.Default.MoreVert,
+                                        contentDescription = "Opciones"
+                                    )
+                                }
+
+                                DropdownMenu(
+                                    expanded = expanded,
+                                    onDismissRequest = { expanded = false }
+                                ) {
+                                    DropdownMenuItem(
+                                        text = { Text(stringResource(id = R.string.edit)) },
+                                        leadingIcon = { Icon(Icons.Default.Edit, null) },
+                                        onClick = {
+                                            expanded = false
+                                            onNavigateToEditProduct(product.id!!)
+                                        }
+                                    )
+                                    DropdownMenuItem(
+                                        text = {
+                                            Text(
+                                                stringResource(id = R.string.delete),
+                                                color = MaterialTheme.colorScheme.error
+                                            )
+                                        },
+                                        leadingIcon = {
+                                            Icon(
+                                                Icons.Default.Delete,
+                                                null,
+                                                tint = MaterialTheme.colorScheme.error
+                                            )
+                                        },
+                                        onClick = {
+                                            expanded = false
+                                            viewModel.deleteProduct(product)
+                                        }
+                                    )
+                                }
+                            }
                         }
                     }
                 }
@@ -272,5 +360,6 @@ fun ProductScreen(
 
         }
     }
+
 
 }
