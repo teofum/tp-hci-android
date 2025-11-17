@@ -55,11 +55,17 @@ fun CategoriesScreen(
             }
         ) {
             CategoryScreen(
+                products = uiState.products,
                 categories = uiState.categories,
                 onClose = onClose,
-                onAddCategory = { category ->
-                    // viewModel.createCategory(category)
-                    onClose()
+                onAdd = { category ->
+                    viewModel.createCategory(category)
+                },
+                onUpdate = { category ->
+                    viewModel.updateCategory(category)
+                },
+                onDelete = { category ->
+                    viewModel.deleteCategory(category)
                 }
             )
         }

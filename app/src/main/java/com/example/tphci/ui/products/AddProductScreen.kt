@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -31,6 +32,7 @@ fun AddProductScreen(
         )
     )
 ) {
+    val uiState = viewModel.uiState.collectAsState().value
     val windowInfo = rememberWindowInfo()
     val isTablet = windowInfo.maxWidth > 600.dp
 
@@ -56,10 +58,11 @@ fun AddProductScreen(
         ) {
             AddProductBox(
                 onClose = onClose,
-                onAdd = { name, categoryId ->
-                    viewModel.createProduct(Product(name = name, categoryId = categoryId))
+                onAdd = { product ->
+                    viewModel.createProduct(product)
                     onClose()
-                }
+                },
+                categories = uiState.categories
             )
         }
     }

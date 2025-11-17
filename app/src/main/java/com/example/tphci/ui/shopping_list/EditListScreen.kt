@@ -28,13 +28,11 @@ fun EditListScreen(
     if (list != null) {
         ManageListBox(
             title = stringResource(R.string.edit_lists),
-            initialName = list.name,
-            initialDescription = list.description,
-            initialRecurring = list.recurring,
+            initial = list,
             confirmButtonText = stringResource(R.string.save_changes),
             onClose = onClose,
-            onConfirm = { name, description, recurring ->
-                // TODO: Update shopping list API call
+            onConfirm = { updatedList ->
+                viewModel.updateShoppingList(updatedList)
                 onClose()
             }
         )

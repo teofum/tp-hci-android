@@ -39,6 +39,16 @@ class ProductViewModel(
         { state, category -> state.copy(categories = state.categories + category) }
     )
 
+    fun updateCategory(category: Category) = runOnViewModelScope(
+        { categoryRepository.updateCategory(category) },
+        { state, category -> state.copy(categories = state.categories.map { if (it.id == category.id) category else it }) }
+    )
+
+    fun deleteCategory(category: Category) = runOnViewModelScope(
+        { categoryRepository.deleteCategory(category.id!!) },
+        { state, _ -> state.copy(categories = state.categories.filter { it.id != category.id }) }
+    )
+
     fun createProduct(product: Product) = runOnViewModelScope(
         { productRepository.createProduct(product) },
         { state, product -> state.copy(products = state.products + product) }

@@ -37,12 +37,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.tphci.R
 import com.example.tphci.MyApplication
+import com.example.tphci.R
 import com.example.tphci.ui.home.rememberWindowInfo
 import com.example.tphci.ui.shopping_list.components.ListItem
 
@@ -65,15 +65,16 @@ fun ShoppingListItemScreen(
 
     val items = uiState.items
 
-    // TODO
-    var searchQuery by remember { mutableStateOf("") }
     var filterExpanded by remember { mutableStateOf(false) }
     val filterAllText = stringResource(R.string.filter_all)
     val filterPurchasedText = stringResource(R.string.filter_purchased)
     val filterPendingText = stringResource(R.string.filter_pending)
-    
     var selectedFilter by remember { mutableStateOf(filterAllText) }
-    val filterOptions = listOf(filterAllText, filterPurchasedText, filterPendingText)
+    val filterOptions = listOf(
+        Pair(null, filterAllText),
+        Pair(true, filterPurchasedText),
+        Pair(false, filterPendingText)
+    )
 
     var groupByCategory by remember { mutableStateOf(false) }
 
@@ -146,8 +147,8 @@ fun ShoppingListItemScreen(
 
 
                 OutlinedTextField(
-                    value = searchQuery,
-                    onValueChange = { searchQuery = it },
+                    value = uiState.search ?: "",
+                    onValueChange = { viewModel.updateSearch(it.ifEmpty { null }) },
                     label = { Text(stringResource(R.string.search_product)) },
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -182,9 +183,10 @@ fun ShoppingListItemScreen(
                         ) {
                             filterOptions.forEach { option ->
                                 DropdownMenuItem(
-                                    text = { Text(option) },
+                                    text = { Text(option.second) },
                                     onClick = {
-                                        selectedFilter = option
+                                        selectedFilter = option.second
+                                        viewModel.updateFilter(option.first)
                                         filterExpanded = false
                                     }
                                 )
@@ -214,11 +216,8 @@ fun ShoppingListItemScreen(
                         .fillMaxSize(),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-
                     if (groupByCategory && groupedItems != null && groupedItems.isNotEmpty()) {
-
                         groupedItems.forEach { (categoryName, itemsInCategory) ->
-
                             item {
                                 Text(
                                     text = categoryName,
@@ -229,17 +228,22 @@ fun ShoppingListItemScreen(
                             }
 
                             items(itemsInCategory, key = { it.id!! }) { item ->
-                                ListItem(item = item, onToggle = {})
+                                ListItem(
+                                    item = item,
+                                    onToggle = { viewModel.toggleCheckStatus(item) },
+                                    onDelete = { viewModel.deleteListItem(item.id!!.toInt()) }
+                                )
                             }
                         }
-
                     } else {
-
                         items(items, key = { it.id!! }) { item ->
-                            ListItem(item = item, onToggle = {})
+                            ListItem(
+                                item = item,
+                                onToggle = { viewModel.toggleCheckStatus(item) },
+                                onDelete = { viewModel.deleteListItem(item.id!!.toInt()) }
+                            )
                         }
                     }
-
                 }
             }
         }

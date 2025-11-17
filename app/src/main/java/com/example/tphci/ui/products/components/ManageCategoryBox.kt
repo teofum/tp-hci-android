@@ -32,18 +32,21 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.tphci.R
+import com.example.tphci.data.model.Category
 import com.example.tphci.ui.EmojiPicker
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ManageCategoryBox(
     title: String,
-    initialName: String = "",
+    initial: Category? = null,
     confirmButtonText: String,
     onClose: () -> Unit,
-    onConfirm: (String) -> Unit
+    onConfirm: (Category) -> Unit
 ) {
-    var name by remember { mutableStateOf(initialName) }
+    var name by remember { mutableStateOf(initial?.name ?: "") }
+    var selectedEmoji by remember { mutableStateOf(initial?.emoji ?: "📦") }
+    var showEmojiPicker by remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
@@ -70,9 +73,6 @@ fun ManageCategoryBox(
                     Icon(Icons.Default.Close, contentDescription = stringResource(R.string.close))
                 }
             }
-
-            var selectedEmoji by remember { mutableStateOf("📦") }
-            var showEmojiPicker by remember { mutableStateOf(false) }
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -122,7 +122,15 @@ fun ManageCategoryBox(
                 Button(
                     onClick = {
                         if (name.isNotBlank()) {
-                            onConfirm(name) // TODO api // TODO emoji
+                            onConfirm(
+                                Category(
+                                    initial?.id,
+                                    name,
+                                    selectedEmoji,
+                                    null,
+                                    null
+                                )
+                            )
                         }
                     }
                 ) {

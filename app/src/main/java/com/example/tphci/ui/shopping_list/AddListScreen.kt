@@ -25,10 +25,8 @@ fun AddListScreen(
         title = stringResource(R.string.add_list),
         confirmButtonText = stringResource(R.string.add),
         onClose = onClose,
-        onConfirm = { name, description, recurring ->
-            viewModel.createShoppingList(
-                ShoppingList(name, description, recurring, "\uD83D\uDED2")
-            )
+        onConfirm = { list ->
+            viewModel.createShoppingList(list)
             onClose()
         }
     )

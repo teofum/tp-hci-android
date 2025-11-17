@@ -49,8 +49,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.tphci.R
 import com.example.tphci.MyApplication
+import com.example.tphci.R
 import com.example.tphci.ui.home.rememberWindowInfo
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -149,7 +149,7 @@ fun ShoppingListScreen(
                                     contentAlignment = Alignment.Center
                                 ) {
                                     Text(
-                                        text = "📦", // TODO api
+                                        text = list.emoji,
                                         fontSize = 24.sp,
                                         fontWeight = FontWeight.Normal
                                     )
@@ -206,9 +206,23 @@ fun ShoppingListScreen(
                                         }
                                     )
                                     DropdownMenuItem(
-                                        text = { Text(stringResource(R.string.delete)) },
-                                        leadingIcon = { Icon(Icons.Default.Delete, null) },
-                                        onClick = { expanded = false } // TODO api
+                                        text = {
+                                            Text(
+                                                stringResource(R.string.delete),
+                                                color = MaterialTheme.colorScheme.error
+                                            )
+                                        },
+                                        leadingIcon = {
+                                            Icon(
+                                                Icons.Default.Delete,
+                                                null,
+                                                tint = MaterialTheme.colorScheme.error
+                                            )
+                                        },
+                                        onClick = {
+                                            expanded = false
+                                            viewModel.deleteShoppingList(list)
+                                        }
                                     )
                                 }
                             }
