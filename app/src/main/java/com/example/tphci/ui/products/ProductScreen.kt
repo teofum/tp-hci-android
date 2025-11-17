@@ -84,11 +84,8 @@ fun ProductScreen(
 
     var showCategoryScreen by remember { mutableStateOf(false) }
 
-    fun categoryNameOf(product: Product): String =
-        product.category?.name ?: "Sin categoría"
-
     val groupedProducts = if (groupByCategory) {
-        uiState.products.groupBy { categoryNameOf(it) } // TODO API, categorización de prods
+        uiState.products.groupBy { it.category?.name ?: stringResource(R.string.no_category) }
     } else null
 
 
@@ -186,9 +183,7 @@ fun ProductScreen(
                 }
 
                 if (groupByCategory && groupedProducts != null && groupedProducts.isNotEmpty()) {
-
                     groupedProducts.forEach { (categoryName, productsInCategory) ->
-
                         Text(
                             text = categoryName,
                             style = MaterialTheme.typography.titleMedium,
@@ -248,7 +243,7 @@ fun ProductScreen(
                                         onDismissRequest = { expanded = false }
                                     ) {
                                         DropdownMenuItem(
-                                            text = { Text("Modificar") },
+                                            text = { Text(stringResource(id = R.string.edit)) },
                                             leadingIcon = { Icon(Icons.Default.Edit, null) },
                                             onClick = {
                                                 expanded = false
@@ -257,8 +252,19 @@ fun ProductScreen(
                                             }
                                         )
                                         DropdownMenuItem(
-                                            text = { Text("Eliminar") },
-                                            leadingIcon = { Icon(Icons.Default.Delete, null) },
+                                            text = {
+                                                Text(
+                                                    stringResource(id = R.string.delete),
+                                                    color = MaterialTheme.colorScheme.error
+                                                )
+                                            },
+                                            leadingIcon = {
+                                                Icon(
+                                                    Icons.Default.Delete,
+                                                    null,
+                                                    tint = MaterialTheme.colorScheme.error
+                                                )
+                                            },
                                             onClick = {
                                                 expanded = false
                                                 viewModel.deleteProduct(product)
@@ -323,7 +329,7 @@ fun ProductScreen(
                                     onDismissRequest = { expanded = false }
                                 ) {
                                     DropdownMenuItem(
-                                        text = { Text("Modificar") },
+                                        text = { Text(stringResource(id = R.string.edit)) },
                                         leadingIcon = { Icon(Icons.Default.Edit, null) },
                                         onClick = {
                                             expanded = false
@@ -334,7 +340,7 @@ fun ProductScreen(
                                     DropdownMenuItem(
                                         text = {
                                             Text(
-                                                "Eliminar",
+                                                stringResource(id = R.string.delete),
                                                 color = MaterialTheme.colorScheme.error
                                             )
                                         },

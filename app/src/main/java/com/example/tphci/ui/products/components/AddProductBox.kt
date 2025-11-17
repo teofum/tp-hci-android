@@ -149,7 +149,7 @@ fun AddProductBox(
                     modifier = Modifier.weight(0.8f),
                 ) {
                     OutlinedTextField(
-                        value = selectedCategory?.name ?: "Sin categoría",
+                        value = selectedCategory?.name ?: stringResource(R.string.no_category),
                         onValueChange = {},
                         readOnly = true,
                         label = { Text(stringResource(R.string.category)) },
@@ -164,7 +164,7 @@ fun AddProductBox(
                         onDismissRequest = { categoryExpanded = false }
                     ) {
                         DropdownMenuItem(
-                            text = { "Sin categoría" },
+                            text = { Text(stringResource(R.string.no_category)) },
                             onClick = {
                                 selectedCategory = null
                                 categoryExpanded = false
@@ -210,5 +210,6 @@ fun AddProductBox(
         }
     }
 }
+
 
 
