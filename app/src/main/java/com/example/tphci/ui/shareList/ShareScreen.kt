@@ -68,13 +68,15 @@ fun ShareListRoute(
     val uiState by viewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
 
+    val context = LocalContext.current
+
     // Handle Error side effect
     val error = uiState.error
     LaunchedEffect(error) {
         if (error != null) {
             snackbarHostState.showSnackbar(
                 message = error,
-                actionLabel = "OK"
+                actionLabel = context.getString(R.string.ok)
             )
         }
     }
@@ -84,8 +86,8 @@ fun ShareListRoute(
     LaunchedEffect(isSharingSuccessful) {
         if (isSharingSuccessful) {
             snackbarHostState.showSnackbar(
-                message = "shared",
-                actionLabel = "OK"
+                message = context.getString(R.string.share_success),
+                actionLabel = context.getString(R.string.ok)
             )
             onBackClick()
         }
