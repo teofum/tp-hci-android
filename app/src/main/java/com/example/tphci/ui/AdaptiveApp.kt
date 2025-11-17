@@ -39,7 +39,6 @@ object Products
 @Serializable
 object Profile
 
-// --- Share route now requires a listId ---
 @Serializable
 data class ShareList(val listId: Int)
 

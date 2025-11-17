@@ -66,13 +66,16 @@ class ListItemsViewModel(
 
     fun loadProducts() = runOnViewModelScope(
         block = { productRepository.getProducts() },
-        updateState = { state, items -> state.copy(products = items) }
+        updateState = { state, products -> state.copy(products = products) }
     )
 
-    fun addListItem(item: Item) = runOnViewModelScope(
-        block = { repository.addListItem(listId, item) },
-        updateState = { state, newItem -> state.copy(items = state.items + newItem) }
-    )
+    fun addListItem(item: Item) {
+        runOnViewModelScope(
+            block = { repository.addListItem(listId, item) },
+            updateState = { state, newItem -> state.copy(items = state.items + newItem) }
+        )
+        loadListItems()
+    }
 
     fun updateSearch(search: String?) {
         _uiState.update { it.copy(search = search) }
