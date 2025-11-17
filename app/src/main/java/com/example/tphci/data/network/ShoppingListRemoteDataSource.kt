@@ -3,7 +3,9 @@ package com.example.tphci.data.network
 import com.example.tphci.data.network.api.ShoppingListApiService
 import com.example.tphci.data.network.model.NetworkNewShoppingList
 import com.example.tphci.data.network.model.NetworkPurchaseShoppingList
+import com.example.tphci.data.network.model.NetworkShareData
 import com.example.tphci.data.network.model.NetworkShoppingList
+import com.example.tphci.ui.shareList.ShareUser
 
 class ShoppingListRemoteDataSource(
     private val shoppingListApiService: ShoppingListApiService
@@ -42,6 +44,24 @@ class ShoppingListRemoteDataSource(
     suspend fun purchaseList(id: Int, data: NetworkPurchaseShoppingList): NetworkShoppingList {
         return handleApiResponse {
             shoppingListApiService.purchaseList(id, data)
+        }
+    }
+
+    suspend fun share(listId: Int, shareData: NetworkShareData) {
+        handleApiResponse {
+            shoppingListApiService.share(listId, shareData)
+        }
+    }
+
+    suspend fun sharedUsers(listId: Int): List<ShareUser> {
+        return handleApiResponse {
+            shoppingListApiService.sharedUsers(listId)
+        }
+    }
+
+    suspend fun unshare(listId: Int, userId: Int) {
+        handleApiResponse {
+            shoppingListApiService.unshare(listId, userId)
         }
     }
 }

@@ -2,6 +2,7 @@ package com.example.tphci.ui.shareList
 
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -21,30 +23,195 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.tphci.MyApplication
 import com.example.tphci.R
 import com.example.tphci.ui.home.rememberWindowInfo
 
-/**
- * Basic ShareUser model – adapt it to your backend DTO.
- */
+
+@Composable
+fun ShareListRoute(
+    listId: Int,
+    onBackClick: () -> Unit
+) {
+    val application = LocalContext.current.applicationContext as MyApplication
+    val viewModel: ShareListViewModel = viewModel(
+        factory = ShareListViewModel.provideFactory(application, listId)
+    )
+    val uiState by viewModel.uiState.collectAsState()
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    val context = LocalContext.current
+
+    // Handle Error side effect
+    val error = uiState.error
+    LaunchedEffect(error) {
+        if (error != null) {
+            snackbarHostState.showSnackbar(
+                message = error,
+                actionLabel = context.getString(R.string.ok)
+            )
+            viewModel.clearError()
+        }
+    }
+
+    ShareListScreen(
+        uiState = uiState,
+        snackbarHostState = snackbarHostState,
+        onEmailInputChange = viewModel::onEmailInputChange,
+        onAddEmail = viewModel::onAddEmail,
+        onRemoveSharedUser = viewModel::onRemoveSharedUser,
+        onBackClick = onBackClick
+    )
+}
+
+@Composable
+fun ShareListScreen(
+    uiState: ShareListUiState,
+    snackbarHostState: SnackbarHostState,
+    onEmailInputChange: (String) -> Unit,
+    onAddEmail: () -> Unit,
+    onRemoveSharedUser: (ShareUser) -> Unit,
+    onBackClick: () -> Unit
+) {
+    val windowInfo = rememberWindowInfo()
+    val maxWidth = windowInfo.maxWidth
+    val isTablet = maxWidth > 600.dp
+
+    Dialog(
+        onDismissRequest = onBackClick,
+        properties = DialogProperties(
+            usePlatformDefaultWidth = false
+        )
+    ) {
+        Box(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            SnackbarHost(
+                hostState = snackbarHostState,
+                modifier = Modifier.align(Alignment.BottomCenter)
+            )
+
+            Column(
+                modifier = if (isTablet) {
+                    Modifier
+                        .widthIn(max = 600.dp)
+                        .align(Alignment.Center)
+                        .background(MaterialTheme.colorScheme.background, RoundedCornerShape(16.dp))
+                        .padding(16.dp)
+                } else {
+                    Modifier
+                        .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.background)
+                        .padding(16.dp)
+                },
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = stringResource(R.string.share_list),
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                    IconButton(onClick = onBackClick) {
+                        Icon(
+                            imageVector = Icons.Default.Close,
+                            contentDescription = stringResource(R.string.close)
+                        )
+                    }
+                }
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    OutlinedTextField(
+                        value = uiState.emailInput,
+                        onValueChange = onEmailInputChange,
+                        modifier = Modifier.weight(1f),
+                        placeholder = { Text(stringResource(R.string.email)) },
+                        singleLine = true,
+                        shape = RoundedCornerShape(10.dp)
+                    )
+                    Button(
+                        onClick = onAddEmail,
+                        enabled = !uiState.isLoading && uiState.emailInput.isNotBlank(),
+                        modifier = Modifier.height(56.dp)
+                    ) {
+                        Text(stringResource(R.string.add))
+                    }
+                }
+
+                Text(
+                    text = stringResource(R.string.shared_with),
+                    style = MaterialTheme.typography.titleMedium
+                )
+
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth()
+                ) {
+                    if (uiState.sharedUsers.isEmpty() && !uiState.isLoading) {
+                        Text(
+                            text = stringResource(R.string.no_shared_users),
+                            modifier = Modifier.align(Alignment.Center),
+                            color = Color.Gray
+                        )
+                    } else {
+                        LazyColumn(
+                            verticalArrangement = Arrangement.spacedBy(12.dp),
+                            modifier = Modifier.fillMaxSize()
+                        ) {
+                            items(uiState.sharedUsers) { user ->
+                                SharedUserRow(
+                                    user = user,
+                                    onRemove = { onRemoveSharedUser(user) }
+                                )
+                            }
+                        }
+                    }
+
+                    if (uiState.isLoading) {
+                        CircularProgressIndicator(Modifier.align(Alignment.Center))
+                    }
+                }
+            }
+        }
+    }
+}
+
 data class ShareUser(
     val id: Int,
     val name: String,
@@ -55,192 +222,55 @@ data class ShareUser(
     val updatedAt: String
 )
 
-// Helper property to minimize changes in composables
-private val ShareUser.fullName: String
+val ShareUser.fullName: String
     get() = "$name $surname"
 
-/**
- * Main screen. Stateless: only UI + callbacks.
- */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ShareListScreen(
-    selectedShareUsers: List<ShareUser>,
-    searchQuery: String,
-    onSearchQueryChange: (String) -> Unit,
-    onShareUserToggle: (ShareUser) -> Unit,
-    onRemoveSelectedShareUser: (ShareUser) -> Unit,
-    onBackClick: () -> Unit,
-    onDoneClick: () -> Unit,
-) {
-
-    val windowInfo = rememberWindowInfo()
-    val maxWidth = windowInfo.maxWidth
-
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = stringResource(R.string.share_list),
-                        fontWeight = FontWeight.SemiBold,
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = onBackClick) {
-                        Icon(
-                            imageVector = Icons.Default.Close,
-                            contentDescription = stringResource(R.string.close)
-                        )
-                    }
-                }
-            )
-        },
-        bottomBar = {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Button(
-                    onClick = onDoneClick,
-                    modifier = Modifier
-                        .fillMaxWidth(0.6f)
-                        .height(52.dp),
-                    shape = RoundedCornerShape(24.dp),
-                ) {
-                    Text(stringResource(R.string.done), fontSize = 18.sp)
-                }
-            }
-        }
-    ) { innerPadding ->
-
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding),
-            contentAlignment = Alignment.TopCenter
-        ) {
-            Column(
-                modifier = Modifier
-                    .widthIn(max = maxWidth)
-                    .padding(16.dp)
-
-            ) {
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 8.dp, bottom = 16.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    IconButton(onClick = onBackClick) {
-                        Icon(
-                            Icons.Default.Close,
-                            contentDescription = stringResource(R.string.close)
-                        )
-                    }
-
-                    Text(
-                        text = stringResource(R.string.share_list),
-                        fontWeight = FontWeight.SemiBold,
-                        style = MaterialTheme.typography.headlineSmall
-                    )
-
-                    Spacer(modifier = Modifier.width(48.dp))
-                }
-
-
-                // Selected ShareUser “pill” on top
-                if (selectedShareUsers.isNotEmpty()) {
-                    LazyRow(
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 16.dp)
-                    ) {
-                        items(selectedShareUsers) { ShareUser ->
-                            SelectedShareUserChip(
-                                ShareUser = ShareUser,
-                                onRemove = { onRemoveSelectedShareUser(ShareUser) }
-                            )
-                        }
-                    }
-                }
-
-                // Search bar
-                OutlinedTextField(
-                    value = searchQuery,
-                    onValueChange = onSearchQueryChange,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 24.dp),
-                    placeholder = { Text(stringResource(R.string.search_users)) },
-                    singleLine = true,
-                    shape = RoundedCornerShape(10.dp)
-                )
-            }
-        }
-    }
-}
-
-/**
- * Pill with avatar, name, handle and close icon.
- */
-@Composable
-fun SelectedShareUserChip(
-    ShareUser: ShareUser,
+private fun SharedUserRow(
+    user: ShareUser,
     onRemove: () -> Unit
 ) {
-    Surface(
-        shape = RoundedCornerShape(24.dp),
-        color = MaterialTheme.colorScheme.surfaceVariant
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Row(
-            modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.weight(1f)
         ) {
-            Avatar(ShareUser, size = 32.dp)
+            Avatar(user, size = 44.dp)
 
-            Spacer(Modifier.width(8.dp))
+            Spacer(Modifier.width(12.dp))
 
             Column {
                 Text(
-                    text = ShareUser.fullName,
-                    fontSize = 13.sp,
-                    fontWeight = FontWeight.SemiBold
+                    text = user.fullName,
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 15.sp
                 )
                 Text(
-                    text = ShareUser.email,
-                    fontSize = 11.sp,
+                    text = user.email,
+                    fontSize = 13.sp,
+                    color = Color.Gray
                 )
             }
+        }
 
-            Spacer(Modifier.width(8.dp))
-
-            IconButton(
-                onClick = onRemove,
-                modifier = Modifier.size(20.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Close,
-                    contentDescription = stringResource(R.string.close),
-                    modifier = Modifier.size(16.dp)
-                )
-            }
+        IconButton(onClick = onRemove) {
+            Icon(
+                imageVector = Icons.Default.Close,
+                contentDescription = stringResource(R.string.delete),
+                tint = MaterialTheme.colorScheme.error
+            )
         }
     }
 }
 
-/**
- * Simple avatar component.
- * Swap this to Coil/Glide if you load from URL.
- */
+
 @Composable
 fun Avatar(
-    ShareUser: ShareUser,
+    user: ShareUser,
     size: Dp
 ) {
     Box(
@@ -251,7 +281,7 @@ fun Avatar(
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = ShareUser.fullName.firstOrNull()?.uppercase() ?: "",
+            text = user.fullName.firstOrNull()?.uppercase() ?: "",
             color = MaterialTheme.colorScheme.onPrimary,
             fontWeight = FontWeight.Bold
         )

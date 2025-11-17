@@ -1,7 +1,6 @@
 package com.example.tphci.ui.shopping_list.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,17 +8,14 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Button
-import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -34,17 +30,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.toSize
 import com.example.tphci.R
 import com.example.tphci.data.model.Item
 import com.example.tphci.data.model.Product
-import com.example.tphci.ui.EmojiPicker
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddItemBox(
     onClose: () -> Unit,
@@ -84,10 +77,6 @@ fun AddItemBox(
             var product by remember { mutableStateOf<Product?>(null) }
 
             var expanded by remember { mutableStateOf(false) }
-            var textFieldSize by remember { mutableStateOf(androidx.compose.ui.geometry.Size.Zero) }
-            val icon =
-                if (expanded) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown
-
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier.fillMaxWidth()
@@ -114,27 +103,27 @@ fun AddItemBox(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Box(modifier = Modifier.weight(1f)) {
+                ExposedDropdownMenuBox(
+                    expanded = expanded,
+                    onExpandedChange = { expanded = !expanded },
+                    modifier = Modifier.weight(1f)
+                ) {
                     OutlinedTextField(
                         value = product?.name ?: "",
-                        onValueChange = { },
+                        onValueChange = {},
                         readOnly = true,
                         label = { Text(stringResource(R.string.product)) },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .onSizeChanged {
-                                textFieldSize = it.toSize()
-                            },
                         trailingIcon = {
-                            IconButton(onClick = { expanded = !expanded }) {
-                                Icon(icon, stringResource(R.string.select_product))
-                            }
-                        }
+                            ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+                        },
+                        colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(),
+                        modifier = Modifier
+                            .menuAnchor()
+                            .fillMaxWidth()
                     )
-                    DropdownMenu(
+                    ExposedDropdownMenu(
                         expanded = expanded,
-                        onDismissRequest = { expanded = false },
-                        modifier = Modifier.width(with(LocalDensity.current) { textFieldSize.width.toDp() })
+                        onDismissRequest = { expanded = false }
                     ) {
                         products.forEach { p ->
                             DropdownMenuItem(

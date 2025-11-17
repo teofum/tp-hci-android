@@ -56,8 +56,8 @@ import com.example.tphci.ui.home.rememberWindowInfo
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ShoppingListScreen(
-    onOpenShareScreen: () -> Unit,
-    onOpenListDetails: (Int) -> Unit,
+    onOpenShareScreen: (listId: Int) -> Unit,
+    onOpenListDetails: (listId: Int) -> Unit,
     onNavigateToAddList: () -> Unit = {},
     onNavigateToEditList: (Int) -> Unit = {},
     onNavigateToSettings: () -> Unit = {},
@@ -202,7 +202,8 @@ fun ShoppingListScreen(
                                         leadingIcon = { Icon(Icons.Default.Share, null) },
                                         onClick = {
                                             expanded = false
-                                            onOpenShareScreen()
+                                            if(list.id != null)
+                                            onOpenShareScreen(list.id)
                                         }
                                     )
                                     DropdownMenuItem(

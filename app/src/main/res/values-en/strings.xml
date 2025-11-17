@@ -98,11 +98,13 @@
     <string name="edit_category">Edit category</string>
 
     <!-- Share Screen -->
-    <string name="done">Done</string>
-    <string name="search_users">Search users</string>
     <string name="share_list">Share list</string>
-    <string name="suggested_users">Suggested users</string>
     <string name="share">Share</string>
+    <string name="shared_with">Shared with</string>
+    <string name="no_shared_users">No shared users</string>
+    <string name="ok">OK</string>
+    <string name="failed_to_load_shared_users">Failed to load shared users: %1$s</string>
+    <string name="failed_to_update_sharing">Failed to update sharing: %1$s</string>
 
     <!-- Settings -->
     <string name="settings">Settings</string>
