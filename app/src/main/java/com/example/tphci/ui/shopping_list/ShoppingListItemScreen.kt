@@ -1,6 +1,5 @@
 package com.example.tphci.ui.shopping_list
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -8,13 +7,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Share
@@ -39,7 +36,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -48,7 +44,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tphci.MyApplication
 import com.example.tphci.R
 import com.example.tphci.ui.home.rememberWindowInfo
-import com.example.tphci.ui.shopping_list.components.AddItemBox
 import com.example.tphci.ui.shopping_list.components.ListItem
 
 
@@ -58,6 +53,7 @@ fun ShoppingListItemScreen(
     onOpenShareScreen: () -> Unit,
     listId: Int,
     onClose: () -> Unit,
+    onNavigateToAddItem: () -> Unit = {},
     viewModel: ListItemsViewModel = viewModel(
         factory = ListItemsViewModel.provideFactory(
             LocalContext.current.applicationContext as MyApplication,
@@ -82,8 +78,6 @@ fun ShoppingListItemScreen(
 
     var groupByCategory by remember { mutableStateOf(false) }
 
-    var showAddItemScreen by remember { mutableStateOf(false) }
-
     val groupedItems = if (groupByCategory) {
         items.groupBy { it.product.category?.name ?: "Sin categoría" }
     } else null
@@ -100,7 +94,7 @@ fun ShoppingListItemScreen(
     Scaffold(
         floatingActionButton = {
             androidx.compose.material3.FloatingActionButton(
-                onClick = { showAddItemScreen = true },
+                onClick = onNavigateToAddItem,
                 containerColor = MaterialTheme.colorScheme.primary,
                 contentColor = MaterialTheme.colorScheme.onPrimary,
                 modifier = Modifier.width(150.dp)
@@ -250,42 +244,6 @@ fun ShoppingListItemScreen(
                             )
                         }
                     }
-                }
-            }
-        }
-
-        if (showAddItemScreen) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color.Black.copy(alpha = 0.5f)),
-                contentAlignment = Alignment.Center
-            ) {
-                Box(
-                    modifier = if (isTablet) {
-                        Modifier
-                            .widthIn(max = 600.dp)
-                            .heightIn(max = 400.dp)
-                            .background(
-                                MaterialTheme.colorScheme.background,
-                                RoundedCornerShape(16.dp)
-                            )
-                            .padding(16.dp)
-                    } else {
-                        Modifier
-                            .fillMaxSize()
-                            .background(MaterialTheme.colorScheme.background)
-                            .padding(16.dp)
-                    }
-                ) {
-                    AddItemBox(
-                        onClose = { showAddItemScreen = false },
-                        onAdd = { item ->
-                            viewModel.addListItem(item)
-                            showAddItemScreen = false
-                        },
-                        products = uiState.products
-                    )
                 }
             }
         }

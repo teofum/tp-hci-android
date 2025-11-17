@@ -55,11 +55,15 @@ import com.example.tphci.R
 import com.example.tphci.data.model.Product
 import com.example.tphci.ui.SettingsBox
 import com.example.tphci.ui.home.rememberWindowInfo
-import com.example.tphci.ui.products.components.AddProductBox
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProductScreen(
+    onNavigateToAddProduct: () -> Unit = {},
+    onNavigateToEditProduct: (Int) -> Unit = {},
+    onNavigateToCategories: () -> Unit = {},
+    onNavigateToSettings: () -> Unit = {},
     viewModel: ProductViewModel = viewModel(
         factory = ProductViewModel.provideFactory(
             LocalContext.current.applicationContext as MyApplication,
@@ -74,15 +78,7 @@ fun ProductScreen(
 
     var groupByCategory by remember { mutableStateOf(false) }
 
-    var showAddProductScreen by remember { mutableStateOf(false) }
-    var showSettingsBox by remember { mutableStateOf(false) }
-
-    var showEditProductScreen by remember { mutableStateOf(false) }
-    var editingProduct by remember { mutableStateOf<Product?>(null) }
-
     val productSearch = remember { mutableStateOf("") }
-
-    var showCategoryScreen by remember { mutableStateOf(false) }
 
     val groupedProducts = if (groupByCategory) {
         uiState.products.groupBy { it.category?.name ?: stringResource(R.string.no_category) }
@@ -104,7 +100,7 @@ fun ProductScreen(
                     )
                 },
                 actions = {
-                    IconButton(onClick = { showSettingsBox = true }) {
+                    IconButton(onClick = onNavigateToSettings) {
                         Icon(
                             Icons.Default.Settings,
                             contentDescription = stringResource(R.string.settings)
@@ -115,7 +111,7 @@ fun ProductScreen(
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { showAddProductScreen = true },
+                onClick = onNavigateToAddProduct,
                 containerColor = MaterialTheme.colorScheme.primary,
                 contentColor = MaterialTheme.colorScheme.onPrimary,
                 modifier = Modifier.width(150.dp)
@@ -155,7 +151,7 @@ fun ProductScreen(
 
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.clickable { showCategoryScreen = true }
+                        modifier = Modifier.clickable(onClick = onNavigateToCategories)
                     ) {
                         Text(
                             stringResource(R.string.manage_categories),
@@ -247,8 +243,7 @@ fun ProductScreen(
                                             leadingIcon = { Icon(Icons.Default.Edit, null) },
                                             onClick = {
                                                 expanded = false
-                                                editingProduct = product
-                                                showEditProductScreen = true
+                                                onNavigateToEditProduct(product.id!!)
                                             }
                                         )
                                         DropdownMenuItem(
@@ -333,8 +328,7 @@ fun ProductScreen(
                                         leadingIcon = { Icon(Icons.Default.Edit, null) },
                                         onClick = {
                                             expanded = false
-                                            editingProduct = product
-                                            showEditProductScreen = true
+                                            onNavigateToEditProduct(product.id!!)
                                         }
                                     )
                                     DropdownMenuItem(
@@ -367,74 +361,6 @@ fun ProductScreen(
         }
     }
 
-    if (showAddProductScreen) {
-        AddProductBox(
-            categories = uiState.categories,
-            onClose = { showAddProductScreen = false },
-            onConfirm = { product ->
-                viewModel.createProduct(product)
-                showAddProductScreen = false
-            }
-        )
-    }
 
-    if (showCategoryScreen) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.Black.copy(alpha = 0.5f)),
-            contentAlignment = Alignment.Center
-        ) {
-            Box(
-                modifier = if (isTablet) {
-                    Modifier
-                        .widthIn(max = 600.dp)
-                        .heightIn(max = 500.dp)
-                        .background(MaterialTheme.colorScheme.background, RoundedCornerShape(16.dp))
-                        .padding(16.dp)
-                } else {
-                    Modifier
-                        .fillMaxSize()
-                        .background(MaterialTheme.colorScheme.background)
-                        .padding(16.dp)
-                }
-            ) {
-                CategoryScreen(
-                    products = uiState.products,
-                    categories = uiState.categories,
-                    onClose = { showCategoryScreen = false },
-                    onAdd = { category ->
-                        viewModel.createCategory(category)
-                        showCategoryScreen = false
-                    },
-                    onUpdate = { category ->
-                        viewModel.updateCategory(category)
-                        showCategoryScreen = false
-                    },
-                    onDelete = { category ->
-                        viewModel.deleteCategory(category)
-                        showCategoryScreen = false
-                    },
-                )
-            }
-        }
-    }
 
-    if (showSettingsBox) {
-        SettingsBox(
-            onClose = { showSettingsBox = false }
-        )
-    }
-
-    if (showEditProductScreen && editingProduct != null) {
-        AddProductBox(
-            categories = uiState.categories,
-            initial = editingProduct,
-            onClose = { showEditProductScreen = false },
-            onConfirm = { product ->
-                viewModel.updateProduct(product)
-                showEditProductScreen = false
-            }
-        )
-    }
 }

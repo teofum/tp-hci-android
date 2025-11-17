@@ -51,29 +51,23 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tphci.MyApplication
 import com.example.tphci.R
-import com.example.tphci.data.model.ShoppingList
-import com.example.tphci.ui.SettingsBox
 import com.example.tphci.ui.home.rememberWindowInfo
-import com.example.tphci.ui.shopping_list.components.ManageListBox
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ShoppingListScreen(
+    onOpenShareScreen: (listId: Int) -> Unit,
+    onOpenListDetails: (listId: Int) -> Unit,
+    onNavigateToAddList: () -> Unit = {},
+    onNavigateToEditList: (Int) -> Unit = {},
+    onNavigateToSettings: () -> Unit = {},
     viewModel: ShoppingListViewModel = viewModel(
         factory = ShoppingListViewModel.provideFactory(
             LocalContext.current.applicationContext as MyApplication,
         )
-    ),
-    onOpenShareScreen: (listId: Int) -> Unit,
-    onOpenListDetails: (listId: Int) -> Unit,
+    )
 ) {
     val uiState = viewModel.uiState.collectAsState().value
-
-    var showAddListBox by remember { mutableStateOf(false) }
-    var showEditListBox by remember { mutableStateOf(false) }
-    var showSettingsBox by remember { mutableStateOf(false) }
-
-    var editingList by remember { mutableStateOf<ShoppingList?>(null) }
 
     val windowInfo = rememberWindowInfo()
     val maxWidth = windowInfo.maxWidth
@@ -94,7 +88,7 @@ fun ShoppingListScreen(
                     )
                 },
                 actions = {
-                    IconButton(onClick = { showSettingsBox = true }) {
+                    IconButton(onClick = onNavigateToSettings) {
                         Icon(
                             Icons.Default.Settings,
                             contentDescription = stringResource(R.string.settings)
@@ -105,7 +99,7 @@ fun ShoppingListScreen(
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { showAddListBox = true },
+                onClick = onNavigateToAddList,
                 containerColor = MaterialTheme.colorScheme.primary,
                 contentColor = MaterialTheme.colorScheme.onPrimary,
                 modifier = Modifier.width(150.dp)
@@ -200,8 +194,7 @@ fun ShoppingListScreen(
                                         leadingIcon = { Icon(Icons.Default.Edit, null) },
                                         onClick = {
                                             expanded = false
-                                            showEditListBox = true
-                                            editingList = list
+                                            onNavigateToEditList(list.id!!)
                                         }
                                     )
                                     DropdownMenuItem(
@@ -240,40 +233,5 @@ fun ShoppingListScreen(
             }
         }
 
-    }
-
-    if (showAddListBox) {
-        ManageListBox(
-            title = stringResource(R.string.add_list),
-            confirmButtonText = stringResource(R.string.add),
-            onClose = { showAddListBox = false },
-            onConfirm = { list ->
-                viewModel.createShoppingList(list)
-                showAddListBox = false
-            }
-        )
-    }
-
-    if (showEditListBox && editingList != null) {
-        ManageListBox(
-            title = stringResource(R.string.edit_lists),
-            initial = editingList,
-            confirmButtonText = stringResource(R.string.save_changes),
-            onClose = {
-                showEditListBox = false
-                editingList = null
-            },
-            onConfirm = { list ->
-                viewModel.updateShoppingList(list)
-                showEditListBox = false
-                editingList = null
-            }
-        )
-    }
-
-    if (showSettingsBox) {
-        SettingsBox(
-            onClose = { showSettingsBox = false }
-        )
     }
 }
