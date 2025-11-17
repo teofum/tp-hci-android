@@ -215,7 +215,10 @@ fun ShoppingListScreen(
                                     DropdownMenuItem(
                                         text = { Text(stringResource(R.string.delete)) },
                                         leadingIcon = { Icon(Icons.Default.Delete, null) },
-                                        onClick = { expanded = false } // TODO api
+                                        onClick = {
+                                            expanded = false
+                                            viewModel.deleteShoppingList(list)
+                                        }
                                     )
                                 }
                             }
