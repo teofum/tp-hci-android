@@ -332,8 +332,19 @@ fun ProductScreen(
                                         }
                                     )
                                     DropdownMenuItem(
-                                        text = { Text("Eliminar") },
-                                        leadingIcon = { Icon(Icons.Default.Delete, null) },
+                                        text = {
+                                            Text(
+                                                "Eliminar",
+                                                color = MaterialTheme.colorScheme.error
+                                            )
+                                        },
+                                        leadingIcon = {
+                                            Icon(
+                                                Icons.Default.Delete,
+                                                null,
+                                                tint = MaterialTheme.colorScheme.error
+                                            )
+                                        },
                                         onClick = {
                                             expanded = false
                                             viewModel.deleteProduct(product)
@@ -415,8 +426,8 @@ fun ProductScreen(
             initial = editingProduct,
             onClose = { showEditProductScreen = false },
             onConfirm = { product ->
-                viewModel.modifyProduct(product)
-                showAddProductScreen = false
+                viewModel.updateProduct(product)
+                showEditProductScreen = false
             }
         )
 
