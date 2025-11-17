@@ -59,13 +59,13 @@ import com.example.tphci.ui.shopping_list.components.ManageListBox
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ShoppingListScreen(
-    onOpenShareScreen: () -> Unit,
-    onOpenListDetails: (Int) -> Unit,
     viewModel: ShoppingListViewModel = viewModel(
         factory = ShoppingListViewModel.provideFactory(
             LocalContext.current.applicationContext as MyApplication,
         )
-    )
+    ),
+    onOpenShareScreen: (listId: Int) -> Unit,
+    onOpenListDetails: (listId: Int) -> Unit,
 ) {
     val uiState = viewModel.uiState.collectAsState().value
 
@@ -209,7 +209,8 @@ fun ShoppingListScreen(
                                         leadingIcon = { Icon(Icons.Default.Share, null) },
                                         onClick = {
                                             expanded = false
-                                            onOpenShareScreen()
+                                            if(list.id != null)
+                                            onOpenShareScreen(list.id)
                                         }
                                     )
                                     DropdownMenuItem(

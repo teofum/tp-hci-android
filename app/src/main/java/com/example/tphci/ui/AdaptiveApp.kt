@@ -24,7 +24,7 @@ import androidx.window.core.layout.WindowSizeClass
 import com.example.tphci.R
 import com.example.tphci.ui.products.ProductScreen
 import com.example.tphci.ui.profile.ProfileScreen
-import com.example.tphci.ui.shareList.ShareListScreen
+import com.example.tphci.ui.shareList.ShareListRoute // Import the new stateful route
 import com.example.tphci.ui.shopping_list.ShoppingListItemScreen
 import com.example.tphci.ui.shopping_list.ShoppingListScreen
 import com.example.tphci.ui.theme.TPHCITheme
@@ -40,7 +40,7 @@ object Products
 object Profile
 
 @Serializable
-object Share
+data class ShareList(val listId: Int)
 
 @Serializable
 data class Item(val listId: Int)
@@ -131,9 +131,10 @@ fun AdaptiveApp() {
             NavHost(navController = navController, startDestination = ShoppingLists) {
                 composable<ShoppingLists> {
                     ShoppingListScreen(
-                        onOpenShareScreen = {
+                        // Assumes ShoppingListScreen now passes the listId when calling this callback
+                        onOpenShareScreen = { listId ->
                             navController.navigate(
-                                Share
+                                ShareList(listId)
                             )
                         },
                         onOpenListDetails = { listId ->
@@ -147,20 +148,20 @@ fun AdaptiveApp() {
                     val args = entry.arguments!!
                     val listId = args.getInt("listId")
                     ShoppingListItemScreen(
-                        onOpenShareScreen = { navController.navigate(Share) },
+                        // Pass the listId to the new ShareList route
+                        onOpenShareScreen = { navController.navigate(ShareList(listId)) },
                         listId = listId,
                         onClose = { navController.popBackStack() }
                     )
                 }
-                composable<Share> {
-                    ShareListScreen(
-                        selectedShareUsers = emptyList(),
-                        searchQuery = "",
-                        onSearchQueryChange = {},
-                        onShareUserToggle = {},
-                        onRemoveSelectedShareUser = {},
-                        onBackClick = { navController.popBackStack() },
-                        onDoneClick = { navController.popBackStack() },
+
+                composable<ShareList> { entry ->
+                    val args = entry.arguments!!
+                    val listId = args.getInt("listId")
+
+                    ShareListRoute(
+                        listId = listId,
+                        onBackClick = { navController.popBackStack() }
                     )
                 }
             }
