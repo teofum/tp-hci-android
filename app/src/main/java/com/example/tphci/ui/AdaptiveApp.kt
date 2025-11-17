@@ -152,10 +152,9 @@ fun AdaptiveApp() {
                         onClose = { navController.popBackStack() }
                     )
                 }
-                composable<Share> { // TODO make the dialog fullscreen (TODO connect to /shareList)
+                composable<Share> {
                     ShareListScreen(
                         selectedShareUsers = emptyList(),
-                        suggestedShareUsers = emptyList(),
                         searchQuery = "",
                         onSearchQueryChange = {},
                         onShareUserToggle = {},

@@ -2,7 +2,6 @@ package com.example.tphci.ui.shareList
 
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,7 +14,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -36,12 +34,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.res.stringResource
 import com.example.tphci.R
 import com.example.tphci.ui.home.rememberWindowInfo
 
@@ -69,7 +66,6 @@ private val ShareUser.fullName: String
 @Composable
 fun ShareListScreen(
     selectedShareUsers: List<ShareUser>,
-    suggestedShareUsers: List<ShareUser>,
     searchQuery: String,
     onSearchQueryChange: (String) -> Unit,
     onShareUserToggle: (ShareUser) -> Unit,
@@ -141,7 +137,10 @@ fun ShareListScreen(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     IconButton(onClick = onBackClick) {
-                        Icon(Icons.Default.Close, contentDescription = stringResource(R.string.close))
+                        Icon(
+                            Icons.Default.Close,
+                            contentDescription = stringResource(R.string.close)
+                        )
                     }
 
                     Text(
@@ -182,26 +181,6 @@ fun ShareListScreen(
                     singleLine = true,
                     shape = RoundedCornerShape(10.dp)
                 )
-
-                // Suggested ShareUsers title
-                Text(
-                    text = stringResource(R.string.suggested_users),
-                    fontWeight = FontWeight.SemiBold,
-                    modifier = Modifier.padding(bottom = 12.dp)
-                )
-
-                // Suggested ShareUsers list
-                LazyColumn(
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    items(suggestedShareUsers) { ShareUser ->
-                        SuggestedShareUserRow(
-                            ShareUser = ShareUser,
-                            onClick = { onShareUserToggle(ShareUser) }
-                        )
-                    }
-                }
             }
         }
     }
@@ -251,39 +230,6 @@ fun SelectedShareUserChip(
                     modifier = Modifier.size(16.dp)
                 )
             }
-        }
-    }
-}
-
-/**
- * Row in "Usuarios sugeridos".
- */
-@Composable
-private fun SuggestedShareUserRow(
-    ShareUser: ShareUser,
-    onClick: () -> Unit
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Avatar(ShareUser, size = 44.dp)
-
-        Spacer(Modifier.width(12.dp))
-
-        Column {
-            Text(
-                text = ShareUser.fullName,
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 15.sp
-            )
-            Text(
-                text = ShareUser.email,
-                fontSize = 13.sp,
-                color = Color.Gray
-            )
         }
     }
 }
