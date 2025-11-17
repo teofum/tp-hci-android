@@ -29,7 +29,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.tphci.R
 import com.example.tphci.data.model.Category
 import com.example.tphci.ui.EmojiPicker
 
@@ -68,7 +70,10 @@ fun ManageCategoryBox(
                 Text(title, style = MaterialTheme.typography.titleLarge)
 
                 IconButton(onClick = onClose) {
-                    Icon(Icons.Default.Close, contentDescription = "Cerrar")
+                    Icon(
+                        Icons.Default.Close,
+                        contentDescription = stringResource(id = R.string.close)
+                    )
                 }
             }
 
@@ -107,7 +112,7 @@ fun ManageCategoryBox(
             OutlinedTextField(
                 value = name,
                 onValueChange = { name = it },
-                label = { Text("Nombre") },
+                label = { Text(stringResource(id = R.string.name)) },
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -115,7 +120,7 @@ fun ManageCategoryBox(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                TextButton(onClick = onClose) { Text("Cancelar") }
+                TextButton(onClick = onClose) { Text(stringResource(id = R.string.cancel)) }
 
                 Button(
                     onClick = {
