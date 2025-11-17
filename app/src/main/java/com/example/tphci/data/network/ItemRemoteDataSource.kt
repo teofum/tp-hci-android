@@ -2,14 +2,15 @@ package com.example.tphci.data.network
 
 import com.example.tphci.data.network.api.ShoppingListItemsApiService
 import com.example.tphci.data.network.model.NetworkItem
+import com.example.tphci.data.network.model.NetworkItemPurchased
 import com.example.tphci.data.network.model.NetworkNewItem
 
 class ItemRemoteDataSource(
     private val shoppingListItemsApiService: ShoppingListItemsApiService
 ) : RemoteDataSource() {
-    suspend fun getListItems(listId: Int): List<NetworkItem> {
+    suspend fun getListItems(listId: Int, search: String?, purchased: Boolean?): List<NetworkItem> {
         val response = handleApiResponse {
-            shoppingListItemsApiService.getListItems(listId)
+            shoppingListItemsApiService.getListItems(listId, search, purchased)
         }
         return response.data
     }
@@ -32,15 +33,13 @@ class ItemRemoteDataSource(
         }
     }
 
-    suspend fun checkListItem(listId: Int, itemId: Int): NetworkItem {
+    suspend fun setListItemPurchased(listId: Int, itemId: Int, purchased: Boolean): NetworkItem {
         return handleApiResponse {
-            shoppingListItemsApiService.checkListItem(listId, itemId)
-        }
-    }
-
-    suspend fun uncheckListItem(listId: Int, itemId: Int): NetworkItem {
-        return handleApiResponse {
-            shoppingListItemsApiService.uncheckListItem(listId, itemId)
+            shoppingListItemsApiService.setListItemPurchased(
+                listId,
+                itemId,
+                NetworkItemPurchased(purchased)
+            )
         }
     }
 }

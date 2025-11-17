@@ -27,6 +27,9 @@ data class ItemUiState(
     val items: List<Item> = emptyList(),
     val products: List<Product> = emptyList(),
     val list: ShoppingList? = null,
+
+    val search: String? = null,
+    val purchased: Boolean? = null,
 )
 
 class ListItemsViewModel(
@@ -51,7 +54,13 @@ class ListItemsViewModel(
     )
 
     fun loadListItems() = runOnViewModelScope(
-        block = { repository.getListItems(listId) },
+        block = {
+            repository.getListItems(
+                listId,
+                _uiState.value.search,
+                _uiState.value.purchased
+            )
+        },
         updateState = { state, items -> state.copy(items = items) }
     )
 
@@ -64,6 +73,16 @@ class ListItemsViewModel(
         block = { repository.addListItem(listId, item) },
         updateState = { state, newItem -> state.copy(items = state.items + newItem) }
     )
+
+    fun updateSearch(search: String?) {
+        _uiState.update { it.copy(search = search) }
+        loadListItems()
+    }
+
+    fun updateFilter(filter: Boolean?) {
+        _uiState.update { it.copy(purchased = filter) }
+        loadListItems()
+    }
 
     fun updateListItem(item: Item) = runOnViewModelScope(
         block = { repository.updateListItem(listId, item) },
@@ -79,16 +98,9 @@ class ListItemsViewModel(
         updateState = { state, _ -> state.copy(items = state.items.filter { it.id!!.toInt() != itemId }) }
     )
 
-
     fun toggleCheckStatus(item: Item) {
-        val block: suspend () -> Item = if (item.purchased) {
-            { repository.uncheckListItem(listId, item.id!!.toInt()) }
-        } else {
-            { repository.checkListItem(listId, item.id!!.toInt()) }
-        }
-
         runOnViewModelScope(
-            block = block,
+            block = { repository.setListItemPurchased(listId, item.id!!.toInt(), !item.purchased) },
             updateState = { state, updatedItem ->
                 state.copy(items = state.items.map {
                     if (it.id == updatedItem.id) updatedItem else it

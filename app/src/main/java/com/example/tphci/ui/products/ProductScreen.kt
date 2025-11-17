@@ -210,7 +210,7 @@ fun ProductScreen(
                                     contentAlignment = Alignment.Center
                                 ) {
                                     Text(
-                                        text = "📦", // TODO api
+                                        text = product.emoji ?: "\uD83D\uDCE6",
                                         fontSize = 24.sp,
                                         fontWeight = FontWeight.Normal
                                     )
@@ -227,7 +227,7 @@ fun ProductScreen(
                                     }
 
                                     Text(
-                                        "${product.category}", // TODO API, check si se accede bien
+                                        product.category?.name ?: "",
                                         style = MaterialTheme.typography.bodySmall,
                                         color = Color.Gray
                                     )
@@ -286,7 +286,7 @@ fun ProductScreen(
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(
-                                    text = "📦", // TODO api
+                                    text = product.emoji ?: "\uD83D\uDCE6",
                                     fontSize = 24.sp,
                                     fontWeight = FontWeight.Normal
                                 )
@@ -303,7 +303,7 @@ fun ProductScreen(
                                 }
 
                                 Text(
-                                    "${product.category}", // TODO API, check si se accede bien
+                                    product.category?.name ?: "",
                                     style = MaterialTheme.typography.bodySmall,
                                     color = Color.Gray
                                 )
@@ -383,12 +383,21 @@ fun ProductScreen(
                 }
             ) {
                 CategoryScreen(
+                    products = uiState.products,
                     categories = uiState.categories,
                     onClose = { showCategoryScreen = false },
-                    onAddCategory = { category ->
-//                        viewModel.createCategory(category)
+                    onAdd = { category ->
+                        viewModel.createCategory(category)
                         showCategoryScreen = false
-                    }
+                    },
+                    onUpdate = { category ->
+                        viewModel.updateCategory(category)
+                        showCategoryScreen = false
+                    },
+                    onDelete = { category ->
+                        viewModel.deleteCategory(category)
+                        showCategoryScreen = false
+                    },
                 )
             }
         }
