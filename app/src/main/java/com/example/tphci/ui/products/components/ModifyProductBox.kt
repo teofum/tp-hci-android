@@ -46,7 +46,149 @@ import com.example.tphci.ui.home.rememberWindowInfo
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ModifyProductBox(
-    onClose: () -> Unit,
     product: Product,
+    onClose: () -> Unit,
+    onMod: (name: String, categoryId: Int?) -> Unit
 ) {
-   }
+
+    val windowInfo = rememberWindowInfo()
+    val isTablet = windowInfo.maxWidth > 600.dp
+
+    Dialog(
+        onDismissRequest = onClose,
+        properties = DialogProperties(
+            usePlatformDefaultWidth = false
+        )
+    ) {
+        Column(
+            modifier = if (isTablet) {
+                Modifier
+                    .widthIn(max = 600.dp)
+                    .heightIn(max = 500.dp)
+                    .background(MaterialTheme.colorScheme.background, RoundedCornerShape(16.dp))
+                    .padding(16.dp)
+            } else {
+                Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.background)
+                    .padding(16.dp)
+            },
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = stringResource(R.string.add_product),
+                    style = MaterialTheme.typography.titleLarge
+                )
+                IconButton(onClick = onClose) {
+                    Icon(Icons.Default.Close, contentDescription = stringResource(R.string.close))
+                }
+            }
+
+            var producto = product.name
+            var categoryExpanded by remember { mutableStateOf(false) }
+            var selectedCategory = product.category?.name
+            val categoryOptions = listOf("Categ0", "Categ1") // TODO hardcoded fetch API
+            var selectedEmoji = product.emoji
+            var showEmojiPicker by remember { mutableStateOf(false) }
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(70.dp)
+                        .background(Color.LightGray, RoundedCornerShape(20.dp))
+                        .clickable { showEmojiPicker = true },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = selectedEmoji?:"",
+                        style = MaterialTheme.typography.headlineLarge
+                    )
+                }
+            }
+
+            if (showEmojiPicker) {
+                androidx.compose.ui.window.Dialog(
+                    onDismissRequest = { showEmojiPicker = false }
+                ) {
+                    EmojiPicker(
+                        onSelect = {
+                            selectedEmoji = it
+                            showEmojiPicker = false
+                        },
+                        onDismiss = { showEmojiPicker = false }
+                    )
+                }
+            }
+
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                OutlinedTextField(
+                    value = producto?:"",
+                    onValueChange = { producto = it },
+                    label = { Text(stringResource(R.string.product)) },
+                    modifier = Modifier.weight(1f)
+                )
+            }
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                ExposedDropdownMenuBox(
+                    expanded = categoryExpanded,
+                    onExpandedChange = { categoryExpanded = !categoryExpanded },
+                    modifier = Modifier.weight(0.8f),
+                ) {
+                    OutlinedTextField(
+                        value = selectedCategory?:"",
+                        onValueChange = {},
+                        readOnly = true,
+                        label = { Text(stringResource(R.string.category)) },
+                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = categoryExpanded) },
+                        modifier = Modifier
+                            .menuAnchor()
+                            .fillMaxWidth()
+                    )
+
+                    ExposedDropdownMenu(
+                        expanded = categoryExpanded,
+                        onDismissRequest = { categoryExpanded = false }
+                    ) {
+                        categoryOptions.forEach { option ->
+                            DropdownMenuItem(
+                                text = { Text(option) },
+                                onClick = {
+                                    selectedCategory = option
+                                    categoryExpanded = false
+                                }
+                            )
+                        }
+                    }
+                }
+
+            }
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                TextButton(onClick = onClose) { Text(stringResource(R.string.cancel)) }
+
+                Button(onClick = {
+                    onMod(producto?:"", null) // TODO emoji
+                }) {
+                    Text("Guardar")
+                }
+            }
+        }
+    }
+}

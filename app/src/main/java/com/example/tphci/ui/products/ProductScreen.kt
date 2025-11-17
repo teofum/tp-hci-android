@@ -406,6 +406,9 @@ fun ProductScreen(
         ModifyProductBox(
             product = editingProduct!!,
             onClose = { showEditProductScreen = false },
+            onMod = { name, categoryId -> viewModel.modifyProduct(Product(name = name, categoryId = categoryId))
+                showAddProductScreen = false
+            }
         )
 
         Box(
