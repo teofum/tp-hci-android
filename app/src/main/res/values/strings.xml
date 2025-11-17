@@ -98,13 +98,11 @@
     <string name="edit_category">Editar categoría</string>
 
     <!-- Share Screen -->
-    <string name="done">Listo</string>
-    <string name="search_users">Buscar usuarios</string>
     <string name="share_list">Compartir lista</string>
-    <string name="suggested_users">Usuarios sugeridos</string>
     <string name="share">Compartir</string>
+    <string name="shared_with">Compartido con</string>
+    <string name="no_shared_users">No hay usuarios compartidos</string>
     <string name="ok">OK</string>
-    <string name="share_success">Lista compartida correctamente</string>
     <string name="failed_to_load_shared_users">Error al cargar usuarios compartidos: %1$s</string>
     <string name="failed_to_update_sharing">Error al actualizar compartir: %1$s</string>
 

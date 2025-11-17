@@ -78,29 +78,17 @@ fun ShareListRoute(
                 message = error,
                 actionLabel = context.getString(R.string.ok)
             )
-        }
-    }
-
-    // Handle Success side effect
-    val isSharingSuccessful = uiState.isSharingSuccessful
-    LaunchedEffect(isSharingSuccessful) {
-        if (isSharingSuccessful) {
-            snackbarHostState.showSnackbar(
-                message = context.getString(R.string.share_success),
-                actionLabel = context.getString(R.string.ok)
-            )
-            onBackClick()
+            viewModel.clearError()
         }
     }
 
     ShareListScreen(
         uiState = uiState,
         snackbarHostState = snackbarHostState,
-        onSearchQueryChange = viewModel::onSearchQueryChange,
-        onShareUserToggle = viewModel::onShareUserToggle,
-        onRemoveSelectedShareUser = viewModel::onRemoveSelectedShareUser,
-        onBackClick = onBackClick,
-        onDoneClick = viewModel::onDoneClick,
+        onEmailInputChange = viewModel::onEmailInputChange,
+        onAddEmail = viewModel::onAddEmail,
+        onRemoveSharedUser = viewModel::onRemoveSharedUser,
+        onBackClick = onBackClick
     )
 }
 
@@ -108,11 +96,10 @@ fun ShareListRoute(
 fun ShareListScreen(
     uiState: ShareListUiState,
     snackbarHostState: SnackbarHostState,
-    onSearchQueryChange: (String) -> Unit,
-    onShareUserToggle: (ShareUser) -> Unit,
-    onRemoveSelectedShareUser: (ShareUser) -> Unit,
-    onBackClick: () -> Unit,
-    onDoneClick: () -> Unit,
+    onEmailInputChange: (String) -> Unit,
+    onAddEmail: () -> Unit,
+    onRemoveSharedUser: (ShareUser) -> Unit,
+    onBackClick: () -> Unit
 ) {
     val windowInfo = rememberWindowInfo()
     val maxWidth = windowInfo.maxWidth
@@ -164,32 +151,62 @@ fun ShareListScreen(
                     }
                 }
 
-                if (uiState.selectedUsers.isNotEmpty()) {
-                    LazyRow(
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        modifier = Modifier.fillMaxWidth()
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    OutlinedTextField(
+                        value = uiState.emailInput,
+                        onValueChange = onEmailInputChange,
+                        modifier = Modifier.weight(1f),
+                        placeholder = { Text(stringResource(R.string.email)) },
+                        singleLine = true,
+                        shape = RoundedCornerShape(10.dp)
+                    )
+                    Button(
+                        onClick = onAddEmail,
+                        enabled = !uiState.isLoading && uiState.emailInput.isNotBlank(),
+                        modifier = Modifier.height(56.dp)
                     ) {
-                        items(uiState.selectedUsers) { ShareUser ->
-                            SelectedShareUserChip(
-                                ShareUser = ShareUser,
-                                onRemove = { onRemoveSelectedShareUser(ShareUser) }
-                            )
-                        }
+                        Text(stringResource(R.string.add))
                     }
                 }
 
-                OutlinedTextField(
-                    value = uiState.searchQuery,
-                    onValueChange = onSearchQueryChange,
-                    modifier = Modifier.fillMaxWidth(),
-                    placeholder = { Text(stringResource(R.string.search_users)) },
-                    singleLine = true,
-                    shape = RoundedCornerShape(10.dp)
+                Text(
+                    text = stringResource(R.string.shared_with),
+                    style = MaterialTheme.typography.titleMedium
                 )
-            }
 
-            if (uiState.isLoading && uiState.selectedUsers.isEmpty()) {
-                CircularProgressIndicator(Modifier.align(Alignment.Center))
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth()
+                ) {
+                    if (uiState.sharedUsers.isEmpty() && !uiState.isLoading) {
+                        Text(
+                            text = stringResource(R.string.no_shared_users),
+                            modifier = Modifier.align(Alignment.Center),
+                            color = Color.Gray
+                        )
+                    } else {
+                        LazyColumn(
+                            verticalArrangement = Arrangement.spacedBy(12.dp),
+                            modifier = Modifier.fillMaxSize()
+                        ) {
+                            items(uiState.sharedUsers) { user ->
+                                SharedUserRow(
+                                    user = user,
+                                    onRemove = { onRemoveSharedUser(user) }
+                                )
+                            }
+                        }
+                    }
+
+                    if (uiState.isLoading) {
+                        CircularProgressIndicator(Modifier.align(Alignment.Center))
+                    }
+                }
             }
         }
     }
@@ -209,76 +226,42 @@ val ShareUser.fullName: String
     get() = "$name $surname"
 
 @Composable
-fun SelectedShareUserChip(
-    ShareUser: ShareUser,
+private fun SharedUserRow(
+    user: ShareUser,
     onRemove: () -> Unit
 ) {
-    Surface(
-        shape = RoundedCornerShape(24.dp),
-        color = MaterialTheme.colorScheme.surfaceVariant
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Row(
-            modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.weight(1f)
         ) {
-            Avatar(ShareUser, size = 32.dp)
+            Avatar(user, size = 44.dp)
 
-            Spacer(Modifier.width(8.dp))
+            Spacer(Modifier.width(12.dp))
 
             Column {
                 Text(
-                    text = ShareUser.fullName,
-                    fontSize = 13.sp,
-                    fontWeight = FontWeight.SemiBold
+                    text = user.fullName,
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 15.sp
                 )
                 Text(
-                    text = ShareUser.email,
-                    fontSize = 11.sp,
-                )
-            }
-
-            Spacer(Modifier.width(8.dp))
-
-            IconButton(
-                onClick = onRemove,
-                modifier = Modifier.size(20.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Close,
-                    contentDescription = stringResource(R.string.close),
-                    modifier = Modifier.size(16.dp)
+                    text = user.email,
+                    fontSize = 13.sp,
+                    color = Color.Gray
                 )
             }
         }
-    }
-}
 
-
-@Composable
-private fun SuggestedShareUserRow(
-    ShareUser: ShareUser,
-    onClick: () -> Unit
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Avatar(ShareUser, size = 44.dp)
-
-        Spacer(Modifier.width(12.dp))
-
-        Column {
-            Text(
-                text = ShareUser.fullName,
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 15.sp
-            )
-            Text(
-                text = ShareUser.email,
-                fontSize = 13.sp,
-                color = Color.Gray
+        IconButton(onClick = onRemove) {
+            Icon(
+                imageVector = Icons.Default.Close,
+                contentDescription = stringResource(R.string.delete),
+                tint = MaterialTheme.colorScheme.error
             )
         }
     }
@@ -287,7 +270,7 @@ private fun SuggestedShareUserRow(
 
 @Composable
 fun Avatar(
-    ShareUser: ShareUser,
+    user: ShareUser,
     size: Dp
 ) {
     Box(
@@ -298,7 +281,7 @@ fun Avatar(
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = ShareUser.fullName.firstOrNull()?.uppercase() ?: "",
+            text = user.fullName.firstOrNull()?.uppercase() ?: "",
             color = MaterialTheme.colorScheme.onPrimary,
             fontWeight = FontWeight.Bold
         )

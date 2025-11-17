@@ -15,12 +15,10 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 data class ShareListUiState(
-    val selectedUsers: List<ShareUser> = emptyList(),
-    // val suggestedUsers: List<ShareUser> = emptyList(), // Removed
-    val searchQuery: String = "",
+    val sharedUsers: List<ShareUser> = emptyList(),
+    val emailInput: String = "",
     val isLoading: Boolean = false,
     val error: String? = null,
-    val isSharingSuccessful: Boolean = false,
 )
 
 class ShareListViewModel(
@@ -34,17 +32,27 @@ class ShareListViewModel(
 
     init {
         loadSharedUsers()
-        // loadInitialSuggestions() // Removed
     }
 
     private fun loadSharedUsers() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, error = null) }
             try {
-                val sharedUsers = repository.getSharedUsers(listId)
+                val list = repository.getList(listId)
+                val sharedUsers = (list.sharedWith ?: emptyList()).map { user ->
+                    ShareUser(
+                        id = user.id,
+                        name = user.name,
+                        surname = user.surname,
+                        email = user.email,
+                        metadata = Unit,
+                        createdAt = "",
+                        updatedAt = ""
+                    )
+                }
                 _uiState.update {
                     it.copy(
-                        selectedUsers = sharedUsers,
+                        sharedUsers = sharedUsers,
                         isLoading = false
                     )
                 }
@@ -59,108 +67,22 @@ class ShareListViewModel(
         }
     }
 
-    /*
-    private fun loadInitialSuggestions() {
-        val mockSuggestions = listOf(
-            ShareUser(101, "Alice", "Smith", "alice@example.com", Unit, "", ""),
-            ShareUser(102, "Bob", "Johnson", "bob@example.com", Unit, "", ""),
-            ShareUser(103, "Charlie", "Brown", "charlie@example.com", Unit, "", ""),
-        ).filter { user ->
-            _uiState.value.selectedUsers.none { it.id == user.id }
-        }
-        _uiState.update { it.copy(suggestedUsers = mockSuggestions) }
-    }
-    */
-
-
-    fun onSearchQueryChange(query: String) {
-        _uiState.update { it.copy(searchQuery = query) }
-
-        /*
-        if (query.length > 2) {
-            val filteredSuggestions = listOf(
-                ShareUser(201, "Dave", "Lee", "dave.lee@work.com", Unit, "", ""),
-                ShareUser(202, "Diana", "Prince", "diana.p@hero.com", Unit, "", ""),
-                ShareUser(203, "David", "Miller", "david.m@home.com", Unit, "", "")
-            ).filter { user ->
-                user.fullName.contains(query, ignoreCase = true) ||
-                        user.email.contains(query, ignoreCase = true)
-            }.filter { user ->
-                _uiState.value.selectedUsers.none { it.id == user.id }
-            }
-            _uiState.update { it.copy(suggestedUsers = filteredSuggestions) }
-        } else {
-            loadInitialSuggestions()
-        }
-        */
+    fun onEmailInputChange(email: String) {
+        _uiState.update { it.copy(emailInput = email) }
     }
 
-    fun onShareUserToggle(user: ShareUser) {
-        val selected = _uiState.value.selectedUsers
-        // val suggested = _uiState.value.suggestedUsers // Suggested users no longer exist in state
-
-        if (selected.contains(user)) {
-            _uiState.update {
-                it.copy(
-                    selectedUsers = selected.filter { it.id != user.id },
-                    // suggestedUsers logic removed:
-                    // suggestedUsers = if (suggested.none { it.id == user.id }) suggested + user else suggested
-                )
-            }
-        } else {
-            _uiState.update {
-                it.copy(
-                    selectedUsers = selected + user,
-                    // suggestedUsers logic removed:
-                    // suggestedUsers = suggested.filter { it.id != user.id }
-                )
-            }
+    fun onAddEmail() {
+        val email = _uiState.value.emailInput.trim()
+        if (email.isBlank() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            return
         }
-    }
-
-
-    fun onRemoveSelectedShareUser(user: ShareUser) {
-        val selected = _uiState.value.selectedUsers
-        _uiState.update {
-            it.copy(
-                selectedUsers = selected.filter { it.id != user.id },
-            )
-        }
-    }
-
-    fun onDoneClick() {
-        _uiState.update { it.copy(isLoading = true, error = null, isSharingSuccessful = false) }
 
         viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, error = null) }
             try {
-                val initialSharedUsers = repository.getSharedUsers(listId)
-                val currentSelectedUsers = _uiState.value.selectedUsers.toSet()
-
-                val usersToShare = currentSelectedUsers.filter { user ->
-                    initialSharedUsers.none { it.id == user.id }
-                }
-
-                val usersToUnshare = initialSharedUsers.filter { user ->
-                    currentSelectedUsers.none { it.id == user.id }
-                }
-
-                for (user in usersToShare) {
-                    val shareData = NetworkShareData(
-                        email = user.email
-                    )
-                    repository.shareList(listId, shareData)
-                }
-
-                for (user in usersToUnshare) {
-                    repository.unshareList(listId, user.id)
-                }
-
-                _uiState.update {
-                    it.copy(
-                        isLoading = false,
-                        isSharingSuccessful = true
-                    )
-                }
+                repository.shareList(listId, NetworkShareData(email))
+                _uiState.update { it.copy(emailInput = "") }
+                loadSharedUsers()
             } catch (e: Exception) {
                 _uiState.update {
                     it.copy(
@@ -170,6 +92,27 @@ class ShareListViewModel(
                 }
             }
         }
+    }
+
+    fun onRemoveSharedUser(user: ShareUser) {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, error = null) }
+            try {
+                repository.unshareList(listId, user.id)
+                loadSharedUsers()
+            } catch (e: Exception) {
+                _uiState.update {
+                    it.copy(
+                        error = context.getString(R.string.failed_to_update_sharing, e.message),
+                        isLoading = false
+                    )
+                }
+            }
+        }
+    }
+
+    fun clearError() {
+        _uiState.update { it.copy(error = null) }
     }
 
     companion object {
