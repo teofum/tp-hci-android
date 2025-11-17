@@ -213,8 +213,19 @@ fun ShoppingListScreen(
                                         }
                                     )
                                     DropdownMenuItem(
-                                        text = { Text(stringResource(R.string.delete)) },
-                                        leadingIcon = { Icon(Icons.Default.Delete, null) },
+                                        text = {
+                                            Text(
+                                                stringResource(R.string.delete),
+                                                color = MaterialTheme.colorScheme.error
+                                            )
+                                        },
+                                        leadingIcon = {
+                                            Icon(
+                                                Icons.Default.Delete,
+                                                null,
+                                                tint = MaterialTheme.colorScheme.error
+                                            )
+                                        },
                                         onClick = {
                                             expanded = false
                                             viewModel.deleteShoppingList(list)
