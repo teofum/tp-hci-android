@@ -27,8 +27,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,7 +36,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import com.example.tphci.R
+import com.example.tphci.data.model.Category
+import com.example.tphci.data.model.Product
 import com.example.tphci.ui.EmojiPicker
 import com.example.tphci.ui.home.rememberWindowInfo
 
@@ -46,7 +48,8 @@ import com.example.tphci.ui.home.rememberWindowInfo
 @Composable
 fun AddProductBox(
     onClose: () -> Unit,
-    onAdd: (name: String, categoryId: Int?) -> Unit // TODO API, check contrato
+    onAdd: (product: Product) -> Unit,
+    categories: List<Category>
 ) {
     val windowInfo = rememberWindowInfo()
     val isTablet = windowInfo.maxWidth > 600.dp
@@ -85,10 +88,9 @@ fun AddProductBox(
                 }
             }
 
-            var producto by remember { mutableStateOf("") }
+            var productName by remember { mutableStateOf("") }
             var categoryExpanded by remember { mutableStateOf(false) }
-            var selectedCategory by remember { mutableStateOf("") }
-            val categoryOptions = listOf("Categ0", "Categ1") // TODO hardcoded fetch API
+            var selectedCategory by remember { mutableStateOf<Int?>(null) }
             var selectedEmoji by remember { mutableStateOf("📦") }
             var showEmojiPicker by remember { mutableStateOf(false) }
 
@@ -129,8 +131,8 @@ fun AddProductBox(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 OutlinedTextField(
-                    value = producto,
-                    onValueChange = { producto = it },
+                    value = productName,
+                    onValueChange = { productName = it },
                     label = { Text(stringResource(R.string.product)) },
                     modifier = Modifier.weight(1f)
                 )
@@ -146,7 +148,7 @@ fun AddProductBox(
                     modifier = Modifier.weight(0.8f),
                 ) {
                     OutlinedTextField(
-                        value = selectedCategory,
+                        value = selectedCategory.toString(),
                         onValueChange = {},
                         readOnly = true,
                         label = { Text(stringResource(R.string.category)) },
@@ -160,11 +162,11 @@ fun AddProductBox(
                         expanded = categoryExpanded,
                         onDismissRequest = { categoryExpanded = false }
                     ) {
-                        categoryOptions.forEach { option ->
+                        categories.forEach { option ->
                             DropdownMenuItem(
-                                text = { Text(option) },
+                                text = { Text(option.name ?: "") },
                                 onClick = {
-                                    selectedCategory = option
+                                    selectedCategory = option.id
                                     categoryExpanded = false
                                 }
                             )
@@ -181,7 +183,7 @@ fun AddProductBox(
                 TextButton(onClick = onClose) { Text(stringResource(R.string.cancel)) }
 
                 Button(onClick = {
-                    onAdd(producto, null) // TODO api // TODO emoji
+                    onAdd(Product(productName, selectedCategory, selectedEmoji))
                 }) {
                     Text(stringResource(R.string.add))
                 }

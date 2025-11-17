@@ -4,6 +4,9 @@ import com.example.tphci.data.model.Item
 import kotlinx.serialization.Serializable
 
 @Serializable
+data class NetworkItemPurchased(val purchased: Boolean)
+
+@Serializable
 data class NetworkNewItem(
     val quantity: Int,
     val unit: String,

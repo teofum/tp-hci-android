@@ -7,11 +7,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -52,12 +49,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.tphci.R
 import com.example.tphci.MyApplication
+import com.example.tphci.R
 import com.example.tphci.data.model.ShoppingList
+import com.example.tphci.ui.SettingsBox
 import com.example.tphci.ui.home.rememberWindowInfo
 import com.example.tphci.ui.shopping_list.components.ManageListBox
-import com.example.tphci.ui.SettingsBox
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -158,7 +155,7 @@ fun ShoppingListScreen(
                                     contentAlignment = Alignment.Center
                                 ) {
                                     Text(
-                                        text = "📦", // TODO api
+                                        text = list.emoji,
                                         fontSize = 24.sp,
                                         fontWeight = FontWeight.Normal
                                     )
@@ -218,7 +215,10 @@ fun ShoppingListScreen(
                                     DropdownMenuItem(
                                         text = { Text(stringResource(R.string.delete)) },
                                         leadingIcon = { Icon(Icons.Default.Delete, null) },
-                                        onClick = { expanded = false } // TODO api
+                                        onClick = {
+                                            expanded = false
+                                            viewModel.deleteShoppingList(list)
+                                        }
                                     )
                                 }
                             }
@@ -229,21 +229,14 @@ fun ShoppingListScreen(
         }
 
     }
-    
+
     if (showAddListBox) {
         ManageListBox(
             title = stringResource(R.string.add_list),
             confirmButtonText = stringResource(R.string.add),
             onClose = { showAddListBox = false },
-            onConfirm = { name, description, recurring ->
-                viewModel.createShoppingList(
-                    ShoppingList(
-                        name,
-                        description,
-                        recurring,
-                        "\uD83D\uDED2"
-                    )
-                )
+            onConfirm = { list ->
+                viewModel.createShoppingList(list)
                 showAddListBox = false
             }
         )
@@ -252,22 +245,20 @@ fun ShoppingListScreen(
     if (showEditListBox && editingList != null) {
         ManageListBox(
             title = stringResource(R.string.edit_lists),
-            initialName = editingList!!.name,
-            initialDescription = editingList!!.description,
-            initialRecurring = editingList!!.recurring,
+            initial = editingList,
             confirmButtonText = stringResource(R.string.save_changes),
             onClose = {
                 showEditListBox = false
                 editingList = null
             },
-            onConfirm = { name, description, recurring ->
-                // TODO: Update shopping list API call
+            onConfirm = { list ->
+                viewModel.updateShoppingList(list)
                 showEditListBox = false
                 editingList = null
             }
         )
     }
-    
+
     if (showSettingsBox) {
         SettingsBox(
             onClose = { showSettingsBox = false }

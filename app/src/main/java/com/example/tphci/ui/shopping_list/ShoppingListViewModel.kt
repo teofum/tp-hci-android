@@ -28,7 +28,17 @@ class ShoppingListViewModel(
 
     fun createShoppingList(shoppingList: ShoppingList) = runOnViewModelScope(
         { repository.createList(shoppingList) },
-        { state, createdList -> state.copy(shoppingLists = state.shoppingLists + createdList) }
+        { state, createdList -> state.copy(shoppingLists = (state.shoppingLists + createdList).sortedBy { it.name }) }
+    )
+
+    fun updateShoppingList(shoppingList: ShoppingList) = runOnViewModelScope(
+        { repository.updateList(shoppingList) },
+        { state, createdList -> state.copy(shoppingLists = state.shoppingLists.map { if (it.id == createdList.id) createdList else it }) }
+    )
+
+    fun deleteShoppingList(shoppingList: ShoppingList) = runOnViewModelScope(
+        { repository.deleteList(shoppingList.id!!) },
+        { state, _ -> state.copy(shoppingLists = state.shoppingLists.filter { it.id != shoppingList.id }) }
     )
 
     fun startPolling() {
