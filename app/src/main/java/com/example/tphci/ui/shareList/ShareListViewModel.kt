@@ -1,7 +1,9 @@
 package com.example.tphci.ui.shareList
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.example.tphci.MyApplication
 import com.example.tphci.data.network.model.NetworkShareData
 import com.example.tphci.data.repository.ShoppingListRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -157,6 +159,19 @@ class ShareListViewModel(
                         isLoading = false
                     )
                 }
+            }
+        }
+    }
+
+    companion object {
+        fun provideFactory(
+            application: MyApplication,
+            listId: Int
+        ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
+            @Suppress("UNCHECKED_CAST")
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                require(modelClass.isAssignableFrom(ShareListViewModel::class.java))
+                return ShareListViewModel(listId, application.shoppingListRepository) as T
             }
         }
     }
