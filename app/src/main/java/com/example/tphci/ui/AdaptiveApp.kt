@@ -155,10 +155,10 @@ fun AdaptiveApp() {
                         onClose = { navController.popBackStack() }
                     )
                 }
-                // --- New composable for ShareListRoute ---
+
                 composable<ShareList> { entry ->
                     val args = entry.arguments!!
-                    val listId = args.getInt("listId") // Extract listId from the route
+                    val listId = args.getInt("listId")
 
                     ShareListRoute(
                         listId = listId,

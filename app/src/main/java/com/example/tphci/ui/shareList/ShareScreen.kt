@@ -204,27 +204,9 @@ fun ShareListScreen(
                     singleLine = true,
                     shape = RoundedCornerShape(10.dp)
                 )
-
-                Text(
-                    text = stringResource(R.string.suggested_users),
-                    fontWeight = FontWeight.SemiBold,
-                    modifier = Modifier.padding(bottom = 12.dp)
-                )
-
-                LazyColumn(
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    items(uiState.suggestedUsers) { ShareUser ->
-                        SuggestedShareUserRow(
-                            ShareUser = ShareUser,
-                            onClick = { onShareUserToggle(ShareUser) }
-                        )
-                    }
-                }
             }
 
-            if (uiState.isLoading && uiState.selectedUsers.isEmpty() && uiState.suggestedUsers.isEmpty()) {
+            if (uiState.isLoading && uiState.selectedUsers.isEmpty()) {
                 CircularProgressIndicator(Modifier.align(Alignment.Center))
             }
         }

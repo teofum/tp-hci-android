@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 
 data class ShareListUiState(
     val selectedUsers: List<ShareUser> = emptyList(),
-    val suggestedUsers: List<ShareUser> = emptyList(),
+    // val suggestedUsers: List<ShareUser> = emptyList(), // Removed
     val searchQuery: String = "",
     val isLoading: Boolean = false,
     val error: String? = null,
@@ -31,7 +31,7 @@ class ShareListViewModel(
 
     init {
         loadSharedUsers()
-        loadInitialSuggestions()
+        // loadInitialSuggestions() // Removed
     }
 
     private fun loadSharedUsers() {
@@ -56,6 +56,7 @@ class ShareListViewModel(
         }
     }
 
+    /*
     private fun loadInitialSuggestions() {
         val mockSuggestions = listOf(
             ShareUser(101, "Alice", "Smith", "alice@example.com", Unit, "", ""),
@@ -66,11 +67,13 @@ class ShareListViewModel(
         }
         _uiState.update { it.copy(suggestedUsers = mockSuggestions) }
     }
+    */
 
 
     fun onSearchQueryChange(query: String) {
         _uiState.update { it.copy(searchQuery = query) }
 
+        /*
         if (query.length > 2) {
             val filteredSuggestions = listOf(
                 ShareUser(201, "Dave", "Lee", "dave.lee@work.com", Unit, "", ""),
@@ -86,24 +89,27 @@ class ShareListViewModel(
         } else {
             loadInitialSuggestions()
         }
+        */
     }
 
     fun onShareUserToggle(user: ShareUser) {
         val selected = _uiState.value.selectedUsers
-        val suggested = _uiState.value.suggestedUsers
+        // val suggested = _uiState.value.suggestedUsers // Suggested users no longer exist in state
 
         if (selected.contains(user)) {
             _uiState.update {
                 it.copy(
                     selectedUsers = selected.filter { it.id != user.id },
-                    suggestedUsers = if (suggested.none { it.id == user.id }) suggested + user else suggested
+                    // suggestedUsers logic removed:
+                    // suggestedUsers = if (suggested.none { it.id == user.id }) suggested + user else suggested
                 )
             }
         } else {
             _uiState.update {
                 it.copy(
                     selectedUsers = selected + user,
-                    suggestedUsers = suggested.filter { it.id != user.id }
+                    // suggestedUsers logic removed:
+                    // suggestedUsers = suggested.filter { it.id != user.id }
                 )
             }
         }
