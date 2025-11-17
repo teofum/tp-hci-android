@@ -59,7 +59,7 @@ data class ShareUser(
 )
 
 // Helper property to minimize changes in composables
-private val ShareUser.fullName: String
+val ShareUser.fullName: String
     get() = "$name $surname"
 
 /**
