@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -51,13 +50,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.tphci.R
 import com.example.tphci.MyApplication
+import com.example.tphci.R
 import com.example.tphci.data.model.Product
+import com.example.tphci.ui.SettingsBox
 import com.example.tphci.ui.home.rememberWindowInfo
 import com.example.tphci.ui.products.components.AddProductBox
-import com.example.tphci.ui.SettingsBox
-import com.example.tphci.ui.products.components.ModifyProductBox
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -354,9 +352,10 @@ fun ProductScreen(
 
     if (showAddProductScreen) {
         AddProductBox(
+            categories = uiState.categories,
             onClose = { showAddProductScreen = false },
-            onAdd = { name, categoryId ->
-                viewModel.createProduct(Product(name = name, categoryId = categoryId))
+            onConfirm = { product ->
+                viewModel.createProduct(product)
                 showAddProductScreen = false
             }
         )
@@ -402,11 +401,12 @@ fun ProductScreen(
     }
 
     if (showEditProductScreen && editingProduct != null) {
-
-        ModifyProductBox(
-            product = editingProduct!!,
+        AddProductBox(
+            categories = uiState.categories,
+            initial = editingProduct,
             onClose = { showEditProductScreen = false },
-            onMod = { name, categoryId -> viewModel.modifyProduct(Product(name = name, categoryId = categoryId))
+            onConfirm = { product ->
+                viewModel.modifyProduct(product)
                 showAddProductScreen = false
             }
         )
