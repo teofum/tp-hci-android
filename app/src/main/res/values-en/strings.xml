@@ -103,6 +103,10 @@
     <string name="share_list">Share list</string>
     <string name="suggested_users">Suggested users</string>
     <string name="share">Share</string>
+    <string name="ok">OK</string>
+    <string name="share_success">List shared successfully</string>
+    <string name="failed_to_load_shared_users">Failed to load shared users: %1$s</string>
+    <string name="failed_to_update_sharing">Failed to update sharing: %1$s</string>
 
     <!-- Settings -->
     <string name="settings">Settings</string>

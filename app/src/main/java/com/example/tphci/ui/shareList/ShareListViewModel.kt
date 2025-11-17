@@ -1,9 +1,11 @@
 package com.example.tphci.ui.shareList
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.tphci.MyApplication
+import com.example.tphci.R
 import com.example.tphci.data.network.model.NetworkShareData
 import com.example.tphci.data.repository.ShoppingListRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,6 +26,7 @@ data class ShareListUiState(
 class ShareListViewModel(
     private val listId: Int,
     private val repository: ShoppingListRepository,
+    private val context: Context,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ShareListUiState())
@@ -48,7 +51,7 @@ class ShareListViewModel(
             } catch (e: Exception) {
                 _uiState.update {
                     it.copy(
-                        error = "Failed to load shared users: ${e.message}",
+                        error = context.getString(R.string.failed_to_load_shared_users, e.message),
                         isLoading = false
                     )
                 }
@@ -161,7 +164,7 @@ class ShareListViewModel(
             } catch (e: Exception) {
                 _uiState.update {
                     it.copy(
-                        error = "Failed to update sharing: ${e.message}",
+                        error = context.getString(R.string.failed_to_update_sharing, e.message),
                         isLoading = false
                     )
                 }
@@ -177,7 +180,7 @@ class ShareListViewModel(
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 require(modelClass.isAssignableFrom(ShareListViewModel::class.java))
-                return ShareListViewModel(listId, application.shoppingListRepository) as T
+                return ShareListViewModel(listId, application.shoppingListRepository, application) as T
             }
         }
     }

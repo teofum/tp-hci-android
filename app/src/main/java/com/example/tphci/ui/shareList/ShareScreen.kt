@@ -29,12 +29,12 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -68,13 +68,15 @@ fun ShareListRoute(
     val uiState by viewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
 
+    val context = LocalContext.current
+
     // Handle Error side effect
     val error = uiState.error
     LaunchedEffect(error) {
         if (error != null) {
             snackbarHostState.showSnackbar(
                 message = error,
-                actionLabel = "OK"
+                actionLabel = context.getString(R.string.ok)
             )
         }
     }
@@ -84,8 +86,8 @@ fun ShareListRoute(
     LaunchedEffect(isSharingSuccessful) {
         if (isSharingSuccessful) {
             snackbarHostState.showSnackbar(
-                message = "shared",
-                actionLabel = "OK"
+                message = context.getString(R.string.share_success),
+                actionLabel = context.getString(R.string.ok)
             )
             onBackClick()
         }
@@ -102,7 +104,6 @@ fun ShareListRoute(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ShareListScreen(
     uiState: ShareListUiState,
@@ -115,18 +116,46 @@ fun ShareListScreen(
 ) {
     val windowInfo = rememberWindowInfo()
     val maxWidth = windowInfo.maxWidth
+    val isTablet = maxWidth > 600.dp
 
-    Scaffold(
-        snackbarHost = { SnackbarHost(snackbarHostState) },
-        topBar = {
-            TopAppBar(
-                title = {
+    Dialog(
+        onDismissRequest = onBackClick,
+        properties = DialogProperties(
+            usePlatformDefaultWidth = false
+        )
+    ) {
+        Box(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            SnackbarHost(
+                hostState = snackbarHostState,
+                modifier = Modifier.align(Alignment.BottomCenter)
+            )
+
+            Column(
+                modifier = if (isTablet) {
+                    Modifier
+                        .widthIn(max = 600.dp)
+                        .align(Alignment.Center)
+                        .background(MaterialTheme.colorScheme.background, RoundedCornerShape(16.dp))
+                        .padding(16.dp)
+                } else {
+                    Modifier
+                        .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.background)
+                        .padding(16.dp)
+                },
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     Text(
                         text = stringResource(R.string.share_list),
-                        fontWeight = FontWeight.SemiBold,
+                        style = MaterialTheme.typography.titleLarge
                     )
-                },
-                navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(
                             imageVector = Icons.Default.Close,
@@ -134,56 +163,11 @@ fun ShareListScreen(
                         )
                     }
                 }
-            )
-        },
-        bottomBar = {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Button(
-                    onClick = onDoneClick,
-                    enabled = !uiState.isLoading,
-                    modifier = Modifier
-                        .fillMaxWidth(0.6f)
-                        .height(52.dp),
-                    shape = RoundedCornerShape(24.dp),
-                ) {
-                    if (uiState.isLoading) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(24.dp),
-                            color = MaterialTheme.colorScheme.onPrimary,
-                            strokeWidth = 2.dp
-                        )
-                    } else {
-                        Text(stringResource(R.string.done), fontSize = 18.sp)
-                    }
-                }
-            }
-        }
-    ) { innerPadding ->
-
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding),
-            contentAlignment = Alignment.TopCenter
-        ) {
-            Column(
-                modifier = Modifier
-                    .widthIn(max = maxWidth)
-                    .padding(16.dp)
-
-            ) {
 
                 if (uiState.selectedUsers.isNotEmpty()) {
                     LazyRow(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 16.dp)
+                        modifier = Modifier.fillMaxWidth()
                     ) {
                         items(uiState.selectedUsers) { ShareUser ->
                             SelectedShareUserChip(
@@ -197,9 +181,7 @@ fun ShareListScreen(
                 OutlinedTextField(
                     value = uiState.searchQuery,
                     onValueChange = onSearchQueryChange,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 24.dp),
+                    modifier = Modifier.fillMaxWidth(),
                     placeholder = { Text(stringResource(R.string.search_users)) },
                     singleLine = true,
                     shape = RoundedCornerShape(10.dp)
