@@ -56,10 +56,6 @@ import com.example.tphci.R
 import com.example.tphci.ui.home.rememberWindowInfo
 
 
-/**
- * Stateful route for the Share List Screen.
- * Handles ViewModel creation, state collection, and side effects (like showing snackbars).
- */
 @Composable
 fun ShareListRoute(
     listId: Int,
@@ -88,10 +84,10 @@ fun ShareListRoute(
     LaunchedEffect(isSharingSuccessful) {
         if (isSharingSuccessful) {
             snackbarHostState.showSnackbar(
-                message = application.getString(R.string.share_success), // Assuming you have this string resource
+                message = application.getString(R.string.share_success),
                 actionLabel = application.getString(R.string.ok)
             )
-            onBackClick() // Navigate back after success
+            onBackClick()
         }
     }
 
@@ -106,9 +102,6 @@ fun ShareListRoute(
     )
 }
 
-/**
- * Main screen. Stateless: only UI + callbacks.
- */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ShareListScreen(
@@ -185,7 +178,6 @@ fun ShareListScreen(
 
             ) {
 
-                // Selected ShareUser “pill” on top
                 if (uiState.selectedUsers.isNotEmpty()) {
                     LazyRow(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -202,7 +194,6 @@ fun ShareListScreen(
                     }
                 }
 
-                // Search bar
                 OutlinedTextField(
                     value = uiState.searchQuery,
                     onValueChange = onSearchQueryChange,
@@ -214,14 +205,12 @@ fun ShareListScreen(
                     shape = RoundedCornerShape(10.dp)
                 )
 
-                // Suggested ShareUsers title
                 Text(
                     text = stringResource(R.string.suggested_users),
                     fontWeight = FontWeight.SemiBold,
                     modifier = Modifier.padding(bottom = 12.dp)
                 )
 
-                // Suggested ShareUsers list
                 LazyColumn(
                     verticalArrangement = Arrangement.spacedBy(12.dp),
                     modifier = Modifier.fillMaxSize()
@@ -235,7 +224,6 @@ fun ShareListScreen(
                 }
             }
 
-            // Central loading indicator for initial load
             if (uiState.isLoading && uiState.selectedUsers.isEmpty() && uiState.suggestedUsers.isEmpty()) {
                 CircularProgressIndicator(Modifier.align(Alignment.Center))
             }
@@ -243,9 +231,6 @@ fun ShareListScreen(
     }
 }
 
-/**
- * Basic ShareUser model – adapt it to your backend DTO.
- */
 data class ShareUser(
     val id: Int,
     val name: String,
@@ -256,13 +241,9 @@ data class ShareUser(
     val updatedAt: String
 )
 
-// Helper property to minimize changes in composables
 val ShareUser.fullName: String
     get() = "$name $surname"
 
-/**
- * Pill with avatar, name, handle and close icon.
- */
 @Composable
 fun SelectedShareUserChip(
     ShareUser: ShareUser,
@@ -308,9 +289,7 @@ fun SelectedShareUserChip(
     }
 }
 
-/**
- * Row in "Usuarios sugeridos".
- */
+
 @Composable
 private fun SuggestedShareUserRow(
     ShareUser: ShareUser,
@@ -341,10 +320,7 @@ private fun SuggestedShareUserRow(
     }
 }
 
-/**
- * Simple avatar component.
- * Swap this to Coil/Glide if you load from URL.
- */
+
 @Composable
 fun Avatar(
     ShareUser: ShareUser,
