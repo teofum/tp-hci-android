@@ -308,12 +308,21 @@ fun ProductScreen(
                 }
             ) {
                 CategoryScreen(
+                    products = uiState.products,
                     categories = uiState.categories,
                     onClose = { showCategoryScreen = false },
-                    onAddCategory = { category ->
-//                        viewModel.createCategory(category)
+                    onAdd = { category ->
+                        viewModel.createCategory(category)
                         showCategoryScreen = false
-                    }
+                    },
+                    onUpdate = { category ->
+                        viewModel.updateCategory(category)
+                        showCategoryScreen = false
+                    },
+                    onDelete = { category ->
+                        viewModel.deleteCategory(category)
+                        showCategoryScreen = false
+                    },
                 )
             }
         }
