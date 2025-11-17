@@ -315,7 +315,7 @@ fun ProductScreen(
                                 IconButton(onClick = { expanded = true }) {
                                     Icon(
                                         Icons.Default.MoreVert,
-                                        contentDescription = "Opciones"
+                                        contentDescription = stringResource(R.string.options)
                                     )
                                 }
 
@@ -360,6 +360,7 @@ fun ProductScreen(
 
         }
     }
+
 
 
 }

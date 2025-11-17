@@ -70,7 +70,10 @@ fun ManageCategoryBox(
                 Text(title, style = MaterialTheme.typography.titleLarge)
 
                 IconButton(onClick = onClose) {
-                    Icon(Icons.Default.Close, contentDescription = stringResource(R.string.close))
+                    Icon(
+                        Icons.Default.Close,
+                        contentDescription = stringResource(id = R.string.close)
+                    )
                 }
             }
 
@@ -109,7 +112,7 @@ fun ManageCategoryBox(
             OutlinedTextField(
                 value = name,
                 onValueChange = { name = it },
-                label = { Text(stringResource(R.string.name)) },
+                label = { Text(stringResource(id = R.string.name)) },
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -117,7 +120,7 @@ fun ManageCategoryBox(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                TextButton(onClick = onClose) { Text(stringResource(R.string.cancel)) }
+                TextButton(onClick = onClose) { Text(stringResource(id = R.string.cancel)) }
 
                 Button(
                     onClick = {

@@ -185,10 +185,9 @@ fun AdaptiveApp() {
                         onNavigateToAddItem = { navController.navigate(AddItem(listId)) }
                     )
                 }
-                composable<Share> { // TODO make the dialog fullscreen (TODO connect to /shareList)
+                composable<Share> {
                     ShareListScreen(
                         selectedShareUsers = emptyList(),
-                        suggestedShareUsers = emptyList(),
                         searchQuery = "",
                         onSearchQueryChange = {},
                         onShareUserToggle = {},

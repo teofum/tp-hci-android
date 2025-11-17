@@ -72,7 +72,7 @@ fun CategoryScreen(
                 contentColor = MaterialTheme.colorScheme.onPrimary,
                 modifier = Modifier.width(150.dp)
             ) {
-                Text("+ " + stringResource(R.string.add_category))
+                Text(stringResource(R.string.add_category))
             }
         }
     ) { innerPadding ->
@@ -88,7 +88,7 @@ fun CategoryScreen(
                     .padding(16.dp)
             ) {
                 Text(
-                    "Categorías",
+                    stringResource(R.string.categories),
                     style = MaterialTheme.typography.headlineMedium,
                     modifier = Modifier.fillMaxWidth(),
                     textAlign = TextAlign.Center
@@ -140,7 +140,7 @@ fun CategoryScreen(
                                             style = MaterialTheme.typography.titleMedium
                                         )
                                         Text(
-                                            stringResource(R.string.products_count, products.count { it.category?.id == category.id }),
+                                            stringResource(id = R.string.product_count, products.count { it.category?.id == category.id }),
                                             style = MaterialTheme.typography.bodyMedium
                                         )
                                     }
@@ -208,7 +208,7 @@ fun CategoryScreen(
             ManageCategoryBox(
                 title = stringResource(R.string.edit_category),
                 initial = editingCategory,
-                confirmButtonText = stringResource(R.string.save),
+                confirmButtonText = stringResource(R.string.save_changes),
                 onClose = { showEditCategoryBox = false },
                 onConfirm = { category ->
                     onUpdate(category)
