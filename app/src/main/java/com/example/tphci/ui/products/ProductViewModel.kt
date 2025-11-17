@@ -86,6 +86,24 @@ class ProductViewModel(
             manualRefresh()
         }
     }
+
+    fun modifyProduct(product: Product) {
+        if (product.id == null) return
+
+        viewModelScope.launch {
+            try {
+                productRepository.updateProduct(product)
+                manualRefresh()
+            } catch (e: Exception) {
+                _uiState.update { currentState ->
+                    currentState.copy(
+                        isFetching = false,
+                        error = handleError(e)
+                    )
+                }
+            }
+        }
+    }
     fun stopPolling() {
         pollingJob?.cancel()
         pollingJob = null

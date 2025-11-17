@@ -57,6 +57,7 @@ import com.example.tphci.data.model.Product
 import com.example.tphci.ui.home.rememberWindowInfo
 import com.example.tphci.ui.products.components.AddProductBox
 import com.example.tphci.ui.SettingsBox
+import com.example.tphci.ui.products.components.ModifyProductBox
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -77,6 +78,9 @@ fun ProductScreen(
 
     var showAddProductScreen by remember { mutableStateOf(false) }
     var showSettingsBox by remember { mutableStateOf(false) }
+
+    var showEditProductScreen by remember { mutableStateOf(false) }
+    var editingProduct by remember { mutableStateOf<Product?>(null) }
 
     val productSearch = remember { mutableStateOf("") }
 
@@ -169,7 +173,7 @@ fun ProductScreen(
                     Spacer(modifier = Modifier.width(12.dp))
 
                     Row(
-                        verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
+                        verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Text(
                             stringResource(R.string.group_by_category) + " ",
@@ -250,7 +254,8 @@ fun ProductScreen(
                                             leadingIcon = { Icon(Icons.Default.Edit, null) },
                                             onClick = {
                                                 expanded = false
-                                                // TODO : editarlo
+                                                editingProduct = product
+                                                showEditProductScreen = true
                                             }
                                         )
                                         DropdownMenuItem(
@@ -258,7 +263,7 @@ fun ProductScreen(
                                             leadingIcon = { Icon(Icons.Default.Delete, null) },
                                             onClick = {
                                                 expanded = false
-                                                viewModel.deleteProduct(product)// TODO : eliminarlo
+                                                viewModel.deleteProduct(product)
                                             }
                                         )
                                     }
@@ -324,7 +329,8 @@ fun ProductScreen(
                                         leadingIcon = { Icon(Icons.Default.Edit, null) },
                                         onClick = {
                                             expanded = false
-                                            // TODO : editarlo
+                                            editingProduct = product
+                                            showEditProductScreen = true
                                         }
                                     )
                                     DropdownMenuItem(
@@ -332,7 +338,7 @@ fun ProductScreen(
                                         leadingIcon = { Icon(Icons.Default.Delete, null) },
                                         onClick = {
                                             expanded = false
-                                            viewModel.deleteProduct(product)// TODO : eliminarlo
+                                            viewModel.deleteProduct(product)
                                         }
                                     )
                                 }
@@ -393,5 +399,22 @@ fun ProductScreen(
         SettingsBox(
             onClose = { showSettingsBox = false }
         )
+    }
+
+    if (showEditProductScreen && editingProduct != null) {
+
+        ModifyProductBox(
+            product = editingProduct!!,
+            onClose = { showEditProductScreen = false },
+        )
+
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black.copy(alpha = 0.5f)),
+            contentAlignment = Alignment.Center
+        ) {
+            Text("Diálogo de Edición de Producto para: ${editingProduct!!.name}")
+        }
     }
 }
